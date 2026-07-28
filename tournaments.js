@@ -35,7 +35,7 @@ function renderTournamentTable(tournament) {
     : tournamentRun.eliminated
       ? "Odpadliśmy z turnieju"
       : `${daysUntil(tournamentRun.nextMatchDay)} kontra ${tournamentRun.opponent}`;
-  return `<section class="competition-table"><div class="section-heading"><span>Aktywny turniej • ${tournamentTeams.length} drużyn</span><h4>${tournament.name}</h4></div><div class="tournament-next"><span>${finished ? "Wynik" : "Następny mecz"}</span><strong>${headline}</strong>${finished ? `<button class="upgrade-button" data-close-tournament>Zakończ turniej</button>` : `<small>Dzień ${tournamentRun.nextMatchDay} • BO1</small>`}</div><table class="finance-table"><thead><tr><th>Seed</th><th>Drużyna</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></section>`;
+  return `<section class="competition-table"><div class="section-heading"><span>Aktywny turniej • ${tournamentTeams.length} drużyn</span><h4>${tournament.name}</h4></div><div class="tournament-next"><span>${finished ? "Wynik" : "Następny mecz"}</span><strong>${headline}</strong>${finished ? `<button class="upgrade-button" data-close-tournament>Zakończ turniej</button>` : `<small>Dzień ${tournamentRun.nextMatchDay} • BO1</small>`}</div>${window.matchCenter.render(tournament.name)}<table class="finance-table"><thead><tr><th>Seed</th><th>Drużyna</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></section>`;
 }
 
 function renderTournaments() {
@@ -73,6 +73,7 @@ window.gameClock.subscribe((day) => {
   const ourTeam = tournamentRun.results[0];
   const opponent = tournamentRun.results.find((team) => team.name === tournamentRun.opponent);
   const won = (day + activeTournamentIndex + tournamentRun.round) % 4 !== 0;
+  window.matchCenter.simulate({ competition: tournament.name, opponent: opponent.name, won, day });
   if (!won) {
     tournamentRun.eliminated = true;
     ourTeam.status = `Odpadł (${tournamentRun.round + 1}. runda)`;

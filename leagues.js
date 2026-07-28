@@ -36,7 +36,7 @@ function renderLeagueTable(league) {
   const matchRows = leagueSeason.matches.length
     ? leagueSeason.matches.map((match) => `<tr><td>Dzień ${match.day}</td><td>${match.opponent}</td><td><strong>${match.score}</strong></td><td>${match.result}</td></tr>`).join("")
     : '<tr><td colspan="4">Pierwszy mecz jeszcze się nie odbył.</td></tr>';
-  return `<section class="competition-table"><div class="section-heading"><span>Aktywna liga • ${league.teamCount} drużyn</span><h4>${league.name}</h4></div><div class="tournament-next"><span>Następny mecz ligowy</span><strong>${matchDate} kontra ${opponent.name}</strong><small>Dzień ${leagueSeason.nextMatchDay} • BO1</small></div><h4 class="table-title">Tabela ligowa</h4><table class="finance-table league-standings"><thead><tr><th>#</th><th>Drużyna</th><th>M</th><th>W</th><th>P</th><th>PKT</th></tr></thead><tbody>${rows}</tbody></table><h4 class="table-title">Mecze naszego zespołu</h4><table class="finance-table"><thead><tr><th>Dzień</th><th>Rywal</th><th>Wynik</th><th>Rezultat</th></tr></thead><tbody>${matchRows}</tbody></table></section>`;
+  return `<section class="competition-table"><div class="section-heading"><span>Aktywna liga • ${league.teamCount} drużyn</span><h4>${league.name}</h4></div><div class="tournament-next"><span>Następny mecz ligowy</span><strong>${matchDate} kontra ${opponent.name}</strong><small>Dzień ${leagueSeason.nextMatchDay} • BO1</small></div>${window.matchCenter.render(league.name)}<h4 class="table-title">Tabela ligowa</h4><table class="finance-table league-standings"><thead><tr><th>#</th><th>Drużyna</th><th>M</th><th>W</th><th>P</th><th>PKT</th></tr></thead><tbody>${rows}</tbody></table><h4 class="table-title">Mecze naszego zespołu</h4><table class="finance-table"><thead><tr><th>Dzień</th><th>Rywal</th><th>Wynik</th><th>Rezultat</th></tr></thead><tbody>${matchRows}</tbody></table></section>`;
 }
 
 function renderLeagues() {
@@ -66,6 +66,7 @@ window.gameClock.subscribe((day) => {
   const us = leagueSeason.teams[0];
   const opponent = leagueSeason.teams[leagueSeason.opponentIndex];
   const won = (day + activeLeagueIndex + leagueSeason.opponentIndex) % 3 !== 0;
+  window.matchCenter.simulate({ competition: league.name, opponent: opponent.name, won, day });
   us.played += 1;
   opponent.played += 1;
   us[won ? "wins" : "losses"] += 1;
