@@ -10,7 +10,7 @@ window.sections = {
     cards: [
       ["Next match", "Spring Split Opener", "Za 3 dni • Best of 1"],
       ["Team morale", "87%", "Pozytywna atmosfera"],
-      ["Budget", "€2.4M", "Gotowe na transfery"],
+      ["Budget", "€500k", "Gotowe na transfery"],
     ],
   },
   mailbox: { layout: "mailbox" },
@@ -18,13 +18,13 @@ window.sections = {
     eyebrow: "Club communication",
     title: "Mailbox",
     action: "Compose reply",
-    tag: "3 unread messages",
+    tag: "Wiadomości klubowe",
     heading: "Inbox",
     description: "Sprawdzaj wiadomości od zarządu, zawodników, sponsorów oraz organizatorów rozgrywek.",
     cards: [
       ["Board", "Cele sezonu", "Awans do play-offów i dodatni budżet"],
       ["Player", "Prośba o rozmowę", "Midlaner chce omówić plan treningowy"],
-      ["League", "Media day", "Obowiązkowa sesja zdjęciowa w piątek"],
+      ["League", "Terminarz", "Pierwszy mecz pojawi się po dołączeniu do ligi"],
     ],
   },
   squad: { layout: "squad" },
@@ -108,7 +108,7 @@ window.sections = {
     heading: "Finanse",
     description: "Kontroluj budżet, pensje, premie za wyniki i miesięczny przepływ gotówki klubu.",
     cards: [
-      ["Balance", "€2.4M", "Dostępne środki"],
+      ["Balance", "€500k", "Dostępne środki"],
       ["Monthly wages", "€310k", "68% limitu płac"],
       ["Projected profit", "+€180k", "Prognoza na koniec splitu"],
     ],
