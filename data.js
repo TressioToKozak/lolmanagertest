@@ -71,7 +71,8 @@ window.sections = {
       ["Scout", "Anna Wiśniewska", "Specjalizacja: mikro mechanika"],
     ],
   },
-  tournaments: {
+  tournaments: { layout: "tournaments" },
+  tournamentsOld: {
     eyebrow: "Competition calendar",
     title: "Tournaments",
     action: "Register team",
@@ -84,7 +85,8 @@ window.sections = {
       ["Bootcamp", "Warszawa", "7 dni przed play-offami"],
     ],
   },
-  leagues: {
+  leagues: { layout: "leagues" },
+  leaguesOld: {
     eyebrow: "League overview",
     title: "Leagues",
     action: "View table",
@@ -97,7 +99,8 @@ window.sections = {
       ["Playoffs", "72% chance", "Według aktualnej symulacji"],
     ],
   },
-  finances: {
+  finances: { layout: "finances" },
+  financesOld: {
     eyebrow: "Club economy",
     title: "Finances",
     action: "Open ledger",
@@ -110,7 +113,8 @@ window.sections = {
       ["Projected profit", "+€180k", "Prognoza na koniec splitu"],
     ],
   },
-  sponsors: {
+  sponsors: { layout: "sponsors" },
+  sponsorsOld: {
     eyebrow: "Commercial deals",
     title: "Sponsors",
     action: "Negotiate deal",

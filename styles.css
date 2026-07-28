@@ -811,3 +811,64 @@ body {
   cursor: not-allowed;
   opacity: 0.5;
 }
+
+.market-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.finance-panel {
+  min-width: 0;
+}
+
+.finance-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(8, 21, 37, 0.52);
+}
+
+.finance-table th,
+.finance-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.finance-table th,
+.finance-table tfoot td {
+  color: var(--gold-bright);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.finance-table td:last-child,
+.finance-table th:last-child {
+  text-align: right;
+}
+
+.empty-state {
+  place-content: center;
+  text-align: center;
+}
+
+.empty-state span {
+  color: var(--gold-bright);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.empty-state h3 {
+  margin: 12px 0;
+  font-size: clamp(2.4rem, 5vw, 5rem);
+}
+
+.empty-state p {
+  max-width: 640px;
+  margin: 0 auto;
+  color: #c4d3e4;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}

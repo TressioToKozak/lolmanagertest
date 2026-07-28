@@ -10,11 +10,15 @@ function renderSection(content, sectionKey) {
   const isStaff = section.layout === "staff";
   const isTransfer = section.layout === "transfer";
   const isScouting = section.layout === "scouting";
+  const isTournaments = section.layout === "tournaments";
+  const isLeagues = section.layout === "leagues";
+  const isFinances = section.layout === "finances";
+  const isSponsors = section.layout === "sponsors";
   const rerender = () => renderSection(content, sectionKey);
 
   content.classList.toggle("hero-panel--squad", isSquad);
   content.classList.toggle("hero-panel--gaming-house", isGamingHouse);
-  content.classList.toggle("hero-panel--management", isStaff || isTransfer || isScouting || isMailbox);
+  content.classList.toggle("hero-panel--management", isStaff || isTransfer || isScouting || isMailbox || isTournaments || isLeagues || isFinances || isSponsors);
 
   if (isSquad) {
     content.innerHTML = window.renderSquad();
@@ -49,6 +53,28 @@ function renderSection(content, sectionKey) {
   if (isScouting) {
     content.innerHTML = window.renderScouting();
     window.setupScouting(rerender);
+    return;
+  }
+
+  if (isTournaments) {
+    content.innerHTML = window.renderTournaments();
+    window.setupTournaments(rerender);
+    return;
+  }
+
+  if (isLeagues) {
+    content.innerHTML = window.renderLeagues();
+    window.setupLeagues(rerender);
+    return;
+  }
+
+  if (isFinances) {
+    content.innerHTML = window.renderFinances();
+    return;
+  }
+
+  if (isSponsors) {
+    content.innerHTML = window.renderSponsors();
     return;
   }
 
