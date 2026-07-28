@@ -499,3 +499,83 @@ body {
 .hero-panel--squad .form-bar {
   margin: 10px 0 6px;
 }
+
+.hero-panel--squad {
+  display: flex;
+  min-height: 0;
+  padding: 18px;
+}
+
+.hero-panel--squad .squad-board {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  width: 100%;
+  margin-top: 0;
+}
+
+.hero-panel--squad .section-heading {
+  margin-bottom: 8px;
+}
+
+.hero-panel--squad .section-heading h4 {
+  font-size: 1.1rem;
+}
+
+.hero-panel--squad .squad-summary {
+  padding: 10px 14px;
+}
+
+.hero-panel--squad .squad-summary strong {
+  font-size: 1.55rem;
+}
+
+.hero-panel--squad .lineup-grid,
+.hero-panel--squad .reserve-grid {
+  gap: 10px;
+}
+
+.hero-panel--squad .squad-slot {
+  padding: 6px;
+  border-radius: 16px;
+}
+
+.hero-panel--squad .squad-slot__label {
+  margin-bottom: 5px;
+  font-size: 0.62rem;
+}
+
+.hero-panel--squad .player-card,
+.hero-panel--squad .empty-slot {
+  min-height: 112px;
+}
+
+.hero-panel--squad .player-card {
+  padding: 10px;
+  border-radius: 16px;
+}
+
+.hero-panel--squad .player-card__role {
+  margin-bottom: 7px;
+  padding: 4px 7px;
+  font-size: 0.62rem;
+}
+
+.hero-panel--squad .player-card strong {
+  margin-bottom: 4px;
+  font-size: 0.88rem;
+}
+
+.hero-panel--squad .player-card p,
+.hero-panel--squad .empty-slot p {
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.hero-panel--squad .form-bar {
+  height: 6px;
+  margin: 7px 0 4px;
+}
+
+.hero-panel--squad .player-card small {
+  font-size: 0.72rem;
+}

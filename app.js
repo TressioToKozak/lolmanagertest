@@ -318,9 +318,16 @@ function setupSquadDragAndDrop() {
 
 function renderSection(sectionKey) {
   const section = sections[sectionKey] || sections.home;
-  const body = section.layout === "squad" ? renderSquad() : renderCards(section.cards);
+  const isSquad = section.layout === "squad";
+  const body = isSquad ? renderSquad() : renderCards(section.cards);
 
-  content.classList.toggle("hero-panel--squad", section.layout === "squad");
+  content.classList.toggle("hero-panel--squad", isSquad);
+
+  if (isSquad) {
+    content.innerHTML = body;
+    setupSquadDragAndDrop();
+    return;
+  }
 
   content.innerHTML = `
     <header class="top-bar">
@@ -338,10 +345,6 @@ function renderSection(sectionKey) {
     </div>
 
     ${body}`;
-
-  if (section.layout === "squad") {
-    setupSquadDragAndDrop();
-  }
 }
 
 function activateNavItem(activeItem) {
