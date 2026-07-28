@@ -30,7 +30,7 @@ function renderMailbox() {
     selectedMail.unread = false;
     notifyMailbox();
   }
-  return `<div class="mailbox-board"><aside class="mail-list">${renderMailList()}</aside><article class="mail-view"><span>${selectedMail.from}</span><h3>${selectedMail.subject}</h3><small>${selectedMail.date}</small><p>${selectedMail.body}</p></article></div>`;
+  return `<div class="mailbox-board"><aside class="mail-list"><div class="mail-list__header"><span>Wiadomości</span><strong>${mails.length}</strong></div>${renderMailList()}</aside><article class="mail-view"><span>${selectedMail.from}</span><h3>${selectedMail.subject}</h3><small>${selectedMail.date}</small><p>${selectedMail.body}</p></article></div>`;
 };
 
 function setupMailbox(onChange) {

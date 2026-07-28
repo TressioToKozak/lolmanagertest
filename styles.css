@@ -12,6 +12,107 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+.auth-screen {
+  display: grid;
+  min-height: 100vh;
+  padding: 24px;
+  place-items: center;
+}
+
+.auth-card {
+  width: min(440px, 100%);
+  padding: 34px;
+  border: 1px solid rgba(255, 211, 110, 0.3);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+}
+
+.auth-card .brand__mark {
+  margin-bottom: 22px;
+}
+
+.auth-card h1 {
+  margin: 8px 0;
+  font-size: 2.2rem;
+}
+
+.auth-card > p:not(.eyebrow) {
+  color: var(--muted);
+}
+
+.auth-card form,
+.auth-card label {
+  display: grid;
+  gap: 8px;
+}
+
+.auth-card form {
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.auth-card label span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 13px;
+  color: var(--text);
+  font: inherit;
+  background: rgba(8, 21, 37, 0.8);
+}
+
+.auth-message {
+  min-height: 20px;
+  margin: 0;
+  color: #ff8a8a;
+  font-size: 0.82rem;
+}
+
+.auth-switch,
+.manager-chip button {
+  border: 0;
+  color: var(--gold-bright);
+  cursor: pointer;
+  background: transparent;
+}
+
+.auth-switch {
+  width: 100%;
+  margin-top: 18px;
+}
+
+.manager-chip {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  background: rgba(8, 21, 37, 0.5);
+}
+
+.manager-chip span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.manager-chip button {
+  justify-self: start;
+  padding: 4px 0 0;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -368,6 +469,43 @@ h3 {
 .reserve-section {
   min-width: 0;
   overflow: hidden;
+}
+
+.reserve-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.squad-sale-filters {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.squad-sale-filters button {
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(8, 21, 37, 0.55);
+}
+
+.squad-sale-filters button.active {
+  border-color: rgba(255, 211, 110, 0.45);
+  color: var(--gold-bright);
+  background: rgba(201, 160, 75, 0.14);
+}
+
+.reserve-empty {
+  width: 280px;
+  padding: 24px;
+  color: var(--muted);
 }
 
 .reserve-grid .squad-slot {
@@ -805,7 +943,20 @@ body {
   display: grid;
   align-content: start;
   gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
   padding: 14px;
+}
+
+.mail-list__header {
+  position: sticky;
+  top: -14px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 4px 10px;
+  color: var(--muted);
+  background: #102742;
 }
 
 .mail-item,
@@ -882,6 +1033,8 @@ body {
 }
 
 .mail-view {
+  min-height: 0;
+  overflow-y: auto;
   padding: 28px;
 }
 
@@ -1392,10 +1545,14 @@ body {
   min-height: 0;
 }
 
-.mailbox-board,
 .gaming-house-board {
   min-height: 0;
   overflow: auto;
+}
+
+.mailbox-board {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .transfer-board {

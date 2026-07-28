@@ -13,6 +13,7 @@ const startingSlots = ["top", "jungle", "mid", "adc", "support"];
 const reserveSlots = ["reserve1", "reserve2", "reserve3"];
 const slotLabels = { top: "TOP", jungle: "JUNGLE", mid: "MID", adc: "ADC", support: "SUPPORT", reserve1: "REZERWA 1", reserve2: "REZERWA 2", reserve3: "WOLNY SLOT" };
 const transferListedPlayers = new Map();
+let squadSaleFilter = "all";
 
 function getAverageRating() {
   const ratings = startingSlots.map((slotId) => squadPlayers[squadSlots[slotId]]?.rating).filter(Boolean);
@@ -43,23 +44,37 @@ function renderSlot(slotId, isStarter) {
 
 function renderSquad() {
   const starters = startingSlots.map((slotId) => renderSlot(slotId, true)).join("");
-  const reserves = reserveSlots.map((slotId) => renderSlot(slotId, false)).join("");
+  const visibleReserveSlots = reserveSlots.filter((slotId) => {
+    const playerId = squadSlots[slotId];
+    if (squadSaleFilter === "listed") return playerId && transferListedPlayers.has(playerId);
+    if (squadSaleFilter === "unlisted") return !playerId || !transferListedPlayers.has(playerId);
+    return true;
+  });
+  const reserves = visibleReserveSlots.map((slotId) => renderSlot(slotId, false)).join("");
 
   return `
     <div class="squad-board">
       <div class="squad-summary"><div><span>Średnia ocena składu</span><strong id="squad-average">${getAverageRating()}</strong></div><p>Liczone tylko z aktualnej podstawowej piątki.</p></div>
       <section><div class="section-heading"><span>LoL starting lineup</span><h4>Podstawowa piątka</h4></div><div class="lineup-grid">${starters}</div></section>
-      <section class="reserve-section"><div class="section-heading"><span>Bench slots</span><h4>Rezerwowi</h4></div><div class="reserve-grid">${reserves}</div></section>
+      <section class="reserve-section"><div class="reserve-heading"><div class="section-heading"><span>Bench slots</span><h4>Rezerwowi</h4></div><div class="squad-sale-filters"><button data-sale-filter="all" class="${squadSaleFilter === "all" ? "active" : ""}">Wszyscy</button><button data-sale-filter="listed" class="${squadSaleFilter === "listed" ? "active" : ""}">Wystawieni</button><button data-sale-filter="unlisted" class="${squadSaleFilter === "unlisted" ? "active" : ""}">Niewystawieni</button></div></div><div class="reserve-grid">${reserves || '<div class="reserve-empty">Brak zawodników w tym filtrze.</div>'}</div></section>
     </div>`;
 }
 
 function setupSquadDragAndDrop(onChange) {
+  document.querySelectorAll("[data-sale-filter]").forEach((button) => button.addEventListener("click", () => {
+    squadSaleFilter = button.dataset.saleFilter;
+    onChange();
+  }));
   document.querySelectorAll("[data-sell-player]").forEach((button) => button.addEventListener("click", (event) => {
     event.stopPropagation();
+    const reserveGrid = document.querySelector(".reserve-grid");
+    const reserveScrollLeft = reserveGrid?.scrollLeft || 0;
     const playerId = button.dataset.sellPlayer;
     if (transferListedPlayers.has(playerId)) transferListedPlayers.delete(playerId);
     else transferListedPlayers.set(playerId, { listedDay: window.gameClock.day, value: squadPlayers[playerId].value });
     onChange();
+    const nextReserveGrid = document.querySelector(".reserve-grid");
+    if (nextReserveGrid) nextReserveGrid.scrollLeft = reserveScrollLeft;
   }));
   document.querySelectorAll(".player-card[draggable='true']").forEach((card) => {
     card.addEventListener("dragstart", (event) => {
