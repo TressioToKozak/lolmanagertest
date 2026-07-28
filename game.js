@@ -15,19 +15,32 @@ window.gameClock = {
 window.matchCenter = {
   activeMatch: null,
   lastMatch: null,
-  start({ competition, opponent, day, section, onComplete }) {
+  start({ competition, opponent, opponentStrength, day, section, onComplete }) {
     if (this.activeMatch) return;
+    const profile = window.getSquadMatchProfile();
+    const staffBonus = window.getStaffMatchBonus?.() || 0;
+    const ourStrength = profile.strength + staffBonus;
+    const winChance = Math.max(18, Math.min(82, Math.round(50 + (ourStrength - opponentStrength) * 2.2)));
     this.activeMatch = {
-      competition, opponent, day, section, onComplete, stage: "dragon", advantage: 0,
-      ourKills: 2 + (day % 3), opponentKills: 2, events: [[5, "Spokojny początek. Obie drużyny farmią i szukają przewagi."]],
+      competition, opponent, day, section, onComplete, stage: "dragon", advantage: 0, winChance,
+      ourStrength: Math.round(ourStrength), opponentStrength, comfort: profile.comfort,
+      ourKills: 1 + (this.seed(`${competition}-${day}-us`) % 4), opponentKills: 1 + (this.seed(`${opponent}-${day}`) % 4),
+      events: [[5, `Początek meczu. Nasza siła: ${Math.round(ourStrength)}, rywal: ${opponentStrength}, komfort ról: ${profile.comfort}%.`]],
     };
+  },
+  seed(value) {
+    return [...value].reduce((hash, character) => ((hash * 31) + character.charCodeAt(0)) >>> 0, 7);
+  },
+  succeeds(match, label, modifier = 0) {
+    const roll = this.seed(`${match.competition}-${match.opponent}-${match.day}-${label}`) % 100;
+    return roll < Math.max(8, Math.min(92, match.winChance + modifier + match.advantage * 7));
   },
   choose(choice) {
     const match = this.activeMatch;
     if (!match) return;
     if (match.stage === "dragon") {
       if (choice === "fight") {
-        const success = (match.day + match.ourKills) % 3 !== 0;
+        const success = this.succeeds(match, "dragon", -5);
         match.advantage += success ? 2 : -2;
         match.ourKills += success ? 3 : 1;
         match.opponentKills += success ? 1 : 3;
@@ -41,13 +54,13 @@ window.matchCenter = {
     }
     if (match.stage === "baron") {
       if (choice === "baron") {
-        const success = match.advantage >= 0 || (match.day % 2 === 0);
+        const success = this.succeeds(match, "baron", -12);
         match.advantage += success ? 3 : -3;
         match.ourKills += success ? 2 : 0;
         match.opponentKills += success ? 0 : 3;
         match.events.push([23, success ? "Kontrolujemy wizję, zabezpieczamy Barona i rozpoczynamy oblężenie." : `${match.opponent} kradnie Barona i wygrywa walkę w pitcie.`]);
       } else if (choice === "bait") {
-        const success = match.advantage >= -1;
+        const success = this.succeeds(match, "bait", 4);
         match.advantage += success ? 2 : -1;
         match.ourKills += success ? 2 : 0;
         match.opponentKills += success ? 0 : 1;
@@ -61,7 +74,8 @@ window.matchCenter = {
     }
     const modifiers = { teamfight: 1, splitpush: match.advantage >= 0 ? 2 : -1, defend: match.advantage < 0 ? 2 : 0 };
     match.advantage += modifiers[choice] ?? 0;
-    const won = match.advantage >= 1;
+    const finalModifier = { teamfight: 0, splitpush: match.comfort >= 80 ? 5 : -6, defend: match.advantage < 0 ? 8 : -3 };
+    const won = this.succeeds(match, `final-${choice}`, finalModifier[choice] || 0);
     match.ourKills += won ? 4 : 1;
     match.opponentKills += won ? 1 : 4;
     const finalTexts = {
@@ -86,7 +100,8 @@ window.matchCenter = {
           ? '<div class="match-decisions"><button data-match-choice="teamfight">Wymuś teamfight<small>Pełna walka 5v5</small></button><button data-match-choice="splitpush">Zagraj splitpush<small>Wywieraj presję na dwóch liniach</small></button><button data-match-choice="defend">Broń bazy<small>Szukaj błędu przeciwnika</small></button></div>'
           : '<div class="match-decisions match-decisions--finished"><button data-dismiss-match="true">Zamknij relację<small>Wróć do tabeli i terminarza</small></button></div>';
     const state = this.activeMatch ? `Decyzja: ${match.stage === "dragon" ? "smok" : match.stage === "baron" ? "Baron" : "końcówka"}` : match.won ? "ZWYCIĘSTWO" : "PORAŻKA";
-    return `<section class="match-simulation match-simulation--${this.activeMatch ? "live" : "finished"}"><div class="section-heading"><span>Mecz na żywo • Dzień ${match.day}</span><h4>${match.competition}</h4></div><div class="match-score"><div><span>Nasz zespół</span><strong>${match.ourKills}</strong></div><b>${state}</b><div><span>${match.opponent}</span><strong>${match.opponentKills}</strong></div></div>${decisions}<ol class="match-timeline">${events}</ol></section>`;
+    const currentChance = Math.max(5, Math.min(95, match.winChance + match.advantage * 7));
+    return `<section class="match-simulation match-simulation--${this.activeMatch ? "live" : "finished"}"><div class="section-heading"><span>Mecz na żywo • Dzień ${match.day}</span><h4>${match.competition}</h4></div><div class="match-odds"><span>Szansa na zwycięstwo <strong>${currentChance}%</strong></span><span>Siła ${match.ourStrength} vs ${match.opponentStrength}</span><span>Komfort ról ${match.comfort}%</span></div><div class="match-score"><div><span>Nasz zespół</span><strong>${match.ourKills}</strong></div><b>${state}</b><div><span>${match.opponent}</span><strong>${match.opponentKills}</strong></div></div>${decisions}<ol class="match-timeline">${events}</ol></section>`;
   },
   setup(onChange) {
     document.querySelectorAll("[data-match-choice]").forEach((button) => button.addEventListener("click", () => {

@@ -89,6 +89,13 @@ function setupSquadDragAndDrop(onChange) {
 
 window.renderSquad = renderSquad;
 window.setupSquadDragAndDrop = setupSquadDragAndDrop;
+window.getSquadMatchProfile = function getSquadMatchProfile() {
+  const starters = startingSlots.map((slotId) => ({ slotId, player: squadPlayers[squadSlots[slotId]] })).filter(({ player }) => player);
+  const average = starters.reduce((sum, { player }) => sum + player.rating, 0) / Math.max(starters.length, 1);
+  const roleMatches = starters.filter(({ slotId, player }) => player.role.split(" / ").includes(slotLabels[slotId])).length;
+  const comfort = Math.round((roleMatches / Math.max(starters.length, 1)) * 100);
+  return { rating: Math.round(average), comfort, strength: average + (comfort - 70) * 0.12 };
+};
 window.addSquadPlayer = function addSquadPlayer(player) {
   const playerId = `transfer-${player.name.toLocaleLowerCase("pl").replace(/[^a-z0-9]+/g, "-")}`;
   squadPlayers[playerId] = {

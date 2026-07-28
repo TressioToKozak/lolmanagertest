@@ -43,9 +43,9 @@ function renderLeagues() {
   const cards = leagues.map((league, index) => {
     const isActive = activeLeagueIndex === index;
     const unavailable = activeLeagueIndex !== null || !window.clubEconomy.canAfford(league.entryFee);
-    return `<article class="market-card ${isActive ? "market-card--active" : ""}"><span>${league.tier}</span><strong>${league.name}</strong><p>${league.region} • ${league.teamCount} drużyn</p><small>Wpisowe: ${league.entryFee ? window.clubEconomy.format(league.entryFee) : "Darmowe"}</small><button class="upgrade-button" data-join-league="${index}" ${unavailable ? "disabled" : ""}>${isActive ? "Gramy" : "Dołącz"}</button></article>`;
+    return `<article class="market-card competition-card ${isActive ? "market-card--active" : ""}"><div class="competition-card__top"><span>${league.tier}</span><b>${league.teamCount} drużyn</b></div><strong>${league.name}</strong><p>${league.region}</p><div class="competition-card__facts"><small>Nagroda<strong>${window.clubEconomy.format(league.prize)}</strong></small><small>Wpisowe<strong>${league.entryFee ? window.clubEconomy.format(league.entryFee) : "Darmowe"}</strong></small></div><button class="upgrade-button" data-join-league="${index}" ${unavailable ? "disabled" : ""}>${isActive ? "Gramy" : "Dołącz do ligi"}</button></article>`;
   }).join("");
-  return `<div class="management-board"><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div><div class="market-grid market-grid--four">${cards}</div>${renderLeagueTable(leagues[activeLeagueIndex])}</div>`;
+  return `<div class="management-board"><header class="competition-picker-header"><div><span>Rozgrywki ligowe</span><h2>${activeLeagueIndex === null ? "Wybierz ligę dla zespołu" : "Sezon ligowy"}</h2><p>${activeLeagueIndex === null ? "Porównaj poziom, wpisowe i pulę nagród. W jednym sezonie możesz grać tylko w jednej lidze." : "Śledź tabelę, terminarz i formę rywali."}</p></div><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div></header><div class="market-grid market-grid--four competition-picker">${cards}</div>${renderLeagueTable(leagues[activeLeagueIndex])}</div>`;
 }
 
 function setupLeagues(onChange) {
@@ -85,6 +85,7 @@ window.gameClock.subscribe((day) => {
   window.matchCenter.start({
     competition: league.name,
     opponent: opponent.name,
+    opponentStrength: 55 + activeLeagueIndex * 7 + (leagueSeason.opponentIndex % 5),
     day,
     section: "leagues",
     onComplete: (won) => resolveLeagueMatch(day, league, opponent, won),

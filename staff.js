@@ -44,3 +44,4 @@ function setupStaff(onChange) {
 
 window.renderStaff = renderStaff;
 window.setupStaff = setupStaff;
+window.getStaffMatchBonus = () => Object.values(staffSlots).reduce((bonus, member) => bonus + (member ? (member.rating - 70) * 0.08 : 0), 0);

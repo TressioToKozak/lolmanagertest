@@ -46,9 +46,9 @@ function renderTournaments() {
   const cards = visibleTournaments.map(([tournament, index]) => {
     const isActive = activeTournamentIndex === index;
     const cannotJoin = activeTournamentIndex !== null || !window.clubEconomy.canAfford(tournament.entryFee);
-    return `<article class="market-card ${isActive ? "market-card--active" : ""}"><span>${tournament.type}</span><strong>${tournament.name}</strong><p>Start za ${tournament.startIn} dni • Nagroda: ${window.clubEconomy.format(tournament.prize)}</p><small>Wpisowe: ${tournament.entryFee ? window.clubEconomy.format(tournament.entryFee) : "Darmowe"}</small>${isActive ? "" : `<button class="upgrade-button" data-join-tournament="${index}" ${cannotJoin ? "disabled" : ""}>${runFinished ? "Zakończ aktywny turniej" : "Dołącz"}</button>`}</article>`;
+    return `<article class="market-card competition-card ${isActive ? "market-card--active" : ""}"><div class="competition-card__top"><span>${tournament.type}</span><b>Start za ${tournament.startIn} dni</b></div><strong>${tournament.name}</strong><p>Drabinka pucharowa • BO1 • 8 drużyn</p><div class="competition-card__facts"><small>Nagroda<strong>${window.clubEconomy.format(tournament.prize)}</strong></small><small>Wpisowe<strong>${tournament.entryFee ? window.clubEconomy.format(tournament.entryFee) : "Darmowe"}</strong></small></div>${isActive ? "" : `<button class="upgrade-button" data-join-tournament="${index}" ${cannotJoin ? "disabled" : ""}>${runFinished ? "Zakończ aktywny turniej" : "Dołącz do turnieju"}</button>`}</article>`;
   }).join("");
-  return `<div class="management-board"><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div><div class="market-grid ${activeTournamentIndex === null ? "market-grid--four" : ""}">${cards}</div>${renderTournamentTable(tournaments[activeTournamentIndex])}</div>`;
+  return `<div class="management-board"><header class="competition-picker-header"><div><span>Turnieje pucharowe</span><h2>${activeTournamentIndex === null ? "Wybierz następne wyzwanie" : "Aktywny turniej"}</h2><p>${activeTournamentIndex === null ? "Sprawdź termin, poziom i ryzyko finansowe przed zgłoszeniem drużyny." : "Pozostałe turnieje wrócą po zakończeniu obecnej drabinki."}</p></div><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div></header><div class="market-grid ${activeTournamentIndex === null ? "market-grid--four" : ""} competition-picker">${cards}</div>${renderTournamentTable(tournaments[activeTournamentIndex])}</div>`;
 }
 
 function setupTournaments(onChange) {
@@ -102,6 +102,7 @@ window.gameClock.subscribe((day) => {
   window.matchCenter.start({
     competition: tournament.name,
     opponent: opponent.name,
+    opponentStrength: 57 + activeTournamentIndex * 7 + tournamentRun.round * 3,
     day,
     section: "tournaments",
     onComplete: (won) => resolveTournamentMatch(day, tournament, opponent, won),
