@@ -76,3 +76,7 @@ function setupGamingHouseUpgrades(onChange) {
 
 window.renderGamingHouse = renderGamingHouse;
 window.setupGamingHouseUpgrades = setupGamingHouseUpgrades;
+window.gameState.register("gamingHouse", {
+  get: () => gamingHouseState,
+  set: (state) => { gamingHouseState.level = Number(state.level) || 1; if (Array.isArray(state.equipment)) gamingHouseState.equipment.splice(0, gamingHouseState.equipment.length, ...state.equipment); },
+});
