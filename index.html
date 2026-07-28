@@ -7,25 +7,36 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=4" />
-    <script src="economy.js?v=4" defer></script>
-    <script src="data.js?v=4" defer></script>
-    <script src="squad.js?v=4" defer></script>
-    <script src="gaming-house.js?v=4" defer></script>
-    <script src="mailbox.js?v=4" defer></script>
-    <script src="staff.js?v=4" defer></script>
-    <script src="transfer.js?v=4" defer></script>
-    <script src="scouting.js?v=4" defer></script>
-    <script src="tournaments.js?v=4" defer></script>
-    <script src="leagues.js?v=4" defer></script>
-    <script src="finances.js?v=4" defer></script>
-    <script src="sponsors.js?v=4" defer></script>
-    <script src="render.js?v=4" defer></script>
-    <script src="app.js?v=4" defer></script>
+    <link rel="stylesheet" href="css/styles.css?v=17" />
+    <script src="js/game.js?v=17" defer></script>
+    <script src="js/economy.js?v=17" defer></script>
+    <script src="js/data.js?v=17" defer></script>
+    <script src="js/squad.js?v=17" defer></script>
+    <script src="js/gaming-house.js?v=17" defer></script>
+    <script src="js/mailbox.js?v=17" defer></script>
+    <script src="js/staff.js?v=17" defer></script>
+    <script src="js/transfer.js?v=17" defer></script>
+    <script src="js/scouting.js?v=17" defer></script>
+    <script src="js/tournaments.js?v=17" defer></script>
+    <script src="js/leagues.js?v=17" defer></script>
+    <script src="js/finances.js?v=17" defer></script>
+    <script src="js/sponsors.js?v=17" defer></script>
+    <script src="js/settings.js?v=17" defer></script>
+    <script src="js/render.js?v=17" defer></script>
+    <script src="js/app.js?v=17" defer></script>
+    <script src="js/auth.js?v=17" defer></script>
   </head>
   <body>
-    <main class="game-shell" aria-label="Ekran startowy gry LoL eSport Manager">
+    <section class="auth-screen" data-auth-screen hidden>
+      <div class="auth-card"><div class="brand__mark">LM</div><p class="eyebrow">LoL eSport Manager</p><h1 data-auth-title>Wróć do klubu</h1><p>Zaloguj się, aby kontynuować karierę menedżera.</p><form data-auth-form><label data-auth-name hidden><span>Nazwa menedżera</span><input name="managerName" autocomplete="name" minlength="2"></label><label><span>E-mail</span><input type="email" name="email" autocomplete="email" required></label><label><span>Hasło</span><input type="password" name="password" autocomplete="current-password" minlength="8" required></label><p class="auth-message" data-auth-message role="alert"></p><button class="primary-action" data-auth-submit>Zaloguj się</button></form><button class="auth-switch" type="button" data-auth-switch>Załóż nowe konto</button></div>
+    </section>
+    <main class="game-shell" aria-label="Ekran startowy gry LoL eSport Manager" hidden>
       <aside class="sidebar">
+        <div class="game-clock">
+          <span>Sezon 2026</span>
+          <strong>Dzień <span data-game-day>1</span></strong>
+          <button class="primary-action" data-next-day>Następny dzień</button>
+        </div>
         <div class="brand">
           <div class="brand__mark">LM</div>
           <div>
@@ -33,10 +44,11 @@
             <h1>LoL Manager</h1>
           </div>
         </div>
+        <div class="manager-chip"><span>Zalogowany</span><strong data-manager-name>Menedżer</strong><button data-logout>Wyloguj</button></div>
 
         <nav class="main-nav" aria-label="Główna nawigacja">
           <a class="main-nav__item main-nav__item--active" href="#home" data-section="home">Home</a>
-          <a class="main-nav__item" href="#mailbox" data-section="mailbox">Mailbox</a>
+          <a class="main-nav__item" href="#mailbox" data-section="mailbox">Mailbox <span class="nav-badge" data-mail-badge hidden>0</span></a>
           <a class="main-nav__item" href="#squad" data-section="squad">Squad</a>
           <a class="main-nav__item" href="#staff" data-section="staff">Staff</a>
           <a class="main-nav__item" href="#gaming-house" data-section="gamingHome">Gaming House</a>
@@ -46,6 +58,7 @@
           <a class="main-nav__item" href="#leagues" data-section="leagues">Leagues</a>
           <a class="main-nav__item" href="#finances" data-section="finances">Finances</a>
           <a class="main-nav__item" href="#sponsors" data-section="sponsors">Sponsors</a>
+          <a class="main-nav__item" href="#settings" data-section="settings">Settings</a>
         </nav>
       </aside>
 
@@ -70,18 +83,18 @@
         <div class="dashboard-grid">
           <article class="status-card">
             <span>Next match</span>
-            <strong>Spring Split Opener</strong>
-            <p>Za 3 dni • Best of 1</p>
+            <strong>Brak zaplanowanego meczu</strong>
+            <p>Dołącz do ligi lub turnieju</p>
           </article>
           <article class="status-card">
             <span>Team morale</span>
-            <strong>87%</strong>
-            <p>Pozytywna atmosfera</p>
+            <strong>Stabilne</strong>
+            <p>Zależy od składu i ostatnich wyników</p>
           </article>
           <article class="status-card">
             <span>Budget</span>
-            <strong>€2.4M</strong>
-            <p>Gotowe na transfery</p>
+            <strong>€15k</strong>
+            <p>Budżet amatorskiego klubu</p>
           </article>
         </div>
       </section>

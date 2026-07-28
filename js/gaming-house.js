@@ -27,7 +27,7 @@ function renderGamingHouse() {
     .map(
       (item) => `
         <article class="equipment-card">
-          <div><span>${item.name}</span><strong>Level ${item.level}</strong></div>
+          <img class="equipment-card__image" src="assets/gaming-house/${item.id}.svg" alt="${item.name}"><div><span>${item.name}</span><strong>Level ${item.level}</strong></div>
           <p>Komfort +${item.level * item.comfort}</p>
           <button class="upgrade-button" data-upgrade-equipment="${item.id}" ${!window.clubEconomy.canAfford(getUpgradeCost(item.level)) ? "disabled" : ""}>Ulepsz (${window.clubEconomy.format(getUpgradeCost(item.level))})</button>
         </article>`
@@ -37,6 +37,7 @@ function renderGamingHouse() {
   return `
     <div class="gaming-house-board">
       <section class="gaming-house-summary"><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div>
+        <img class="gaming-house-image" src="assets/gaming-house/house.svg" alt="Gaming House">
         <div>
           <span>Gaming House</span>
           <strong>Level ${gamingHouseState.level}</strong>
@@ -76,3 +77,7 @@ function setupGamingHouseUpgrades(onChange) {
 
 window.renderGamingHouse = renderGamingHouse;
 window.setupGamingHouseUpgrades = setupGamingHouseUpgrades;
+window.gameState.register("gamingHouse", {
+  get: () => gamingHouseState,
+  set: (state) => { gamingHouseState.level = Number(state.level) || 1; if (Array.isArray(state.equipment)) gamingHouseState.equipment.splice(0, gamingHouseState.equipment.length, ...state.equipment); },
+});
