@@ -94,7 +94,7 @@ window.gameClock.subscribe((day) => {
     id: `tournament-${day}`,
     from: "Organizator turnieju",
     subject: `${won ? "Wygrana" : "Porażka"}: ${tournament.name}`,
-    date: `Dzień ${day}`,
+    date: `Dzień ${day} • 21:00`,
     body: won ? `Wygraliśmy mecz turniejowy z ${opponent.name}. ${tournamentRun.champion ? `Zdobywamy trofeum i ${window.clubEconomy.format(tournament.prize)} nagrody!` : `Następny mecz z ${tournamentRun.opponent} odbędzie się za 2 dni.`}` : `Przegraliśmy z ${opponent.name} i odpadamy z turnieju. Możesz zakończyć turniej i wybrać kolejne rozgrywki.`,
   });
 });

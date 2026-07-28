@@ -137,7 +137,7 @@ function setupTransfer(onChange) {
         id: `transfer-${player.name}`,
         from: "Dyrektor sportowy",
         subject: `Transfer zakończony: ${player.name}`,
-        date: `Dzień ${window.gameClock.day}`,
+        date: `Dzień ${window.gameClock.day} • 12:00`,
         body: `${player.name} (${player.position}, OVR ${player.overall}) dołączył do naszego zespołu z ${player.team}. Kwota transferu: ${window.clubEconomy.format(player.cost)}. Zawodnik jest już dostępny w rezerwach na ekranie Squad.`,
       });
       transferMessage = `Kupiono zawodnika ${player.name} z ${player.team} za ${window.clubEconomy.format(player.cost)}.`;

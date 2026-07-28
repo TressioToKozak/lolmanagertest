@@ -1,6 +1,17 @@
 const content = document.querySelector("#game-content");
 const navItems = document.querySelectorAll(".main-nav__item");
 const gameDay = document.querySelector("[data-game-day]");
+const mailBadge = document.querySelector("[data-mail-badge]");
+
+function refreshMailboxBadge() {
+  const unread = window.getUnreadMailCount();
+  mailBadge.textContent = unread;
+  mailBadge.hidden = unread === 0;
+  document.querySelector('[data-section="mailbox"]')?.classList.toggle("main-nav__item--unread", unread > 0);
+}
+
+window.subscribeMailbox(refreshMailboxBadge);
+refreshMailboxBadge();
 
 function activateNavItem(activeItem) {
   navItems.forEach((item) => item.classList.remove("main-nav__item--active"));
