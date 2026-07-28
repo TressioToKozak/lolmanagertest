@@ -579,3 +579,100 @@ body {
 .hero-panel--squad .player-card small {
   font-size: 0.72rem;
 }
+
+.hero-panel--gaming-house {
+  padding: 22px;
+}
+
+.gaming-house-board {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 18px;
+  height: 100%;
+}
+
+.gaming-house-summary {
+  display: grid;
+  grid-template-columns: 1fr 240px auto;
+  align-items: center;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgba(255, 211, 110, 0.28);
+  border-radius: 22px;
+  background: rgba(201, 160, 75, 0.12);
+}
+
+.gaming-house-summary span,
+.equipment-card span,
+.comfort-meter span {
+  color: var(--gold-bright);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gaming-house-summary strong,
+.comfort-meter strong {
+  display: block;
+  margin: 6px 0;
+  font-size: 1.65rem;
+}
+
+.gaming-house-summary p,
+.equipment-card p {
+  margin: 0;
+  color: #abc0d7;
+  line-height: 1.45;
+}
+
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.equipment-card {
+  display: grid;
+  gap: 10px;
+  min-height: 138px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: var(--panel-light);
+}
+
+.equipment-card strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.2rem;
+}
+
+.upgrade-button {
+  align-self: end;
+  border: 1px solid rgba(255, 211, 110, 0.35);
+  border-radius: 999px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(201, 160, 75, 0.14);
+}
+
+.upgrade-button:hover,
+.primary-action:hover {
+  filter: brightness(1.08);
+}
+
+.primary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 1100px) {
+  .gaming-house-summary,
+  .equipment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
