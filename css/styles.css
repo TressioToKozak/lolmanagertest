@@ -1808,6 +1808,14 @@ body {
   white-space: nowrap;
 }
 
+.country-flag {
+  display: inline-grid;
+  min-width: 32px;
+  place-items: center;
+  font-size: 1.35rem;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.28));
+}
+
 .transfer-sort {
   display: inline-flex;
   align-items: center;

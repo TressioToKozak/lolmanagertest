@@ -53,11 +53,61 @@ const transferDetails = {
   Szafa: ["TOP", 68, 20000], Ribu: ["JUNGLE", 71, 35000], Krysia: ["MID", 68, 20000], ShazQ: ["ADC", 70, 30000], Sorrow2: ["SUPPORT", 68, 20000], Salami: ["ADC", 67, 18000], Acorderr: ["SUPPORT", 67, 18000],
 };
 
+const countryFlags = {
+  PL: ["🇵🇱", "Polska"], GB: ["🇬🇧", "Wielka Brytania"], ES: ["🇪🇸", "Hiszpania"], RO: ["🇷🇴", "Rumunia"],
+  PT: ["🇵🇹", "Portugalia"], SI: ["🇸🇮", "Słowenia"], CZ: ["🇨🇿", "Czechy"], KR: ["🇰🇷", "Korea Południowa"],
+  SK: ["🇸🇰", "Słowacja"], SE: ["🇸🇪", "Szwecja"], HR: ["🇭🇷", "Chorwacja"],
+};
+const riftCountryCodes = { iBo: "GB" };
+function withCountry(player, countryCode) {
+  const [flag, country] = countryFlags[countryCode] || countryFlags.PL;
+  return { ...player, countryCode, country, flag };
+}
+
 const transferPlayers = Object.entries(riftLegendsRosters).flatMap(([team, roster]) => roster.map((stats) => {
   const [name, macro, micro, vision, roams, farming, reflex] = stats;
   const [position, overall, cost] = transferDetails[name];
-  return { name, team, league: "RiftLegends", position, macro, micro, vision, roams, farming, reflex, overall, cost };
+  return withCountry({ name, team, league: "RiftLegends", position, macro, micro, vision, roams, farming, reflex, overall, cost }, riftCountryCodes[name] || "PL");
 }));
+
+const superligaRosters = {
+  "KOI Fénix": [
+    ["Kozi", "PL", 84, 83, 85, 79, 77, 84, 86, 350000], ["bluerzor", "RO", 83, 84, 81, 83, 84, 78, 81, 320000], ["Czajek", "PL", 84, 83, 84, 81, 80, 85, 85, 340000], ["Flakked", "ES", 85, 81, 86, 77, 74, 87, 87, 450000], ["Oscure", "ES", 82, 82, 79, 85, 83, 70, 80, 250000],
+  ],
+  "Barça eSports": [
+    ["Maynter", "ES", 82, 81, 82, 77, 75, 81, 82, 230000], ["Hadess", "PL", 83, 84, 81, 82, 84, 77, 81, 280000], ["Baca", "PT", 82, 82, 82, 79, 79, 83, 83, 240000], ["Legolas", "ES", 81, 79, 82, 76, 73, 84, 84, 220000], ["Whiteinn", "SI", 82, 82, 79, 84, 84, 71, 79, 240000],
+  ],
+  "GIANTX PRIDE": [
+    ["R4ven", "CZ", 81, 81, 82, 76, 74, 81, 82, 210000], ["Peach", "KR", 82, 83, 80, 81, 84, 75, 80, 250000], ["Feisty", "KR", 82, 82, 83, 79, 80, 84, 84, 250000], ["Aetinoth", "ES", 80, 79, 81, 75, 73, 83, 83, 190000], ["Seaz", "ES", 81, 81, 78, 84, 83, 70, 78, 200000],
+  ],
+  "UCAM Esports Club": [
+    ["Dreedy", "CZ", 80, 80, 80, 76, 73, 81, 81, 180000], ["Koldo", "ES", 82, 83, 80, 82, 84, 76, 80, 250000], ["Fresskowy", "PL", 83, 83, 84, 80, 80, 84, 84, 300000], ["Trigger", "KR", 82, 80, 83, 77, 74, 85, 85, 260000], ["Lucky", "ES", 81, 81, 79, 84, 83, 70, 79, 210000],
+  ],
+  "LUA Gaming": [
+    ["Sinmivak", "SK", 79, 79, 80, 74, 72, 80, 81, 150000], ["Thayger", "ES", 80, 81, 79, 80, 82, 75, 79, 180000], ["Miniduke", "ES", 81, 81, 82, 78, 78, 83, 83, 210000], ["Guubi", "ES", 80, 79, 81, 75, 72, 83, 83, 180000], ["Efias", "ES", 80, 80, 78, 83, 82, 69, 78, 170000],
+  ],
+  "Ramboot Club": [
+    ["iBo", "GB", 84, 84, 85, 80, 77, 85, 86, 360000], ["bluerzor", "RO", 83, 84, 81, 83, 85, 78, 81, 320000], ["twohoyrz", "CZ", 81, 80, 82, 78, 78, 82, 83, 220000], ["Coldraa", "SE", 81, 80, 81, 76, 75, 83, 83, 210000], ["Pyrka", "PL", 82, 82, 79, 84, 84, 71, 80, 240000],
+  ],
+  "Los Heretics": [
+    ["Tracyn", "CZ", 82, 81, 83, 77, 75, 82, 84, 240000], ["Rabble", "GB", 82, 83, 80, 82, 84, 76, 80, 250000], ["ESCIK", "PL", 82, 82, 83, 80, 79, 83, 84, 250000], ["BEAN", "GB", 84, 82, 85, 78, 74, 86, 86, 350000], ["LIMIT", "HR", 83, 83, 80, 85, 84, 70, 80, 310000],
+  ],
+  "Guasones": [
+    ["Syzyfek", "PL", 79, 79, 80, 74, 73, 80, 81, 150000], ["Zorozero", "ES", 79, 80, 78, 79, 81, 74, 78, 160000], ["Roison", "ES", 80, 80, 81, 77, 77, 82, 82, 180000], ["Rayito", "ES", 79, 78, 80, 74, 72, 82, 82, 160000], ["Kasing", "GB", 81, 81, 77, 84, 83, 68, 77, 200000],
+  ],
+  "ZETA": [
+    ["Ethe", "ES", 78, 78, 79, 74, 72, 79, 80, 140000], ["ElOjoNinja", "ES", 79, 80, 78, 80, 82, 74, 78, 170000], ["ptt", "ES", 80, 80, 81, 77, 77, 82, 82, 190000], ["Adryh", "ES", 81, 79, 82, 75, 73, 84, 84, 220000], ["escoX", "ES", 80, 81, 78, 83, 82, 69, 78, 190000],
+  ],
+  "Veni Vidi Vici": [
+    ["CPM", "ES", 79, 79, 80, 75, 73, 80, 81, 150000], ["Time", "KR", 80, 81, 79, 80, 82, 74, 79, 180000], ["Miniduke", "ES", 81, 81, 82, 78, 78, 83, 83, 220000], ["Thomas", "ES", 80, 79, 81, 76, 74, 83, 83, 190000], ["Exorant", "ES", 80, 81, 78, 83, 82, 69, 78, 190000],
+  ],
+};
+const standardPositions = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
+Object.entries(superligaRosters).forEach(([team, roster]) => roster.forEach((stats, index) => {
+  const [name, countryCode, overall, macro, micro, vision, roams, farming, reflex, cost] = stats;
+  transferPlayers.push(withCountry({ name, team, league: "LVP Superliga", position: standardPositions[index], overall, macro, micro, vision, roams, farming, reflex, cost }, countryCode));
+}));
+
 const purchasedPlayers = new Set();
 let transferTeamFilter = "all";
 let transferLeagueFilter = "all";
@@ -67,7 +117,7 @@ let transferMessage = "";
 let transferSort = { key: "overall", direction: "desc" };
 
 const transferColumns = [
-  ["name", "Zawodnik"], ["position", "Pozycja"], ["team", "Drużyna"], ["league", "Liga"], ["overall", "OVR"],
+  ["name", "Zawodnik"], ["flag", "Kraj"], ["position", "Pozycja"], ["team", "Drużyna"], ["league", "Liga"], ["overall", "OVR"],
   ["macro", "Macro"], ["micro", "Micro"], ["vision", "Wizja"], ["roams", "Roamy"],
   ["farming", "Farming"], ["reflex", "Reflex"], ["cost", "Cena"],
 ];
@@ -79,7 +129,7 @@ function renderSortHeader(key, label) {
 }
 
 function renderTransfer() {
-  const teams = Object.keys(riftLegendsRosters);
+  const teams = [...new Set(transferPlayers.map((player) => player.team))];
   const leagues = [...new Set(transferPlayers.map((player) => player.league))];
   const positions = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
   const visiblePlayers = transferPlayers.filter((player) =>
@@ -100,12 +150,12 @@ function renderTransfer() {
   const rows = visiblePlayers.map((player) => {
     const index = transferPlayers.indexOf(player);
     const unavailable = purchasedPlayers.has(index) || !window.clubEconomy.canAfford(player.cost);
-    return `<tr><td><strong>${player.name}</strong></td><td><strong>${player.position}</strong></td><td>${player.team}</td><td>${player.league}</td><td class="rating-cell">${player.overall}</td><td>${player.macro}</td><td>${player.micro}</td><td>${player.vision}</td><td>${player.roams}</td><td>${player.farming}</td><td>${player.reflex}</td><td><strong>${window.clubEconomy.format(player.cost)}</strong></td><td><button class="upgrade-button transfer-buy" data-buy-player="${index}" ${unavailable ? "disabled" : ""}>${purchasedPlayers.has(index) ? "Kupiony" : "Kup"}</button></td></tr>`;
+    return `<tr><td><strong>${player.name}</strong></td><td><span class="country-flag" title="${player.country}" aria-label="${player.country}">${player.flag}</span></td><td><strong>${player.position}</strong></td><td>${player.team}</td><td>${player.league}</td><td class="rating-cell">${player.overall}</td><td>${player.macro}</td><td>${player.micro}</td><td>${player.vision}</td><td>${player.roams}</td><td>${player.farming}</td><td>${player.reflex}</td><td><strong>${window.clubEconomy.format(player.cost)}</strong></td><td><button class="upgrade-button transfer-buy" data-buy-player="${index}" ${unavailable ? "disabled" : ""}>${purchasedPlayers.has(index) ? "Kupiony" : "Kup"}</button></td></tr>`;
   }).join("");
   return `<div class="management-board transfer-board">
-    <header class="transfer-toolbar"><div><p class="eyebrow">Rynek transferowy</p><h2>RiftLegends</h2><div class="transfer-meta"><span class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></span><span>${visiblePlayers.length} z ${transferPlayers.length - purchasedPlayers.size} dostępnych zawodników</span></div></div><div class="transfer-filters"><label><span>Szukaj</span><input data-transfer-search value="${transferSearch}" placeholder="Nazwa zawodnika"></label><label><span>Pozycja</span><select data-transfer-position><option value="all">Wszystkie pozycje</option>${positions.map((position) => `<option ${position === transferPositionFilter ? "selected" : ""}>${position}</option>`).join("")}</select></label><label><span>Liga</span><select data-transfer-league><option value="all">Wszystkie ligi</option>${leagues.map((league) => `<option ${league === transferLeagueFilter ? "selected" : ""}>${league}</option>`).join("")}</select></label><label><span>Drużyna</span><select data-transfer-team><option value="all">Wszystkie drużyny</option>${teams.map((team) => `<option ${team === transferTeamFilter ? "selected" : ""}>${team}</option>`).join("")}</select></label></div></header>
+    <header class="transfer-toolbar"><div><p class="eyebrow">Rynek transferowy</p><h2>${transferLeagueFilter === "all" ? "Wszystkie ligi" : transferLeagueFilter}</h2><div class="transfer-meta"><span class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></span><span>${visiblePlayers.length} z ${transferPlayers.length - purchasedPlayers.size} dostępnych zawodników</span></div></div><div class="transfer-filters"><label><span>Szukaj</span><input data-transfer-search value="${transferSearch}" placeholder="Nazwa zawodnika"></label><label><span>Pozycja</span><select data-transfer-position><option value="all">Wszystkie pozycje</option>${positions.map((position) => `<option ${position === transferPositionFilter ? "selected" : ""}>${position}</option>`).join("")}</select></label><label><span>Liga</span><select data-transfer-league><option value="all">Wszystkie ligi</option>${leagues.map((league) => `<option ${league === transferLeagueFilter ? "selected" : ""}>${league}</option>`).join("")}</select></label><label><span>Drużyna</span><select data-transfer-team><option value="all">Wszystkie drużyny</option>${teams.map((team) => `<option ${team === transferTeamFilter ? "selected" : ""}>${team}</option>`).join("")}</select></label></div></header>
     <p class="transfer-notice ${transferMessage ? "" : "transfer-notice--hint"}" role="status">${transferMessage || "Wybierz zawodnika z listy i kliknij „Kup”. Cena zostanie odjęta od budżetu klubu."}</p>
-    <div class="transfer-table-wrap"><table class="finance-table transfer-table"><thead><tr>${transferColumns.map(([key, label]) => renderSortHeader(key, label)).join("")}<th>Zakup</th></tr></thead><tbody>${rows || `<tr><td colspan="13" class="transfer-empty">Brak zawodników spełniających kryteria.</td></tr>`}</tbody></table></div>
+    <div class="transfer-table-wrap"><table class="finance-table transfer-table"><thead><tr>${transferColumns.map(([key, label]) => renderSortHeader(key, label)).join("")}<th>Zakup</th></tr></thead><tbody>${rows || `<tr><td colspan="14" class="transfer-empty">Brak zawodników spełniających kryteria.</td></tr>`}</tbody></table></div>
   </div>`;
 }
 
@@ -148,7 +198,7 @@ function setupTransfer(onChange) {
   }));
   document.querySelectorAll("[data-transfer-sort]").forEach((button) => button.addEventListener("click", () => {
     const key = button.dataset.transferSort;
-    const defaultDirection = key === "name" || key === "position" || key === "team" || key === "league" || key === "cost" ? "asc" : "desc";
+    const defaultDirection = key === "name" || key === "flag" || key === "position" || key === "team" || key === "league" || key === "cost" ? "asc" : "desc";
     transferSort = transferSort.key === key
       ? { key, direction: transferSort.direction === "asc" ? "desc" : "asc" }
       : { key, direction: defaultDirection };

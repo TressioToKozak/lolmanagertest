@@ -112,7 +112,7 @@ window.getSquadMatchProfile = function getSquadMatchProfile() {
   return { rating: Math.round(average), comfort, strength: average + (comfort - 70) * 0.12 };
 };
 window.addSquadPlayer = function addSquadPlayer(player) {
-  const playerId = `transfer-${player.name.toLocaleLowerCase("pl").replace(/[^a-z0-9]+/g, "-")}`;
+  const playerId = `transfer-${player.league}-${player.team}-${player.name}`.toLocaleLowerCase("pl").replace(/[^a-z0-9]+/g, "-");
   squadPlayers[playerId] = {
     name: player.name,
     role: player.position,
