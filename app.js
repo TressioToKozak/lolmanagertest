@@ -34,13 +34,19 @@ const sections = {
     tag: "Starting five",
     heading: "Skład",
     description:
-      "Ustaw podstawową piątkę, analizuj formę zawodników i dobieraj role pod następny mecz.",
-    cards: [
-      ["TOP", "Kamil \"Stone\" Wójcik", "Tank specialist • Forma 82"],
-      ["JUNGLE", "Adam \"Path\" Nowak", "Early gank style • Forma 88"],
-      ["MID", "Michał \"Nova\" Zieliński", "Control mage • Forma 91"],
-      ["ADC", "Piotr \"Arrow\" Lis", "Late game carry • Forma 86"],
-      ["SUPP", "Jan \"Ward\" Kowal", "Shotcaller • Forma 89"],
+      "Ustaw podstawową piątkę dokładnie jak w LoL-u, analizuj formę zawodników i trzymaj pod ręką rezerwowych gotowych do rotacji.",
+    layout: "squad",
+    starters: [
+      { role: "TOP", player: "Kamil \"Stone\" Wójcik", style: "Tank specialist", form: 82 },
+      { role: "JUNGLE", player: "Adam \"Path\" Nowak", style: "Early gank style", form: 88 },
+      { role: "MID", player: "Michał \"Nova\" Zieliński", style: "Control mage", form: 91 },
+      { role: "ADC", player: "Piotr \"Arrow\" Lis", style: "Late game carry", form: 86 },
+      { role: "SUPPORT", player: "Jan \"Ward\" Kowal", style: "Shotcaller", form: 89 },
+    ],
+    reserves: [
+      { role: "TOP / JUNGLE", player: "Bartosz \"Flex\" Grabowski", note: "Rezerwowy front line • Forma 76" },
+      { role: "MID / ADC", player: "Tomasz \"Pulse\" Wrona", note: "Mechaniczny talent • Forma 79" },
+      { role: "SUPPORT", player: "Miejsce wolne", note: "Slot na przyszły transfer lub akademię" },
     ],
   },
   staff: {
@@ -160,18 +166,72 @@ const sections = {
 const content = document.querySelector("#game-content");
 const navItems = document.querySelectorAll(".main-nav__item");
 
-function renderSection(sectionKey) {
-  const section = sections[sectionKey] || sections.home;
-  const cards = section.cards
+function renderCards(cards) {
+  return `
+    <div class="dashboard-grid">
+      ${cards
+        .map(
+          ([label, value, note]) => `
+            <article class="status-card">
+              <span>${label}</span>
+              <strong>${value}</strong>
+              <p>${note}</p>
+            </article>`
+        )
+        .join("")}
+    </div>`;
+}
+
+function renderSquad(section) {
+  const starters = section.starters
     .map(
-      ([label, value, note]) => `
-        <article class="status-card">
-          <span>${label}</span>
-          <strong>${value}</strong>
+      ({ role, player, style, form }) => `
+        <article class="player-card player-card--starter">
+          <span class="player-card__role">${role}</span>
+          <strong>${player}</strong>
+          <p>${style}</p>
+          <div class="form-bar" aria-label="Forma zawodnika ${form}%">
+            <span style="width: ${form}%"></span>
+          </div>
+          <small>Forma ${form}</small>
+        </article>`
+    )
+    .join("");
+
+  const reserves = section.reserves
+    .map(
+      ({ role, player, note }) => `
+        <article class="player-card player-card--reserve">
+          <span class="player-card__role">${role}</span>
+          <strong>${player}</strong>
           <p>${note}</p>
         </article>`
     )
     .join("");
+
+  return `
+    <div class="squad-board">
+      <section>
+        <div class="section-heading">
+          <span>LoL starting lineup</span>
+          <h4>Podstawowa piątka</h4>
+        </div>
+        <div class="lineup-grid">${starters}</div>
+      </section>
+
+      <section class="reserve-section">
+        <div class="section-heading">
+          <span>Bench slots</span>
+          <h4>Rezerwowi</h4>
+        </div>
+        <div class="reserve-grid">${reserves}</div>
+      </section>
+    </div>`;
+}
+
+function renderSection(sectionKey) {
+  const section = sections[sectionKey] || sections.home;
+  const body = section.layout === "squad" ? renderSquad(section) : renderCards(section.cards);
 
   content.innerHTML = `
     <header class="top-bar">
@@ -188,9 +248,7 @@ function renderSection(sectionKey) {
       <p>${section.description}</p>
     </div>
 
-    <div class="dashboard-grid">
-      ${cards}
-    </div>`;
+    ${body}`;
 }
 
 function activateNavItem(activeItem) {
