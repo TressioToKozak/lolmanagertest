@@ -3,6 +3,11 @@ const navItems = document.querySelectorAll(".main-nav__item");
 const gameDay = document.querySelector("[data-game-day]");
 const mailBadge = document.querySelector("[data-mail-badge]");
 
+// Keep only the clock at the top if stale cached markup ever injects an older bottom copy.
+document.querySelectorAll(".game-clock").forEach((clock, index) => {
+  if (index > 0) clock.remove();
+});
+
 function refreshMailboxBadge() {
   const unread = window.getUnreadMailCount();
   mailBadge.textContent = unread;
@@ -34,6 +39,9 @@ window.renderSection(content, initialItem.dataset.section);
 document.querySelector("[data-next-day]")?.addEventListener("click", () => {
   window.gameClock.nextDay();
   gameDay.textContent = window.gameClock.day;
-  const activeItem = document.querySelector(".main-nav__item--active");
+  const matchSection = window.matchCenter.activeMatch?.section;
+  const matchItem = matchSection ? document.querySelector(`[data-section="${matchSection}"]`) : null;
+  if (matchItem) activateNavItem(matchItem);
+  const activeItem = matchItem || document.querySelector(".main-nav__item--active");
   window.renderSection(content, activeItem?.dataset.section || "home");
 });

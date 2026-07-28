@@ -67,13 +67,8 @@ function setupTournaments(onChange) {
   });
 }
 
-window.gameClock.subscribe((day) => {
-  if (!tournamentRun || tournamentRun.eliminated || tournamentRun.champion || day < tournamentRun.nextMatchDay) return;
-  const tournament = tournaments[activeTournamentIndex];
+function resolveTournamentMatch(day, tournament, opponent, won) {
   const ourTeam = tournamentRun.results[0];
-  const opponent = tournamentRun.results.find((team) => team.name === tournamentRun.opponent);
-  const won = (day + activeTournamentIndex + tournamentRun.round) % 4 !== 0;
-  window.matchCenter.simulate({ competition: tournament.name, opponent: opponent.name, won, day });
   if (!won) {
     tournamentRun.eliminated = true;
     ourTeam.status = `Odpadł (${tournamentRun.round + 1}. runda)`;
@@ -97,6 +92,19 @@ window.gameClock.subscribe((day) => {
     subject: `${won ? "Wygrana" : "Porażka"}: ${tournament.name}`,
     date: `Dzień ${day} • 21:00`,
     body: won ? `Wygraliśmy mecz turniejowy z ${opponent.name}. ${tournamentRun.champion ? `Zdobywamy trofeum i ${window.clubEconomy.format(tournament.prize)} nagrody!` : `Następny mecz z ${tournamentRun.opponent} odbędzie się za 2 dni.`}` : `Przegraliśmy z ${opponent.name} i odpadamy z turnieju. Możesz zakończyć turniej i wybrać kolejne rozgrywki.`,
+  });
+}
+
+window.gameClock.subscribe((day) => {
+  if (!tournamentRun || tournamentRun.eliminated || tournamentRun.champion || day < tournamentRun.nextMatchDay || window.matchCenter.activeMatch) return;
+  const tournament = tournaments[activeTournamentIndex];
+  const opponent = tournamentRun.results.find((team) => team.name === tournamentRun.opponent);
+  window.matchCenter.start({
+    competition: tournament.name,
+    opponent: opponent.name,
+    day,
+    section: "tournaments",
+    onComplete: (won) => resolveTournamentMatch(day, tournament, opponent, won),
   });
 });
 

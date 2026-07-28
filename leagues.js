@@ -60,13 +60,8 @@ function setupLeagues(onChange) {
   }));
 }
 
-window.gameClock.subscribe((day) => {
-  if (!leagueSeason || day < leagueSeason.nextMatchDay) return;
-  const league = leagues[activeLeagueIndex];
+function resolveLeagueMatch(day, league, opponent, won) {
   const us = leagueSeason.teams[0];
-  const opponent = leagueSeason.teams[leagueSeason.opponentIndex];
-  const won = (day + activeLeagueIndex + leagueSeason.opponentIndex) % 3 !== 0;
-  window.matchCenter.simulate({ competition: league.name, opponent: opponent.name, won, day });
   us.played += 1;
   opponent.played += 1;
   us[won ? "wins" : "losses"] += 1;
@@ -80,6 +75,19 @@ window.gameClock.subscribe((day) => {
     subject: `${won ? "Wygrana" : "Porażka"} w lidze z ${opponent.name}`,
     date: `Dzień ${day} • 20:00`,
     body: `${won ? "Wygraliśmy" : "Przegraliśmy"} mecz ligowy ${won ? "1:0" : "0:1"} z ${opponent.name}. Tabela została zaktualizowana, a kolejne spotkanie odbędzie się w dniu ${leagueSeason.nextMatchDay}.`,
+  });
+}
+
+window.gameClock.subscribe((day) => {
+  if (!leagueSeason || day < leagueSeason.nextMatchDay || window.matchCenter.activeMatch) return;
+  const league = leagues[activeLeagueIndex];
+  const opponent = leagueSeason.teams[leagueSeason.opponentIndex];
+  window.matchCenter.start({
+    competition: league.name,
+    opponent: opponent.name,
+    day,
+    section: "leagues",
+    onComplete: (won) => resolveLeagueMatch(day, league, opponent, won),
   });
 });
 

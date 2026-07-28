@@ -1125,6 +1125,45 @@ body {
   background: linear-gradient(135deg, rgba(46, 230, 166, 0.08), rgba(17, 39, 64, 0.7));
 }
 
+.match-simulation--live {
+  border-color: rgba(255, 211, 110, 0.5);
+  box-shadow: 0 0 28px rgba(201, 160, 75, 0.12);
+}
+
+.match-decisions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.match-decisions button {
+  display: grid;
+  gap: 7px;
+  padding: 14px;
+  border: 1px solid rgba(255, 211, 110, 0.3);
+  border-radius: 14px;
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+  background: rgba(201, 160, 75, 0.1);
+  transition: 160ms ease;
+}
+
+.match-decisions button:hover {
+  border-color: var(--gold-bright);
+  transform: translateY(-2px);
+  background: rgba(201, 160, 75, 0.2);
+}
+
+.match-decisions small {
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 .match-score {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

@@ -59,12 +59,14 @@ function renderSection(content, sectionKey) {
   if (isTournaments) {
     content.innerHTML = window.renderTournaments();
     window.setupTournaments(rerender);
+    window.matchCenter.setup(rerender);
     return;
   }
 
   if (isLeagues) {
     content.innerHTML = window.renderLeagues();
     window.setupLeagues(rerender);
+    window.matchCenter.setup(rerender);
     return;
   }
 
