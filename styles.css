@@ -872,3 +872,32 @@ body {
   font-size: 1.05rem;
   line-height: 1.7;
 }
+
+.market-grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.market-card--active {
+  border-color: rgba(255, 211, 110, 0.55);
+  background: rgba(201, 160, 75, 0.16);
+}
+
+.competition-table {
+  min-width: 0;
+}
+
+.finance-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.budget-pill--profit {
+  border-color: rgba(46, 230, 166, 0.4);
+  color: #2ee6a6;
+}
+
+.budget-pill--loss {
+  border-color: rgba(255, 100, 100, 0.4);
+  color: #ff8a8a;
+}

@@ -1,11 +1,11 @@
 const squadPlayers = {
-  stone: { name: 'Kamil "Stone" Wójcik', role: "TOP", style: "Tank specialist", rating: 82 },
-  path: { name: 'Adam "Path" Nowak', role: "JUNGLE", style: "Early gank style", rating: 88 },
-  nova: { name: 'Michał "Nova" Zieliński', role: "MID", style: "Control mage", rating: 91 },
-  arrow: { name: 'Piotr "Arrow" Lis', role: "ADC", style: "Late game carry", rating: 86 },
-  ward: { name: 'Jan "Ward" Kowal', role: "SUPPORT", style: "Shotcaller", rating: 89 },
-  flex: { name: 'Bartosz "Flex" Grabowski', role: "TOP / JUNGLE", style: "Rezerwowy front line", rating: 76 },
-  pulse: { name: 'Tomasz "Pulse" Wrona', role: "MID / ADC", style: "Mechaniczny talent", rating: 79 },
+  stone: { name: 'Kamil "Stone" Wójcik', role: "TOP", style: "Tank specialist", rating: 58 },
+  path: { name: 'Adam "Path" Nowak', role: "JUNGLE", style: "Early gank style", rating: 61 },
+  nova: { name: 'Michał "Nova" Zieliński', role: "MID", style: "Control mage", rating: 64 },
+  arrow: { name: 'Piotr "Arrow" Lis', role: "ADC", style: "Late game carry", rating: 60 },
+  ward: { name: 'Jan "Ward" Kowal', role: "SUPPORT", style: "Shotcaller", rating: 62 },
+  flex: { name: 'Bartosz "Flex" Grabowski', role: "TOP / JUNGLE", style: "Rezerwowy front line", rating: 54 },
+  pulse: { name: 'Tomasz "Pulse" Wrona', role: "MID / ADC", style: "Mechaniczny talent", rating: 56 },
 };
 
 const squadSlots = { top: "stone", jungle: "path", mid: "nova", adc: "arrow", support: "ward", reserve1: "flex", reserve2: "pulse", reserve3: null };
