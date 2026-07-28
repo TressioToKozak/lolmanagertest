@@ -1,4 +1,4 @@
-export const sections = {
+window.sections = {
   home: {
     eyebrow: "Season 2026 • Preseason",
     title: "Welcome, Coach",

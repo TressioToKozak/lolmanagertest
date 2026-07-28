@@ -1,5 +1,3 @@
-import { renderSection } from "./render.js";
-
 const content = document.querySelector("#game-content");
 const navItems = document.querySelectorAll(".main-nav__item");
 
@@ -12,11 +10,11 @@ navItems.forEach((item) => {
   item.addEventListener("click", (event) => {
     event.preventDefault();
     activateNavItem(item);
-    renderSection(content, item.dataset.section);
+    window.renderSection(content, item.dataset.section);
     window.history.replaceState(null, "", item.getAttribute("href"));
   });
 });
 
 const initialItem = [...navItems].find((item) => item.getAttribute("href") === window.location.hash) || navItems[0];
 activateNavItem(initialItem);
-renderSection(content, initialItem.dataset.section);
+window.renderSection(content, initialItem.dataset.section);

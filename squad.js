@@ -38,7 +38,7 @@ function renderSlot(slotId, isStarter) {
   return `<div class="squad-slot ${isStarter ? "squad-slot--starter" : "squad-slot--reserve"}" data-slot-id="${slotId}"><span class="squad-slot__label">${slotLabels[slotId]}</span>${renderPlayer(squadSlots[slotId], isStarter)}</div>`;
 }
 
-export function renderSquad() {
+function renderSquad() {
   const starters = startingSlots.map((slotId) => renderSlot(slotId, true)).join("");
   const reserves = reserveSlots.map((slotId) => renderSlot(slotId, false)).join("");
 
@@ -50,7 +50,7 @@ export function renderSquad() {
     </div>`;
 }
 
-export function setupSquadDragAndDrop(onChange) {
+function setupSquadDragAndDrop(onChange) {
   document.querySelectorAll(".player-card[draggable='true']").forEach((card) => {
     card.addEventListener("dragstart", (event) => {
       event.dataTransfer.setData("text/plain", card.dataset.playerId);
@@ -76,3 +76,6 @@ export function setupSquadDragAndDrop(onChange) {
     });
   });
 }
+
+window.renderSquad = renderSquad;
+window.setupSquadDragAndDrop = setupSquadDragAndDrop;

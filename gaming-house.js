@@ -21,7 +21,7 @@ function getUpgradeCost(level) {
   return `€${(level * 35).toFixed(0)}k`;
 }
 
-export function renderGamingHouse() {
+function renderGamingHouse() {
   const comfort = getComfort();
   const equipment = gamingHouseState.equipment
     .map(
@@ -53,7 +53,7 @@ export function renderGamingHouse() {
     </div>`;
 }
 
-export function setupGamingHouseUpgrades(onChange) {
+function setupGamingHouseUpgrades(onChange) {
   document.querySelector("[data-upgrade-house]")?.addEventListener("click", () => {
     gamingHouseState.level = Math.min(maxGamingHouseLevel, gamingHouseState.level + 1);
     onChange();
@@ -68,3 +68,6 @@ export function setupGamingHouseUpgrades(onChange) {
     });
   });
 }
+
+window.renderGamingHouse = renderGamingHouse;
+window.setupGamingHouseUpgrades = setupGamingHouseUpgrades;
