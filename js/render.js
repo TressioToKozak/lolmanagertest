@@ -21,7 +21,7 @@ function renderSection(content, sectionKey) {
   const isFinances = section.layout === "finances";
   const isSponsors = section.layout === "sponsors";
   const isSettings = section.layout === "settings";
-  const rerender = () => renderSection(content, sectionKey);
+  const rerender = () => { renderSection(content, sectionKey); window.gameState.schedule(); };
 
   content.classList.toggle("hero-panel--squad", isSquad);
   content.classList.toggle("hero-panel--gaming-house", isGamingHouse);

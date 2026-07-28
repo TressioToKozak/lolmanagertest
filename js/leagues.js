@@ -100,3 +100,7 @@ window.getLeagueNextMatch = () => {
   const remaining = Math.max(0, leagueSeason.nextMatchDay - window.gameClock.day);
   return { value: `vs ${opponent.name}`, note: `${remaining === 0 ? "Dzisiaj" : remaining === 1 ? "Jutro" : `Za ${remaining} dni`} • ${leagues[activeLeagueIndex].name}` };
 };
+window.gameState.register("leagues", {
+  get: () => ({ activeLeagueIndex, leagueSeason }),
+  set: (state) => { activeLeagueIndex = state.activeLeagueIndex ?? null; leagueSeason = state.leagueSeason || null; },
+});

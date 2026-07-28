@@ -26,3 +26,4 @@ function setupScouting(onChange) {
 
 window.renderScouting = renderScouting;
 window.setupScouting = setupScouting;
+window.gameState.register("scouting", { get: () => ({ scoutSlots, selectedScoutSlot }), set: (state) => { scoutSlots.splice(0, scoutSlots.length, ...(state.scoutSlots || [null, null, null])); selectedScoutSlot = Number(state.selectedScoutSlot) || 0; } });

@@ -21,6 +21,11 @@ database.exec(`
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     expires_at INTEGER NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS game_saves (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    state_json TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 const mimeTypes = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8" };
@@ -32,7 +37,7 @@ const readJson = async (request) => {
   let body = "";
   for await (const chunk of request) {
     body += chunk;
-    if (body.length > 20000) throw new Error("Payload too large");
+    if (body.length > 600000) throw new Error("Payload too large");
   }
   return JSON.parse(body || "{}");
 };
@@ -104,6 +109,22 @@ const server = createServer(async (request, response) => {
       if (!verifyPassword(password, account.password_hash)) return json(response, 400, { error: "Hasło jest nieprawidłowe." });
       database.prepare("DELETE FROM users WHERE id = ?").run(user.id);
       return json(response, 200, { ok: true }, { "Set-Cookie": "session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0" });
+    }
+    if (request.url === "/api/game-state" && request.method === "GET") {
+      const user = getUser(request);
+      if (!user) return json(response, 401, { error: "Musisz być zalogowany." });
+      const save = database.prepare("SELECT state_json AS state FROM game_saves WHERE user_id = ?").get(user.id);
+      return json(response, 200, { state: save ? JSON.parse(save.state) : null });
+    }
+    if (request.url === "/api/game-state" && request.method === "PUT") {
+      const user = getUser(request);
+      if (!user) return json(response, 401, { error: "Musisz być zalogowany." });
+      const { state } = await readJson(request);
+      if (!state || typeof state !== "object") return json(response, 400, { error: "Nieprawidłowy zapis gry." });
+      const serialized = JSON.stringify(state);
+      if (serialized.length > 500000) return json(response, 413, { error: "Zapis gry jest zbyt duży." });
+      database.prepare("INSERT INTO game_saves (user_id, state_json, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) ON CONFLICT(user_id) DO UPDATE SET state_json = excluded.state_json, updated_at = CURRENT_TIMESTAMP").run(user.id, serialized);
+      return json(response, 200, { ok: true });
     }
     if (request.url.startsWith("/api/")) return json(response, 404, { error: "Nieznany endpoint API." });
     if (request.method !== "GET") return json(response, 405, { error: "Method not allowed" });

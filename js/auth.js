@@ -8,10 +8,12 @@ const authName = document.querySelector("[data-auth-name]");
 const authMessage = document.querySelector("[data-auth-message]");
 let authMode = "login";
 
-function showGame(user) {
+async function showGame(user) {
   authScreen.hidden = true;
   gameShell.hidden = false;
   document.querySelector("[data-manager-name]").textContent = user.managerName;
+  await window.gameState.load();
+  window.refreshActiveSection();
 }
 
 function setMode(mode) {

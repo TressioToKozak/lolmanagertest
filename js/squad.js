@@ -148,3 +148,12 @@ window.gameClock.subscribe((day) => {
     });
   });
 });
+window.gameState.register("squad", {
+  get: () => ({ squadPlayers, squadSlots, reserveSlots, slotLabels, listed: [...transferListedPlayers], squadSaleFilter }),
+  set: (state) => {
+    Object.keys(squadPlayers).forEach((key) => delete squadPlayers[key]); Object.assign(squadPlayers, state.squadPlayers || {});
+    Object.keys(squadSlots).forEach((key) => delete squadSlots[key]); Object.assign(squadSlots, state.squadSlots || {});
+    reserveSlots.splice(0, reserveSlots.length, ...(state.reserveSlots || [])); Object.assign(slotLabels, state.slotLabels || {});
+    transferListedPlayers.clear(); (state.listed || []).forEach(([key, value]) => transferListedPlayers.set(key, value)); squadSaleFilter = state.squadSaleFilter || "all";
+  },
+});

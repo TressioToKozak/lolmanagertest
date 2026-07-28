@@ -53,3 +53,7 @@ window.addMail = function addMail(mail) {
 };
 window.getUnreadMailCount = () => mails.filter((mail) => mail.unread).length;
 window.subscribeMailbox = (listener) => mailboxListeners.push(listener);
+window.gameState.register("mailbox", {
+  get: () => ({ mails, selectedMailId }),
+  set: (state) => { if (Array.isArray(state.mails)) mails.splice(0, mails.length, ...state.mails); selectedMailId = state.selectedMailId || mails[0]?.id; notifyMailbox(); },
+});

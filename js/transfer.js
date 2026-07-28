@@ -158,3 +158,11 @@ function setupTransfer(onChange) {
 
 window.renderTransfer = renderTransfer;
 window.setupTransfer = setupTransfer;
+window.gameState.register("transfers", {
+  get: () => ({ purchasedPlayers: [...purchasedPlayers], transferTeamFilter, transferLeagueFilter, transferPositionFilter, transferSearch, transferMessage, transferSort }),
+  set: (state) => {
+    purchasedPlayers.clear(); (state.purchasedPlayers || []).forEach((index) => purchasedPlayers.add(index));
+    transferTeamFilter = state.transferTeamFilter || "all"; transferLeagueFilter = state.transferLeagueFilter || "all"; transferPositionFilter = state.transferPositionFilter || "all";
+    transferSearch = state.transferSearch || ""; transferMessage = state.transferMessage || ""; transferSort = state.transferSort || transferSort;
+  },
+});

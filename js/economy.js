@@ -16,3 +16,4 @@ window.clubEconomy = {
     return true;
   },
 };
+window.gameState.register("economy", { get: () => ({ budget: window.clubEconomy.budget }), set: (state) => { window.clubEconomy.budget = Number(state.budget) || 0; } });

@@ -18,6 +18,11 @@ function refreshMailboxBadge() {
 window.subscribeMailbox(refreshMailboxBadge);
 refreshMailboxBadge();
 window.applyPreferences();
+window.refreshActiveSection = () => {
+  gameDay.textContent = window.gameClock.day;
+  const activeItem = document.querySelector(".main-nav__item--active") || navItems[0];
+  window.renderSection(content, activeItem.dataset.section);
+};
 
 function activateNavItem(activeItem) {
   navItems.forEach((item) => item.classList.remove("main-nav__item--active"));
@@ -45,5 +50,6 @@ document.querySelector("[data-next-day]")?.addEventListener("click", () => {
   if (matchItem) activateNavItem(matchItem);
   const activeItem = matchItem || document.querySelector(".main-nav__item--active");
   window.renderSection(content, activeItem?.dataset.section || "home");
+  window.gameState.schedule();
   document.querySelector(".match-simulation--live")?.scrollIntoView({ block: "center" });
 });

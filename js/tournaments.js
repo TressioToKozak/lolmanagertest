@@ -116,3 +116,7 @@ window.getTournamentNextMatch = () => {
   const remaining = Math.max(0, tournamentRun.nextMatchDay - window.gameClock.day);
   return { value: `vs ${tournamentRun.opponent}`, note: `${remaining === 0 ? "Dzisiaj" : remaining === 1 ? "Jutro" : `Za ${remaining} dni`} • ${tournaments[activeTournamentIndex].name}` };
 };
+window.gameState.register("tournaments", {
+  get: () => ({ activeTournamentIndex, tournamentRun }),
+  set: (state) => { activeTournamentIndex = state.activeTournamentIndex ?? null; tournamentRun = state.tournamentRun || null; },
+});

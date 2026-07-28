@@ -12,6 +12,34 @@ window.gameClock = {
   },
 };
 
+window.gameState = {
+  modules: new Map(),
+  saveTimer: null,
+  loading: false,
+  register(name, handler) { handler.defaultState = JSON.parse(JSON.stringify(handler.get())); this.modules.set(name, handler); },
+  snapshot() { return Object.fromEntries([...this.modules].map(([name, handler]) => [name, handler.get()])); },
+  schedule() {
+    if (this.loading) return;
+    clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => this.save(), 250);
+  },
+  async save() {
+    try { await fetch("/api/game-state", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ state: this.snapshot() }) }); }
+    catch (error) { console.error("Nie udało się zapisać gry:", error); }
+  },
+  async load() {
+    this.loading = true;
+    try {
+      const response = await fetch("/api/game-state");
+      if (!response.ok) return;
+      const { state } = await response.json();
+      this.modules.forEach((handler, name) => handler.set(state?.[name] ?? JSON.parse(JSON.stringify(handler.defaultState))));
+    } finally { this.loading = false; }
+  },
+};
+
+window.gameState.register("clock", { get: () => ({ day: window.gameClock.day }), set: (state) => { window.gameClock.day = Number(state.day) || 1; } });
+
 window.matchCenter = {
   activeMatch: null,
   lastMatch: null,
@@ -119,6 +147,8 @@ window.matchCenter = {
     });
   },
 };
+
+window.gameState.register("matches", { get: () => ({ lastMatch: window.matchCenter.lastMatch }), set: (state) => { window.matchCenter.lastMatch = state.lastMatch || null; window.matchCenter.activeMatch = null; } });
 
 window.getHomeStatus = function getHomeStatus() {
   const nextMatch = window.getLeagueNextMatch?.() || window.getTournamentNextMatch?.() || { value: "Brak zaplanowanego meczu", note: "Dołącz do ligi lub turnieju" };

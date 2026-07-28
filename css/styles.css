@@ -9,17 +9,17 @@
 }
 
 :root[data-theme="light"] {
-  --ink: #eef4fb;
-  --panel: rgba(244, 248, 253, 0.94);
-  --panel-light: rgba(224, 235, 247, 0.92);
-  --text: #10243a;
-  --muted: #60758a;
-  --gold: #9d711f;
-  --gold-bright: #b68120;
+  --ink: #dbe5ee;
+  --panel: rgba(196, 211, 224, 0.97);
+  --panel-light: rgba(174, 195, 213, 0.94);
+  --text: #10283e;
+  --muted: #526b80;
+  --gold: #8a5e13;
+  --gold-bright: #95630e;
 }
 
 :root[data-theme="light"] body {
-  background: linear-gradient(135deg, #edf4fb, #dbe8f4 55%, #f6efe1);
+  background: linear-gradient(135deg, #a9bbca, #c5d2dd 55%, #b9aa8d);
 }
 
 :root[data-theme="light"] .sidebar,
@@ -30,8 +30,50 @@
 
 :root[data-theme="light"] .hero-content p:last-child,
 :root[data-theme="light"] .management-header p,
-:root[data-theme="light"] .mail-view p {
+:root[data-theme="light"] .mail-view p,
+:root[data-theme="light"] .player-card p,
+:root[data-theme="light"] .competition-picker-header p,
+:root[data-theme="light"] .status-card p,
+:root[data-theme="light"] .candidate-card p,
+:root[data-theme="light"] .market-card p,
+:root[data-theme="light"] .gaming-house-summary p,
+:root[data-theme="light"] .equipment-card p {
   color: #405971;
+}
+
+:root[data-theme="light"] .management-board,
+:root[data-theme="light"] .mail-list,
+:root[data-theme="light"] .mail-view,
+:root[data-theme="light"] .candidate-card,
+:root[data-theme="light"] .market-card,
+:root[data-theme="light"] .status-card,
+:root[data-theme="light"] .settings-panel {
+  border-color: rgba(16, 40, 62, 0.16);
+  background: rgba(218, 228, 237, 0.9);
+}
+
+:root[data-theme="light"] .finance-table,
+:root[data-theme="light"] .match-timeline li,
+:root[data-theme="light"] .mail-item,
+:root[data-theme="light"] .player-card,
+:root[data-theme="light"] .squad-slot {
+  border-color: rgba(16, 40, 62, 0.14);
+  color: var(--text);
+  background: rgba(190, 207, 221, 0.82);
+}
+
+:root[data-theme="light"] .mail-list__header {
+  background: #c4d3e0;
+}
+
+:root[data-theme="light"] .main-nav__item {
+  color: #405b72;
+}
+
+:root[data-theme="light"] .main-nav__item:hover,
+:root[data-theme="light"] .main-nav__item--active {
+  color: #10283e;
+  background: rgba(149, 99, 14, 0.16);
 }
 
 * {
