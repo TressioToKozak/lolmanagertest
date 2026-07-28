@@ -923,7 +923,7 @@ body {
 }
 
 .transfer-board {
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
   overflow: hidden;
 }
 
@@ -938,6 +938,41 @@ body {
   margin: 10px 0 0;
   color: var(--muted);
   font-size: 0.82rem;
+}
+
+.transfer-toolbar .eyebrow {
+  margin-bottom: 4px;
+  color: var(--gold-bright);
+}
+
+.transfer-toolbar h2 {
+  margin-top: 2px;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+}
+
+.transfer-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.transfer-notice {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid rgba(46, 230, 166, 0.35);
+  border-radius: 12px;
+  color: #79f2c8;
+  font-size: 0.84rem;
+  background: rgba(46, 230, 166, 0.08);
+}
+
+.transfer-notice--hint {
+  border-color: rgba(255, 211, 110, 0.24);
+  color: var(--muted);
+  background: rgba(201, 160, 75, 0.06);
 }
 
 .transfer-filters {
@@ -974,7 +1009,7 @@ body {
 }
 
 .transfer-table {
-  min-width: 940px;
+  min-width: 1180px;
   font-size: 0.8rem;
 }
 

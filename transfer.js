@@ -50,6 +50,7 @@ const transferPlayers = Object.entries(riftLegendsRosters).flatMap(([team, roste
 const purchasedPlayers = new Set();
 let transferTeamFilter = "all";
 let transferSearch = "";
+let transferMessage = "";
 
 function renderTransfer() {
   const teams = Object.keys(riftLegendsRosters);
@@ -60,11 +61,12 @@ function renderTransfer() {
   const rows = visiblePlayers.map((player) => {
     const index = transferPlayers.indexOf(player);
     const unavailable = purchasedPlayers.has(index) || !window.clubEconomy.canAfford(player.cost);
-    return `<tr><td><strong>${player.name}</strong><small>${player.team}</small></td><td class="rating-cell">${player.overall}</td><td>${player.macro}</td><td>${player.micro}</td><td>${player.vision}</td><td>${player.roams}</td><td>${player.farming}</td><td>${player.reflex}</td><td>${window.clubEconomy.format(player.cost)}</td><td><button class="upgrade-button transfer-buy" data-buy-player="${index}" ${unavailable ? "disabled" : ""}>${purchasedPlayers.has(index) ? "Kupiony" : "Kup"}</button></td></tr>`;
+    return `<tr><td><strong>${player.name}</strong></td><td>${player.team}</td><td>RiftLegends</td><td class="rating-cell">${player.overall}</td><td>${player.macro}</td><td>${player.micro}</td><td>${player.vision}</td><td>${player.roams}</td><td>${player.farming}</td><td>${player.reflex}</td><td><strong>${window.clubEconomy.format(player.cost)}</strong></td><td><button class="upgrade-button transfer-buy" data-buy-player="${index}" ${unavailable ? "disabled" : ""}>${purchasedPlayers.has(index) ? "Kupiony" : "Kup"}</button></td></tr>`;
   }).join("");
   return `<div class="management-board transfer-board">
-    <header class="transfer-toolbar"><div><span class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></span><p>${visiblePlayers.length} z ${transferPlayers.length} zawodników ligi RiftLegends</p></div><div class="transfer-filters"><label><span>Szukaj</span><input data-transfer-search value="${transferSearch}" placeholder="Nazwa zawodnika"></label><label><span>Drużyna</span><select data-transfer-team><option value="all">Wszystkie drużyny</option>${teams.map((team) => `<option ${team === transferTeamFilter ? "selected" : ""}>${team}</option>`).join("")}</select></label></div></header>
-    <div class="transfer-table-wrap"><table class="finance-table transfer-table"><thead><tr><th>Zawodnik</th><th>OVR</th><th>Macro</th><th>Micro</th><th>Wizja</th><th>Roamy</th><th>Farming</th><th>Reflex</th><th>Cena</th><th></th></tr></thead><tbody>${rows || `<tr><td colspan="10" class="transfer-empty">Brak zawodników spełniających kryteria.</td></tr>`}</tbody></table></div>
+    <header class="transfer-toolbar"><div><p class="eyebrow">Rynek transferowy</p><h2>RiftLegends</h2><div class="transfer-meta"><span class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></span><span>${visiblePlayers.length} z ${transferPlayers.length} zawodników</span></div></div><div class="transfer-filters"><label><span>Szukaj</span><input data-transfer-search value="${transferSearch}" placeholder="Nazwa zawodnika"></label><label><span>Drużyna</span><select data-transfer-team><option value="all">Wszystkie drużyny</option>${teams.map((team) => `<option ${team === transferTeamFilter ? "selected" : ""}>${team}</option>`).join("")}</select></label></div></header>
+    <p class="transfer-notice ${transferMessage ? "" : "transfer-notice--hint"}" role="status">${transferMessage || "Wybierz zawodnika z listy i kliknij „Kup”. Cena zostanie odjęta od budżetu klubu."}</p>
+    <div class="transfer-table-wrap"><table class="finance-table transfer-table"><thead><tr><th>Zawodnik</th><th>Drużyna</th><th>Liga</th><th>OVR</th><th>Macro</th><th>Micro</th><th>Wizja</th><th>Roamy</th><th>Farming</th><th>Reflex</th><th>Cena</th><th>Zakup</th></tr></thead><tbody>${rows || `<tr><td colspan="12" class="transfer-empty">Brak zawodników spełniających kryteria.</td></tr>`}</tbody></table></div>
   </div>`;
 }
 
@@ -85,6 +87,7 @@ function setupTransfer(onChange) {
     const player = transferPlayers[index];
     if (player && window.clubEconomy.spend(player.cost)) {
       purchasedPlayers.add(index);
+      transferMessage = `Kupiono zawodnika ${player.name} z ${player.team} za ${window.clubEconomy.format(player.cost)}.`;
       onChange();
     }
   }));
