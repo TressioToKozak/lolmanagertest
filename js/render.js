@@ -1,4 +1,5 @@
 function renderCards(cards) {
+
   const homeStatus = window.getHomeStatus();
   return `<div class="dashboard-grid">${cards.map(([label, value, note]) => {
     if (label === "Budget") return `<article class="status-card"><span>${label}</span><strong>${window.clubEconomy.format()}</strong><p>${note}</p></article>`;
@@ -6,6 +7,7 @@ function renderCards(cards) {
     if (label === "Team morale") return `<article class="status-card"><span>${label}</span><strong>${homeStatus.morale.value}</strong><p>${homeStatus.morale.note}</p></article>`;
     return `<article class="status-card"><span>${label}</span><strong>${value}</strong><p>${note}</p></article>`;
   }).join("")}</div>`;
+
 }
 
 function renderSection(content, sectionKey) {
