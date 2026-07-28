@@ -1,17 +1,18 @@
 const squadPlayers = {
-  stone: { name: 'Kamil "Stone" Wójcik', role: "TOP", style: "Tank specialist", rating: 58 },
-  path: { name: 'Adam "Path" Nowak', role: "JUNGLE", style: "Early gank style", rating: 61 },
-  nova: { name: 'Michał "Nova" Zieliński', role: "MID", style: "Control mage", rating: 64 },
-  arrow: { name: 'Piotr "Arrow" Lis', role: "ADC", style: "Late game carry", rating: 60 },
-  ward: { name: 'Jan "Ward" Kowal', role: "SUPPORT", style: "Shotcaller", rating: 62 },
-  flex: { name: 'Bartosz "Flex" Grabowski', role: "TOP / JUNGLE", style: "Rezerwowy front line", rating: 54 },
-  pulse: { name: 'Tomasz "Pulse" Wrona', role: "MID / ADC", style: "Mechaniczny talent", rating: 56 },
+  stone: { name: 'Kamil "Stone" Wójcik', role: "TOP", style: "Tank specialist", rating: 58, value: 39000 },
+  path: { name: 'Adam "Path" Nowak', role: "JUNGLE", style: "Early gank style", rating: 61, value: 48000 },
+  nova: { name: 'Michał "Nova" Zieliński', role: "MID", style: "Control mage", rating: 64, value: 57000 },
+  arrow: { name: 'Piotr "Arrow" Lis', role: "ADC", style: "Late game carry", rating: 60, value: 45000 },
+  ward: { name: 'Jan "Ward" Kowal', role: "SUPPORT", style: "Shotcaller", rating: 62, value: 51000 },
+  flex: { name: 'Bartosz "Flex" Grabowski', role: "TOP / JUNGLE", style: "Rezerwowy front line", rating: 54, value: 27000 },
+  pulse: { name: 'Tomasz "Pulse" Wrona', role: "MID / ADC", style: "Mechaniczny talent", rating: 56, value: 33000 },
 };
 
 const squadSlots = { top: "stone", jungle: "path", mid: "nova", adc: "arrow", support: "ward", reserve1: "flex", reserve2: "pulse", reserve3: null };
 const startingSlots = ["top", "jungle", "mid", "adc", "support"];
 const reserveSlots = ["reserve1", "reserve2", "reserve3"];
 const slotLabels = { top: "TOP", jungle: "JUNGLE", mid: "MID", adc: "ADC", support: "SUPPORT", reserve1: "REZERWA 1", reserve2: "REZERWA 2", reserve3: "WOLNY SLOT" };
+const transferListedPlayers = new Map();
 
 function getAverageRating() {
   const ratings = startingSlots.map((slotId) => squadPlayers[squadSlots[slotId]]?.rating).filter(Boolean);
@@ -24,13 +25,15 @@ function renderPlayer(playerId, isStarter) {
   }
 
   const player = squadPlayers[playerId];
+  const listed = transferListedPlayers.has(playerId);
   return `
-    <article class="player-card ${isStarter ? "player-card--starter" : "player-card--reserve"}" draggable="true" data-player-id="${playerId}">
+    <article class="player-card ${isStarter ? "player-card--starter" : "player-card--reserve"} ${listed ? "player-card--listed" : ""}" draggable="true" data-player-id="${playerId}">
       <span class="player-card__role">${player.role}</span>
       <strong>${player.name}</strong>
       <p>${player.style}</p>
       <div class="form-bar" aria-label="Ocena zawodnika ${player.rating}"><span style="width: ${player.rating}%"></span></div>
       <small>Ocena ${player.rating}</small>
+      <button class="player-sale-button" data-sell-player="${playerId}">${listed ? `Wystawiony • ${window.clubEconomy.format(player.value)}` : `Wystaw na sprzedaż • ${window.clubEconomy.format(player.value)}`}</button>
     </article>`;
 }
 
@@ -51,6 +54,13 @@ function renderSquad() {
 }
 
 function setupSquadDragAndDrop(onChange) {
+  document.querySelectorAll("[data-sell-player]").forEach((button) => button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const playerId = button.dataset.sellPlayer;
+    if (transferListedPlayers.has(playerId)) transferListedPlayers.delete(playerId);
+    else transferListedPlayers.set(playerId, { listedDay: window.gameClock.day, value: squadPlayers[playerId].value });
+    onChange();
+  }));
   document.querySelectorAll(".player-card[draggable='true']").forEach((card) => {
     card.addEventListener("dragstart", (event) => {
       event.dataTransfer.setData("text/plain", card.dataset.playerId);
@@ -79,3 +89,40 @@ function setupSquadDragAndDrop(onChange) {
 
 window.renderSquad = renderSquad;
 window.setupSquadDragAndDrop = setupSquadDragAndDrop;
+window.addSquadPlayer = function addSquadPlayer(player) {
+  const playerId = `transfer-${player.name.toLocaleLowerCase("pl").replace(/[^a-z0-9]+/g, "-")}`;
+  squadPlayers[playerId] = {
+    name: player.name,
+    role: player.position,
+    style: `Transfer z ${player.team}`,
+    rating: player.overall,
+    value: Math.round(player.cost * 0.7),
+  };
+
+  let freeSlot = reserveSlots.find((slotId) => !squadSlots[slotId]);
+  if (!freeSlot) {
+    freeSlot = `reserve${reserveSlots.length + 1}`;
+    reserveSlots.push(freeSlot);
+    slotLabels[freeSlot] = `REZERWA ${reserveSlots.length}`;
+  }
+  squadSlots[freeSlot] = playerId;
+};
+
+window.gameClock.subscribe((day) => {
+  [...transferListedPlayers.entries()].forEach(([playerId, listing]) => {
+    if (day - listing.listedDay < 2) return;
+    const player = squadPlayers[playerId];
+    const slotId = Object.keys(squadSlots).find((slot) => squadSlots[slot] === playerId);
+    if (!player || !slotId) return;
+    squadSlots[slotId] = null;
+    transferListedPlayers.delete(playerId);
+    window.clubEconomy.budget += listing.value;
+    window.addMail({
+      id: `sale-${playerId}`,
+      from: "Dyrektor sportowy",
+      subject: `Sprzedano zawodnika: ${player.name}`,
+      date: `Dzień ${day} • 11:00`,
+      body: `${player.name} odchodzi z klubu. Oferta w wysokości ${window.clubEconomy.format(listing.value)} została zaakceptowana, a środki trafiły do budżetu.`,
+    });
+  });
+});
