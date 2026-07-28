@@ -30,24 +30,12 @@ const sections = {
   squad: {
     eyebrow: "Team roster",
     title: "Squad",
-    action: "Set lineup",
-    tag: "Starting five",
+    action: "Auto best five",
+    tag: "Drag & drop lineup",
     heading: "Skład",
     description:
-      "Ustaw podstawową piątkę dokładnie jak w LoL-u, analizuj formę zawodników i trzymaj pod ręką rezerwowych gotowych do rotacji.",
+      "Przeciągaj zawodników między rolami i ławką. Upuszczenie gracza na zajęty slot zamienia ich miejscami, a puste sloty pozwalają zdjąć zawodnika z pierwszej piątki.",
     layout: "squad",
-    starters: [
-      { role: "TOP", player: "Kamil \"Stone\" Wójcik", style: "Tank specialist", form: 82 },
-      { role: "JUNGLE", player: "Adam \"Path\" Nowak", style: "Early gank style", form: 88 },
-      { role: "MID", player: "Michał \"Nova\" Zieliński", style: "Control mage", form: 91 },
-      { role: "ADC", player: "Piotr \"Arrow\" Lis", style: "Late game carry", form: 86 },
-      { role: "SUPPORT", player: "Jan \"Ward\" Kowal", style: "Shotcaller", form: 89 },
-    ],
-    reserves: [
-      { role: "TOP / JUNGLE", player: "Bartosz \"Flex\" Grabowski", note: "Rezerwowy front line • Forma 76" },
-      { role: "MID / ADC", player: "Tomasz \"Pulse\" Wrona", note: "Mechaniczny talent • Forma 79" },
-      { role: "SUPPORT", player: "Miejsce wolne", note: "Slot na przyszły transfer lub akademię" },
-    ],
   },
   staff: {
     eyebrow: "Backroom team",
@@ -165,6 +153,39 @@ const sections = {
 
 const content = document.querySelector("#game-content");
 const navItems = document.querySelectorAll(".main-nav__item");
+const squadPlayers = {
+  stone: { name: 'Kamil "Stone" Wójcik', role: "TOP", style: "Tank specialist", rating: 82 },
+  path: { name: 'Adam "Path" Nowak', role: "JUNGLE", style: "Early gank style", rating: 88 },
+  nova: { name: 'Michał "Nova" Zieliński', role: "MID", style: "Control mage", rating: 91 },
+  arrow: { name: 'Piotr "Arrow" Lis', role: "ADC", style: "Late game carry", rating: 86 },
+  ward: { name: 'Jan "Ward" Kowal', role: "SUPPORT", style: "Shotcaller", rating: 89 },
+  flex: { name: 'Bartosz "Flex" Grabowski', role: "TOP / JUNGLE", style: "Rezerwowy front line", rating: 76 },
+  pulse: { name: 'Tomasz "Pulse" Wrona', role: "MID / ADC", style: "Mechaniczny talent", rating: 79 },
+};
+
+const squadSlots = {
+  top: "stone",
+  jungle: "path",
+  mid: "nova",
+  adc: "arrow",
+  support: "ward",
+  reserve1: "flex",
+  reserve2: "pulse",
+  reserve3: null,
+};
+
+const startingSlots = ["top", "jungle", "mid", "adc", "support"];
+const slotLabels = {
+  top: "TOP",
+  jungle: "JUNGLE",
+  mid: "MID",
+  adc: "ADC",
+  support: "SUPPORT",
+  reserve1: "REZERWA 1",
+  reserve2: "REZERWA 2",
+  reserve3: "WOLNY SLOT",
+};
+
 
 function renderCards(cards) {
   return `
@@ -182,35 +203,63 @@ function renderCards(cards) {
     </div>`;
 }
 
-function renderSquad(section) {
-  const starters = section.starters
-    .map(
-      ({ role, player, style, form }) => `
-        <article class="player-card player-card--starter">
-          <span class="player-card__role">${role}</span>
-          <strong>${player}</strong>
-          <p>${style}</p>
-          <div class="form-bar" aria-label="Forma zawodnika ${form}%">
-            <span style="width: ${form}%"></span>
-          </div>
-          <small>Forma ${form}</small>
-        </article>`
-    )
-    .join("");
+function getAverageRating() {
+  const ratings = startingSlots
+    .map((slotId) => squadPlayers[squadSlots[slotId]]?.rating)
+    .filter(Boolean);
 
-  const reserves = section.reserves
-    .map(
-      ({ role, player, note }) => `
-        <article class="player-card player-card--reserve">
-          <span class="player-card__role">${role}</span>
-          <strong>${player}</strong>
-          <p>${note}</p>
-        </article>`
-    )
-    .join("");
+  if (!ratings.length) {
+    return "--";
+  }
+
+  return Math.round(ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length);
+}
+
+function renderPlayer(playerId, isStarter) {
+  if (!playerId) {
+    return `
+      <div class="empty-slot">
+        <strong>Pusty slot</strong>
+        <p>Przeciągnij tutaj zawodnika, żeby zdjąć go ze składu lub dodać do rezerw.</p>
+      </div>`;
+  }
+
+  const player = squadPlayers[playerId];
+
+  return `
+    <article class="player-card ${isStarter ? "player-card--starter" : "player-card--reserve"}" draggable="true" data-player-id="${playerId}">
+      <span class="player-card__role">${player.role}</span>
+      <strong>${player.name}</strong>
+      <p>${player.style}</p>
+      <div class="form-bar" aria-label="Ocena zawodnika ${player.rating}">
+        <span style="width: ${player.rating}%"></span>
+      </div>
+      <small>Ocena ${player.rating}</small>
+    </article>`;
+}
+
+function renderSlot(slotId, isStarter) {
+  return `
+    <div class="squad-slot ${isStarter ? "squad-slot--starter" : "squad-slot--reserve"}" data-slot-id="${slotId}">
+      <span class="squad-slot__label">${slotLabels[slotId]}</span>
+      ${renderPlayer(squadSlots[slotId], isStarter)}
+    </div>`;
+}
+
+function renderSquad() {
+  const starters = startingSlots.map((slotId) => renderSlot(slotId, true)).join("");
+  const reserves = ["reserve1", "reserve2", "reserve3"].map((slotId) => renderSlot(slotId, false)).join("");
 
   return `
     <div class="squad-board">
+      <div class="squad-summary">
+        <div>
+          <span>Średnia ocena składu</span>
+          <strong id="squad-average">${getAverageRating()}</strong>
+        </div>
+        <p>Liczone tylko z aktualnej podstawowej piątki.</p>
+      </div>
+
       <section>
         <div class="section-heading">
           <span>LoL starting lineup</span>
@@ -229,9 +278,49 @@ function renderSquad(section) {
     </div>`;
 }
 
+function setupSquadDragAndDrop() {
+  document.querySelectorAll(".player-card[draggable='true']").forEach((card) => {
+    card.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", card.dataset.playerId);
+      card.classList.add("player-card--dragging");
+    });
+
+    card.addEventListener("dragend", () => card.classList.remove("player-card--dragging"));
+  });
+
+  document.querySelectorAll(".squad-slot").forEach((slot) => {
+    slot.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      slot.classList.add("squad-slot--over");
+    });
+
+    slot.addEventListener("dragleave", () => slot.classList.remove("squad-slot--over"));
+
+    slot.addEventListener("drop", (event) => {
+      event.preventDefault();
+      slot.classList.remove("squad-slot--over");
+
+      const playerId = event.dataTransfer.getData("text/plain");
+      const sourceSlotId = Object.keys(squadSlots).find((slotId) => squadSlots[slotId] === playerId);
+      const targetSlotId = slot.dataset.slotId;
+
+      if (!playerId || !sourceSlotId || !targetSlotId || sourceSlotId === targetSlotId) {
+        return;
+      }
+
+      const targetPlayerId = squadSlots[targetSlotId];
+      squadSlots[targetSlotId] = playerId;
+      squadSlots[sourceSlotId] = targetPlayerId;
+      renderSection("squad");
+    });
+  });
+}
+
 function renderSection(sectionKey) {
   const section = sections[sectionKey] || sections.home;
-  const body = section.layout === "squad" ? renderSquad(section) : renderCards(section.cards);
+  const body = section.layout === "squad" ? renderSquad() : renderCards(section.cards);
+
+  content.classList.toggle("hero-panel--squad", section.layout === "squad");
 
   content.innerHTML = `
     <header class="top-bar">
@@ -249,6 +338,10 @@ function renderSection(sectionKey) {
     </div>
 
     ${body}`;
+
+  if (section.layout === "squad") {
+    setupSquadDragAndDrop();
+  }
 }
 
 function activateNavItem(activeItem) {
