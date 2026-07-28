@@ -1,5 +1,11 @@
 function renderCards(cards) {
-  return `<div class="dashboard-grid">${cards.map(([label, value, note]) => `<article class="status-card"><span>${label}</span><strong>${value}</strong><p>${note}</p></article>`).join("")}</div>`;
+  const homeStatus = window.getHomeStatus();
+  return `<div class="dashboard-grid">${cards.map(([label, value, note]) => {
+    if (label === "Budget") return `<article class="status-card"><span>${label}</span><strong>${window.clubEconomy.format()}</strong><p>${note}</p></article>`;
+    if (label === "Next match") return `<article class="status-card"><span>${label}</span><strong>${homeStatus.nextMatch.value}</strong><p>${homeStatus.nextMatch.note}</p></article>`;
+    if (label === "Team morale") return `<article class="status-card"><span>${label}</span><strong>${homeStatus.morale.value}</strong><p>${homeStatus.morale.note}</p></article>`;
+    return `<article class="status-card"><span>${label}</span><strong>${value}</strong><p>${note}</p></article>`;
+  }).join("")}</div>`;
 }
 
 function renderSection(content, sectionKey) {
@@ -59,12 +65,14 @@ function renderSection(content, sectionKey) {
   if (isTournaments) {
     content.innerHTML = window.renderTournaments();
     window.setupTournaments(rerender);
+    window.matchCenter.setup(rerender);
     return;
   }
 
   if (isLeagues) {
     content.innerHTML = window.renderLeagues();
     window.setupLeagues(rerender);
+    window.matchCenter.setup(rerender);
     return;
   }
 
