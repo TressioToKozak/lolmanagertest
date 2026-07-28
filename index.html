@@ -7,25 +7,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=8" />
     <script src="economy.js?v=4" defer></script>
+    <script src="game.js?v=8" defer></script>
     <script src="data.js?v=4" defer></script>
-    <script src="squad.js?v=4" defer></script>
+    <script src="squad.js?v=5" defer></script>
     <script src="gaming-house.js?v=4" defer></script>
-    <script src="mailbox.js?v=4" defer></script>
-    <script src="staff.js?v=4" defer></script>
-    <script src="transfer.js?v=4" defer></script>
-    <script src="scouting.js?v=4" defer></script>
-    <script src="tournaments.js?v=4" defer></script>
-    <script src="leagues.js?v=4" defer></script>
-    <script src="finances.js?v=4" defer></script>
+    <script src="mailbox.js?v=6" defer></script>
+    <script src="staff.js?v=7" defer></script>
+    <script src="transfer.js?v=5" defer></script>
+    <script src="scouting.js?v=7" defer></script>
+    <script src="tournaments.js?v=8" defer></script>
+    <script src="leagues.js?v=8" defer></script>
+    <script src="finances.js?v=7" defer></script>
     <script src="sponsors.js?v=4" defer></script>
-    <script src="render.js?v=4" defer></script>
-    <script src="app.js?v=4" defer></script>
+    <script src="render.js?v=8" defer></script>
+    <script src="app.js?v=8" defer></script>
   </head>
   <body>
     <main class="game-shell" aria-label="Ekran startowy gry LoL eSport Manager">
       <aside class="sidebar">
+        <div class="game-clock">
+          <span>Sezon 2026</span>
+          <strong>Dzień <span data-game-day>1</span></strong>
+          <button class="primary-action" data-next-day>Następny dzień</button>
+        </div>
         <div class="brand">
           <div class="brand__mark">LM</div>
           <div>
@@ -36,7 +42,7 @@
 
         <nav class="main-nav" aria-label="Główna nawigacja">
           <a class="main-nav__item main-nav__item--active" href="#home" data-section="home">Home</a>
-          <a class="main-nav__item" href="#mailbox" data-section="mailbox">Mailbox</a>
+          <a class="main-nav__item" href="#mailbox" data-section="mailbox">Mailbox <span class="nav-badge" data-mail-badge hidden>0</span></a>
           <a class="main-nav__item" href="#squad" data-section="squad">Squad</a>
           <a class="main-nav__item" href="#staff" data-section="staff">Staff</a>
           <a class="main-nav__item" href="#gaming-house" data-section="gamingHome">Gaming House</a>
@@ -80,7 +86,7 @@
           </article>
           <article class="status-card">
             <span>Budget</span>
-            <strong>€2.4M</strong>
+            <strong>€500k</strong>
             <p>Gotowe na transfery</p>
           </article>
         </div>
