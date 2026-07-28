@@ -6,10 +6,15 @@ function renderSection(content, sectionKey) {
   const section = window.sections[sectionKey] || window.sections.home;
   const isSquad = section.layout === "squad";
   const isGamingHouse = section.layout === "gamingHouse";
+  const isMailbox = section.layout === "mailbox";
+  const isStaff = section.layout === "staff";
+  const isTransfer = section.layout === "transfer";
+  const isScouting = section.layout === "scouting";
   const rerender = () => renderSection(content, sectionKey);
 
   content.classList.toggle("hero-panel--squad", isSquad);
   content.classList.toggle("hero-panel--gaming-house", isGamingHouse);
+  content.classList.toggle("hero-panel--management", isStaff || isTransfer || isScouting || isMailbox);
 
   if (isSquad) {
     content.innerHTML = window.renderSquad();
@@ -20,6 +25,30 @@ function renderSection(content, sectionKey) {
   if (isGamingHouse) {
     content.innerHTML = window.renderGamingHouse();
     window.setupGamingHouseUpgrades(rerender);
+    return;
+  }
+
+  if (isMailbox) {
+    content.innerHTML = window.renderMailbox();
+    window.setupMailbox(rerender);
+    return;
+  }
+
+  if (isStaff) {
+    content.innerHTML = window.renderStaff();
+    window.setupStaff(rerender);
+    return;
+  }
+
+  if (isTransfer) {
+    content.innerHTML = window.renderTransfer();
+    window.setupTransfer(rerender);
+    return;
+  }
+
+  if (isScouting) {
+    content.innerHTML = window.renderScouting();
+    window.setupScouting(rerender);
     return;
   }
 

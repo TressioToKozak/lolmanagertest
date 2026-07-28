@@ -676,3 +676,138 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.hero-panel--management {
+  padding: 22px;
+}
+
+.mailbox-board {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 18px;
+  height: 100%;
+}
+
+.mail-list,
+.mail-view,
+.management-board {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  background: rgba(17, 39, 64, 0.68);
+}
+
+.mail-list {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 14px;
+}
+
+.mail-item,
+.staff-slot {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  background: rgba(8, 21, 37, 0.56);
+}
+
+.mail-item--active,
+.staff-slot--active {
+  border-color: rgba(255, 211, 110, 0.5);
+  background: rgba(201, 160, 75, 0.16);
+}
+
+.mail-item span,
+.mail-view span,
+.staff-slot span,
+.candidate-card span,
+.market-card span,
+.budget-pill {
+  color: var(--gold-bright);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mail-item strong,
+.staff-slot strong,
+.candidate-card strong,
+.market-card strong {
+  display: block;
+  margin: 7px 0;
+}
+
+.mail-item small,
+.mail-view small,
+.candidate-card small,
+.market-card small {
+  color: var(--muted);
+}
+
+.mail-view {
+  padding: 28px;
+}
+
+.mail-view h3 {
+  margin: 12px 0 8px;
+  font-size: clamp(2rem, 4vw, 4rem);
+}
+
+.mail-view p {
+  max-width: 780px;
+  margin-top: 28px;
+  color: #c4d3e4;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.management-board {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 18px;
+  height: 100%;
+  padding: 18px;
+}
+
+.budget-pill {
+  justify-self: start;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 211, 110, 0.28);
+  border-radius: 999px;
+  background: rgba(201, 160, 75, 0.12);
+}
+
+.staff-grid,
+.candidate-grid,
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.candidate-card,
+.market-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: var(--panel-light);
+}
+
+.market-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.upgrade-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

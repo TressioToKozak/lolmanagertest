@@ -13,7 +13,8 @@ window.sections = {
       ["Budget", "€2.4M", "Gotowe na transfery"],
     ],
   },
-  mailbox: {
+  mailbox: { layout: "mailbox" },
+  mailboxOld: {
     eyebrow: "Club communication",
     title: "Mailbox",
     action: "Compose reply",
@@ -27,7 +28,8 @@ window.sections = {
     ],
   },
   squad: { layout: "squad" },
-  staff: {
+  staff: { layout: "staff" },
+  staffOld: {
     eyebrow: "Backroom team",
     title: "Staff",
     action: "Hire staff",
@@ -41,7 +43,8 @@ window.sections = {
     ],
   },
   gamingHome: { layout: "gamingHouse" },
-  transfer: {
+  transfer: { layout: "transfer" },
+  transferOld: {
     eyebrow: "Market window",
     title: "Transfer",
     action: "Make offer",
@@ -54,7 +57,8 @@ window.sections = {
       ["Sale", "Academy ADC", "Zainteresowanie 3 klubów"],
     ],
   },
-  scouting: {
+  scouting: { layout: "scouting" },
+  scoutingOld: {
     eyebrow: "Talent network",
     title: "Scouting",
     action: "Send scout",
