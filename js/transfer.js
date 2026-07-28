@@ -54,14 +54,12 @@ const transferDetails = {
 };
 
 const countryFlags = {
-  PL: ["🇵🇱", "Polska"], GB: ["🇬🇧", "Wielka Brytania"], ES: ["🇪🇸", "Hiszpania"], RO: ["🇷🇴", "Rumunia"],
-  PT: ["🇵🇹", "Portugalia"], SI: ["🇸🇮", "Słowenia"], CZ: ["🇨🇿", "Czechy"], KR: ["🇰🇷", "Korea Południowa"],
-  SK: ["🇸🇰", "Słowacja"], SE: ["🇸🇪", "Szwecja"], HR: ["🇭🇷", "Chorwacja"],
+  PL: "Polska", GB: "Wielka Brytania", ES: "Hiszpania", RO: "Rumunia", PT: "Portugalia", SI: "Słowenia",
+  CZ: "Czechy", KR: "Korea Południowa", SK: "Słowacja", SE: "Szwecja", HR: "Chorwacja",
 };
 const riftCountryCodes = { iBo: "GB" };
 function withCountry(player, countryCode) {
-  const [flag, country] = countryFlags[countryCode] || countryFlags.PL;
-  return { ...player, countryCode, country, flag };
+  return { ...player, countryCode, country: countryFlags[countryCode] || countryFlags.PL, flag: `assets/flags/${countryCode.toLowerCase()}.svg` };
 }
 
 const transferPlayers = Object.entries(riftLegendsRosters).flatMap(([team, roster]) => roster.map((stats) => {
@@ -150,7 +148,7 @@ function renderTransfer() {
   const rows = visiblePlayers.map((player) => {
     const index = transferPlayers.indexOf(player);
     const unavailable = purchasedPlayers.has(index) || !window.clubEconomy.canAfford(player.cost);
-    return `<tr><td><strong>${player.name}</strong></td><td><span class="country-flag" title="${player.country}" aria-label="${player.country}">${player.flag}</span></td><td><strong>${player.position}</strong></td><td>${player.team}</td><td>${player.league}</td><td class="rating-cell">${player.overall}</td><td>${player.macro}</td><td>${player.micro}</td><td>${player.vision}</td><td>${player.roams}</td><td>${player.farming}</td><td>${player.reflex}</td><td><strong>${window.clubEconomy.format(player.cost)}</strong></td><td><button class="upgrade-button transfer-buy" data-buy-player="${index}" ${unavailable ? "disabled" : ""}>${purchasedPlayers.has(index) ? "Kupiony" : "Kup"}</button></td></tr>`;
+    return `<tr><td><strong>${player.name}</strong></td><td><img class="country-flag" src="${player.flag}" title="${player.country}" alt="Flaga: ${player.country}" loading="lazy"></td><td><strong>${player.position}</strong></td><td>${player.team}</td><td>${player.league}</td><td class="rating-cell">${player.overall}</td><td>${player.macro}</td><td>${player.micro}</td><td>${player.vision}</td><td>${player.roams}</td><td>${player.farming}</td><td>${player.reflex}</td><td><strong>${window.clubEconomy.format(player.cost)}</strong></td><td><button class="upgrade-button transfer-buy" data-buy-player="${index}" ${unavailable ? "disabled" : ""}>${purchasedPlayers.has(index) ? "Kupiony" : "Kup"}</button></td></tr>`;
   }).join("");
   return `<div class="management-board transfer-board">
     <header class="transfer-toolbar"><div><p class="eyebrow">Rynek transferowy</p><h2>${transferLeagueFilter === "all" ? "Wszystkie ligi" : transferLeagueFilter}</h2><div class="transfer-meta"><span class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></span><span>${visiblePlayers.length} z ${transferPlayers.length - purchasedPlayers.size} dostępnych zawodników</span></div></div><div class="transfer-filters"><label><span>Szukaj</span><input data-transfer-search value="${transferSearch}" placeholder="Nazwa zawodnika"></label><label><span>Pozycja</span><select data-transfer-position><option value="all">Wszystkie pozycje</option>${positions.map((position) => `<option ${position === transferPositionFilter ? "selected" : ""}>${position}</option>`).join("")}</select></label><label><span>Liga</span><select data-transfer-league><option value="all">Wszystkie ligi</option>${leagues.map((league) => `<option ${league === transferLeagueFilter ? "selected" : ""}>${league}</option>`).join("")}</select></label><label><span>Drużyna</span><select data-transfer-team><option value="all">Wszystkie drużyny</option>${teams.map((team) => `<option ${team === transferTeamFilter ? "selected" : ""}>${team}</option>`).join("")}</select></label></div></header>

@@ -5,7 +5,8 @@ window.clubEconomy = {
       return `€${(amount / 1000000).toFixed(3).replace(/\.?0+$/, "")}M`;
     }
 
-    return `€${(amount / 1000).toFixed(0)}k`;
+    const thousands = amount / 1000;
+    return `€${(Number.isInteger(thousands) ? thousands.toFixed(0) : thousands.toFixed(1))}k`;
   },
   canAfford(cost) {
     return this.budget >= cost;

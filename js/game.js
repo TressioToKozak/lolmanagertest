@@ -36,6 +36,13 @@ window.gameState = {
       this.modules.forEach((handler, name) => handler.set(state?.[name] ?? JSON.parse(JSON.stringify(handler.defaultState))));
     } finally { this.loading = false; }
   },
+  async reset() {
+    this.loading = true;
+    try {
+      this.modules.forEach((handler) => handler.set(JSON.parse(JSON.stringify(handler.defaultState))));
+      await fetch("/api/game-state", { method: "DELETE" });
+    } finally { this.loading = false; }
+  },
 };
 
 window.gameState.register("clock", { get: () => ({ day: window.gameClock.day }), set: (state) => { window.gameClock.day = Number(state.day) || 1; } });

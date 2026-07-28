@@ -76,6 +76,28 @@
   background: rgba(149, 99, 14, 0.16);
 }
 
+:root[data-theme="light"] .finance-kpi,
+:root[data-theme="light"] .management-header,
+:root[data-theme="light"] .match-simulation,
+:root[data-theme="light"] .competition-picker-header,
+:root[data-theme="light"] .gaming-house-summary {
+  border-color: rgba(16, 40, 62, 0.18);
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(214, 226, 236, 0.96), rgba(177, 198, 215, 0.92));
+}
+
+:root[data-theme="light"] .squad-summary p,
+:root[data-theme="light"] .empty-slot p,
+:root[data-theme="light"] .empty-state p,
+:root[data-theme="light"] .transfer-notice,
+:root[data-theme="light"] .finance-kpi small {
+  color: #405971;
+}
+
+:root[data-theme="light"] .mail-item--unread strong {
+  color: #10283e;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -1809,10 +1831,12 @@ body {
 }
 
 .country-flag {
-  display: inline-grid;
-  min-width: 32px;
-  place-items: center;
-  font-size: 1.35rem;
+  display: block;
+  width: 30px;
+  height: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  object-fit: cover;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.28));
 }
 

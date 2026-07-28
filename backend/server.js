@@ -126,6 +126,12 @@ const server = createServer(async (request, response) => {
       database.prepare("INSERT INTO game_saves (user_id, state_json, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) ON CONFLICT(user_id) DO UPDATE SET state_json = excluded.state_json, updated_at = CURRENT_TIMESTAMP").run(user.id, serialized);
       return json(response, 200, { ok: true });
     }
+    if (request.url === "/api/game-state" && request.method === "DELETE") {
+      const user = getUser(request);
+      if (!user) return json(response, 401, { error: "Musisz być zalogowany." });
+      database.prepare("DELETE FROM game_saves WHERE user_id = ?").run(user.id);
+      return json(response, 200, { ok: true });
+    }
     if (request.url.startsWith("/api/")) return json(response, 404, { error: "Nieznany endpoint API." });
     if (request.method !== "GET") return json(response, 405, { error: "Method not allowed" });
     const pathname = new URL(request.url, "http://localhost").pathname;
