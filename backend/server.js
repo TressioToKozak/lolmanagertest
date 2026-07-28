@@ -7,6 +7,7 @@ const { DatabaseSync } = require("node:sqlite");
 const root = join(__dirname, "..");
 const database = new DatabaseSync(join(__dirname, "data", "manager.db"));
 database.exec(`
+  PRAGMA foreign_keys = ON;
   PRAGMA journal_mode = WAL;
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
@@ -82,6 +83,26 @@ const server = createServer(async (request, response) => {
     if (request.url === "/api/logout" && request.method === "POST") {
       const token = getToken(request);
       if (token) database.prepare("DELETE FROM sessions WHERE token = ?").run(token);
+      return json(response, 200, { ok: true }, { "Set-Cookie": "session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0" });
+    }
+    if (request.url === "/api/account/password" && request.method === "PUT") {
+      const user = getUser(request);
+      if (!user) return json(response, 401, { error: "Musisz być zalogowany." });
+      const { currentPassword = "", newPassword = "" } = await readJson(request);
+      const account = database.prepare("SELECT password_hash FROM users WHERE id = ?").get(user.id);
+      if (!verifyPassword(currentPassword, account.password_hash)) return json(response, 400, { error: "Aktualne hasło jest nieprawidłowe." });
+      if (newPassword.length < 8) return json(response, 400, { error: "Nowe hasło musi mieć minimum 8 znaków." });
+      database.prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(hashPassword(newPassword), user.id);
+      database.prepare("DELETE FROM sessions WHERE user_id = ? AND token != ?").run(user.id, getToken(request));
+      return json(response, 200, { ok: true });
+    }
+    if (request.url === "/api/account" && request.method === "DELETE") {
+      const user = getUser(request);
+      if (!user) return json(response, 401, { error: "Musisz być zalogowany." });
+      const { password = "" } = await readJson(request);
+      const account = database.prepare("SELECT password_hash FROM users WHERE id = ?").get(user.id);
+      if (!verifyPassword(password, account.password_hash)) return json(response, 400, { error: "Hasło jest nieprawidłowe." });
+      database.prepare("DELETE FROM users WHERE id = ?").run(user.id);
       return json(response, 200, { ok: true }, { "Set-Cookie": "session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0" });
     }
     if (request.url.startsWith("/api/")) return json(response, 404, { error: "Nieznany endpoint API." });

@@ -114,6 +114,7 @@ window.sections = {
     ],
   },
   sponsors: { layout: "sponsors" },
+  settings: { layout: "settings" },
   sponsorsOld: {
     eyebrow: "Commercial deals",
     title: "Sponsors",

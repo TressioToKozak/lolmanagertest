@@ -17,6 +17,7 @@ function refreshMailboxBadge() {
 
 window.subscribeMailbox(refreshMailboxBadge);
 refreshMailboxBadge();
+window.applyPreferences();
 
 function activateNavItem(activeItem) {
   navItems.forEach((item) => item.classList.remove("main-nav__item--active"));
