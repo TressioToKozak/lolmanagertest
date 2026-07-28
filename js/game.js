@@ -50,6 +50,65 @@ window.gameState.register("clock", { get: () => ({ day: window.gameClock.day }),
 window.matchCenter = {
   activeMatch: null,
   lastMatch: null,
+  scenarios: {
+    opening: [
+      { id: "invade", title: "Rywal grupuje się w naszej dżungli", minute: 2, options: [
+        { id: "counter", title: "Kontr-invade górą", note: "Odbij tempo po przeciwnej stronie mapy", risk: "średnie", modifier: 2, success: 2, failure: -1, text: ["Czytamy ruch rywala i zabieramy jego górne obozy.", "Rywal przewiduje kontrę i nasz jungler traci tempo."] },
+        { id: "collapse", title: "Zamknij pułapkę", note: "Pięciu graczy walczy o pierwszą krew", risk: "wysokie", modifier: -7, success: 3, failure: -2, kills: 2, text: ["Pułapka działa — zdobywamy pierwszą krew i dwa flashe.", "Spóźniona rotacja kończy się pierwszą krwią dla rywala."] },
+        { id: "cover", title: "Broń wejść", note: "Bezpieczny start bez utraty zasobów", risk: "niskie", modifier: 10, success: 1, failure: 0, text: ["Zachowujemy zimną krew i rozpoczynamy linie zgodnie z planem.", "Oddajemy jeden obóz, ale linie pozostają bezpieczne."] },
+      ]},
+      { id: "laneswap", title: "Przeciwnik rozpoczyna lane swap", minute: 3, options: [
+        { id: "mirror", title: "Odpowiedz zmianą linii", note: "Utrzymaj równy układ mapy", risk: "niskie", modifier: 8, success: 1, failure: -1, text: ["Szybka odpowiedź neutralizuje plan przeciwnika.", "Zmiana trwa za długo i tracimy dwie fale stworów."] },
+        { id: "dive", title: "Wymuś dive na topie", note: "Przewaga liczebna za cenę ryzyka", risk: "wysokie", modifier: -9, success: 3, failure: -3, kills: 2, tower: 1, text: ["Perfekcyjny dive daje zabójstwa i pierwszą wieżę.", "Teleport rywala odwraca dive — tracimy dwóch graczy."] },
+        { id: "freeze", title: "Zamroź dolną aleję", note: "Inwestycja w farmę naszego carry", risk: "średnie", modifier: 4, success: 2, failure: -1, text: ["Carry buduje dużą przewagę w stworach.", "Rywal łamie freeze i odzyskuje kontrolę rzeki."] },
+      ]},
+    ],
+    early: [
+      { id: "dragon", title: "Pierwszy smok pojawia się na mapie", minute: 9, objective: "smok", options: [
+        { id: "fight", title: "Rozpocznij walkę", note: "Pełne 5v5 o trwałe wzmocnienie", risk: "wysokie", modifier: -5, success: 3, failure: -3, kills: 3, objective: "dragon", text: ["Wygrywamy walkę w rzece i zabezpieczamy smoka.", "Rywal kontruje wejście i zabiera smoka po walce."] },
+        { id: "trade", title: "Wymień cel na Herolda", note: "Presja wieżą po drugiej stronie mapy", risk: "niskie", modifier: 9, success: 2, failure: 0, tower: 1, objective: "herald", text: ["Herold taranuje wieżę i daje nam zastrzyk złota.", "Zdobywamy Herolda, ale rywal dobrze broni wieży."] },
+        { id: "steal", title: "Spróbuj ukraść smoka", note: "Jungler wchodzi sam, reszta farmi", risk: "bardzo wysokie", modifier: -16, success: 4, failure: -2, objective: "dragon", text: ["Niesamowity Smite! Kradniemy smoka i uciekamy.", "Próba kradzieży nie wychodzi, jungler ginie w pitcie."] },
+      ]},
+      { id: "botpressure", title: "Botlane rywala gra bez flashów", minute: 11, options: [
+        { id: "gank", title: "Zagraj dive 4 na 2", note: "Przenieś mid i jungle na dół", risk: "średnie", modifier: 1, success: 3, failure: -2, kills: 2, tower: 1, text: ["Czysty dive otwiera dolną aleję.", "Rywal kupuje czas, a jego teleport odwraca akcję."] },
+        { id: "plates", title: "Graj o płyty na midzie", note: "Pewne złoto bez dużej walki", risk: "niskie", modifier: 11, success: 1, failure: 0, text: ["Zgarniamy płyty i spokojnie powiększamy zasoby.", "Presja daje mniej złota, niż zakładaliśmy."] },
+        { id: "vision", title: "Odkrój ich od dżungli", note: "Wizja przygotuje następną akcję", risk: "średnie", modifier: 5, success: 2, failure: -1, text: ["Głęboka wizja pozwala złapać supporta rywali.", "Ward zostaje wykryty i tracimy kontrolę rzeki."] },
+      ]},
+    ],
+    middle: [
+      { id: "herald", title: "Herold otwiera drogę do środkowej wieży", minute: 17, options: [
+        { id: "siege", title: "Zgrupuj się na midzie", note: "Oblężenie i walka o wieżę", risk: "średnie", modifier: 1, success: 3, failure: -2, tower: 1, kills: 2, text: ["Herold uderza, a my wygrywamy walkę pod wieżą.", "Rywal czyści Herolda i karze nas za zbyt długie oblężenie."] },
+        { id: "side", title: "1-3-1 na bocznych liniach", note: "Rozciągnij obronę przeciwnika", risk: "średnie", modifier: 4, comfort: true, success: 2, failure: -2, tower: 1, text: ["Boczne linie pękają pod jednoczesną presją.", "Nasz splitpusher zostaje złapany bez teleportu."] },
+        { id: "ambush", title: "Oddaj Herolda i zastaw pułapkę", note: "Poluj na rotujących graczy", risk: "wysokie", modifier: -3, success: 3, failure: -2, kills: 3, text: ["Rywal wchodzi bez wizji — pułapka daje trzy zabójstwa.", "Przeciwnik sprawdza krzaki i odwraca zasadzkę."] },
+      ]},
+      { id: "soul", title: "Walka o punkt duszy smoka", minute: 20, objective: "smok", options: [
+        { id: "setup", title: "Ustaw wizję 60 sekund wcześniej", note: "Kontroluj wejścia do rzeki", risk: "niskie", modifier: 10, success: 2, failure: -1, objective: "dragon", text: ["Pełna kontrola rzeki daje nam smoka bez strat.", "Rywal obchodzi wizję i zmusza nas do odwrotu."] },
+        { id: "rush", title: "Szybko zabij smoka", note: "Cel zanim rywal zdąży się zebrać", risk: "wysokie", modifier: -7, success: 4, failure: -3, objective: "dragon", text: ["Tempo zaskakuje rywala — smok jest nasz.", "Brakuje obrażeń; rywal wchodzi do pitu i wygrywa walkę."] },
+        { id: "crossmap", title: "Atakuj bazę górą", note: "Oddaj smoka za wieże i mapę", risk: "średnie", modifier: 4, success: 3, failure: -1, tower: 2, text: ["Cross-map działa: bierzemy dwie wieże i inhibitor.", "Rotacja jest spóźniona i zyskujemy tylko jedną falę."] },
+      ]},
+    ],
+    late: [
+      { id: "baron", title: "Baron jest odsłonięty, rywal nie ma wizji", minute: 27, objective: "baron", options: [
+        { id: "rush", title: "Rozpocznij Barona", note: "Szybki cel, ale ryzyko kradzieży", risk: "wysokie", modifier: -10, success: 4, failure: -4, objective: "baron", text: ["Zabezpieczamy Barona tuż przed wejściem rywala.", "Baron zostaje skradziony, a pit zamienia się w pułapkę."] },
+        { id: "bait", title: "Zgaś wizję i czekaj", note: "Zmuś przeciwnika do wejścia w pułapkę", risk: "średnie", modifier: 5, success: 3, failure: -2, kills: 3, text: ["Łapiemy trzech graczy i bierzemy Barona po walce.", "Rywal nie daje się sprowokować i odzyskuje teren."] },
+        { id: "turn", title: "Zacznij cel i odwróć się do walki", note: "Skoordynowany engage zamiast Smite'a", risk: "wysokie", modifier: -2, success: 4, failure: -3, kills: 4, text: ["Idealny zwrot od Barona kończy się ace'em.", "Dzielimy obrażenia między cel i rywali, przegrywając starcie."] },
+        { id: "scale", title: "Reset i zakup przedmiotów", note: "Nie podejmuj walki bez przewagi", risk: "niskie", modifier: 12, success: 1, failure: 0, text: ["Wracamy na mapę z przewagą przedmiotów.", "Rywal wykorzystuje reset, by przejąć wizję."] },
+      ]},
+      { id: "elder", title: "Starszy Smok rozstrzygnie późną grę", minute: 31, objective: "elder", options: [
+        { id: "front", title: "Walcz od frontu", note: "Chroń carry i graj standardowe 5v5", risk: "średnie", modifier: 2, success: 4, failure: -4, kills: 4, objective: "elder", text: ["Carry pozostaje nietknięty — wygrywamy walkę o Starszego.", "Rywal przebija pierwszą linię i zabiera wzmocnienie."] },
+        { id: "flank", title: "Szukaj głębokiej flanki", note: "Ryzykowne wejście prosto na carry", risk: "wysokie", modifier: -7, comfort: true, success: 5, failure: -4, kills: 4, objective: "elder", text: ["Flanka rozrywa ustawienie rywala i Starszy jest nasz.", "Flanka zostaje zauważona, zanim drużyna może dołączyć."] },
+        { id: "backdoor", title: "Wyślij gracza do backdooru", note: "Wyścig Starszy Smok kontra Nexus", risk: "bardzo wysokie", modifier: -13, success: 6, failure: -5, tower: 2, text: ["Rywal reaguje za późno — otwieramy Nexus.", "Teleport zostaje przerwany, a drużyna przegrywa 4 na 5."] },
+      ]},
+    ],
+    finish: [
+      { id: "nexus", title: "Ostatnia decyzja — baza rywala jest otwarta", minute: 36, final: true, options: [
+        { id: "teamfight", title: "Wymuś teamfight 5v5", note: "Postaw wszystko na mechanikę drużyny", risk: "średnie", modifier: 0, success: 2, failure: -2 },
+        { id: "splitpush", title: "Zagraj splitpush", note: "Presja na dwóch liniach i teleport", risk: "wysokie", modifier: 3, comfort: true, success: 3, failure: -3 },
+        { id: "pick", title: "Poluj na pojedynczy cel", note: "Wizja i cierpliwość zamiast pełnej walki", risk: "niskie", modifier: 7, success: 2, failure: -2 },
+        { id: "defend", title: "Broń i kontratakuj", note: "Najlepsze, gdy jesteśmy z tyłu", risk: "średnie", modifier: 0, comeback: true, success: 3, failure: -3 },
+      ]},
+    ],
+  },
   start({ competition, opponent, opponentStrength, day, section, onComplete }) {
     if (this.activeMatch) return;
     const profile = window.getSquadMatchProfile();
@@ -57,10 +116,12 @@ window.matchCenter = {
     const ourStrength = profile.strength + staffBonus;
     const winChance = Math.max(18, Math.min(82, Math.round(50 + (ourStrength - opponentStrength) * 2.2)));
     this.activeMatch = {
-      competition, opponent, day, section, onComplete, stage: "dragon", advantage: 0, winChance,
+      competition, opponent, day, section, onComplete, stage: "opening", stageIndex: 0, advantage: 0, winChance,
       ourStrength: Math.round(ourStrength), opponentStrength, comfort: profile.comfort,
       ourKills: 1 + (this.seed(`${competition}-${day}-us`) % 4), opponentKills: 1 + (this.seed(`${opponent}-${day}`) % 4),
-      events: [[5, `Początek meczu. Nasza siła: ${Math.round(ourStrength)}, rywal: ${opponentStrength}, komfort ról: ${profile.comfort}%.`]],
+      ourTowers: 0, opponentTowers: 0, ourObjectives: [], opponentObjectives: [],
+      scenarioIndexes: ["opening", "early", "middle", "late"].map((phase, index) => this.seed(`${competition}-${opponent}-${day}-${phase}`) % this.scenarios[phase].length),
+      events: [{ minute: 0, type: "info", description: `Wchodzimy na Summoner's Rift. Siła ${Math.round(ourStrength)} vs ${opponentStrength}, komfort ról ${profile.comfort}%.` }],
     };
   },
   seed(value) {
@@ -73,70 +134,61 @@ window.matchCenter = {
   choose(choice) {
     const match = this.activeMatch;
     if (!match) return;
-    if (match.stage === "dragon") {
-      if (choice === "fight") {
-        const success = this.succeeds(match, "dragon", -5);
-        match.advantage += success ? 2 : -2;
-        match.ourKills += success ? 3 : 1;
-        match.opponentKills += success ? 1 : 3;
-        match.events.push([10, success ? "Wygrywamy walkę i zdobywamy smoka. Drużyna otrzymuje trwałe wzmocnienie." : `${match.opponent} kontruje nas przy smoku i zabiera cel.`]);
-      } else {
-        match.advantage -= 1;
-        match.events.push([10, `Oddajemy smoka bez walki i wymieniamy go na farmę oraz bezpieczne wieże.`]);
-      }
-      match.stage = "baron";
+    const scenario = this.currentScenario(match);
+    const option = scenario.options.find((item) => item.id === choice);
+    if (!option) return;
+    let modifier = option.modifier || 0;
+    if (option.comfort) modifier += match.comfort >= 80 ? 5 : -5;
+    if (option.comeback) modifier += match.advantage < 0 ? 9 : -4;
+    const success = this.succeeds(match, `${match.stageIndex}-${scenario.id}-${choice}`, modifier);
+    match.advantage += success ? option.success : option.failure;
+    const kills = option.kills || (scenario.final ? 4 : 1);
+    match.ourKills += success ? kills : Math.min(1, kills);
+    match.opponentKills += success ? Math.min(1, kills) : kills;
+    if (option.tower) {
+      if (success) match.ourTowers += option.tower;
+      else match.opponentTowers += option.tower;
+    }
+    if (option.objective) (success ? match.ourObjectives : match.opponentObjectives).push(option.objective);
+    const ambient = this.ambientEvent(match, scenario.minute - 2);
+    if (ambient) match.events.push(ambient);
+    if (!scenario.final) {
+      match.events.push({ minute: scenario.minute, type: success ? "success" : "danger", description: option.text[success ? 0 : 1] });
+      match.stageIndex += 1;
+      match.stage = ["opening", "early", "middle", "late", "finish"][match.stageIndex];
       return;
     }
-    if (match.stage === "baron") {
-      if (choice === "baron") {
-        const success = this.succeeds(match, "baron", -12);
-        match.advantage += success ? 3 : -3;
-        match.ourKills += success ? 2 : 0;
-        match.opponentKills += success ? 0 : 3;
-        match.events.push([23, success ? "Kontrolujemy wizję, zabezpieczamy Barona i rozpoczynamy oblężenie." : `${match.opponent} kradnie Barona i wygrywa walkę w pitcie.`]);
-      } else if (choice === "bait") {
-        const success = this.succeeds(match, "bait", 4);
-        match.advantage += success ? 2 : -1;
-        match.ourKills += success ? 2 : 0;
-        match.opponentKills += success ? 0 : 1;
-        match.events.push([23, success ? "Udana pułapka przy Baronie daje nam dwa zabójstwa." : "Rywal rozpoznaje pułapkę, więc wycofujemy się bez Barona."]);
-      } else {
-        match.advantage += 1;
-        match.events.push([23, "Nie ryzykujemy Barona. Czyścimy wizję i skalujemy kompozycję."]);
-      }
-      match.stage = "nexus";
-      return;
-    }
-    const modifiers = { teamfight: 1, splitpush: match.advantage >= 0 ? 2 : -1, defend: match.advantage < 0 ? 2 : 0 };
-    match.advantage += modifiers[choice] ?? 0;
-    const finalModifier = { teamfight: 0, splitpush: match.comfort >= 80 ? 5 : -6, defend: match.advantage < 0 ? 8 : -3 };
-    const won = this.succeeds(match, `final-${choice}`, finalModifier[choice] || 0);
-    match.ourKills += won ? 4 : 1;
-    match.opponentKills += won ? 1 : 4;
-    const finalTexts = {
-      teamfight: won ? "Wygrywamy decydujący teamfight i niszczymy Nexus." : "Przegrywamy walkę 5 na 5, a rywal kończy mecz.",
-      splitpush: won ? "Splitpush zmusza rywala do podziału, dzięki czemu niszczymy Nexus." : "Rywal wymusza walkę 5 na 4 i kończy grę przed naszym splitpushem.",
-      defend: won ? "Skuteczna obrona wyczerpuje rywala. Kontratak kończy mecz." : "Nie utrzymujemy bazy i nasz Nexus upada.",
-    };
-    match.events.push([34 + (match.day % 5), finalTexts[choice]]);
+    const won = success;
+    match.events.push({ minute: scenario.minute + (match.day % 4), type: won ? "success" : "danger", description: won ? "Wygrywamy decydującą akcję i niszczymy Nexus!" : `${match.opponent} wygrywa decydującą akcję i niszczy nasz Nexus.` });
     this.lastMatch = { ...match, won, stage: "finished" };
     this.activeMatch = null;
     match.onComplete(won, this.lastMatch);
   },
+  currentScenario(match) {
+    if (match.stage === "finish") return this.scenarios.finish[0];
+    return this.scenarios[match.stage][match.scenarioIndexes[match.stageIndex]];
+  },
+  ambientEvent(match, minute) {
+    const pool = match.advantage >= 0
+      ? ["Nasze linie przepychają fale i otwierają drogę do rzeki.", "Support usuwa wizję rywala; przejmujemy tempo mapy.", "Carry kończy ważny przedmiot przed przeciwnikiem."]
+      : ["Rywal naciska boczne linie i zmusza nas do reakcji.", "Tracimy dwa wardy w dżungli, mapa robi się ciemna.", "Przeciwnik wraca na mapę z przewagą przedmiotów."];
+    const description = pool[this.seed(`${match.opponent}-${match.day}-${minute}`) % pool.length];
+    return { minute: Math.max(1, minute), type: "neutral", description };
+  },
   render(competition) {
     const match = this.activeMatch?.competition === competition ? this.activeMatch : this.lastMatch?.competition === competition ? this.lastMatch : null;
     if (!match) return "";
-    const events = match.events.map(([minute, description]) => `<li><strong>${minute}:00</strong><span>${description}</span></li>`).join("");
-    const decisions = match.stage === "dragon"
-      ? '<div class="match-decisions"><button data-match-choice="fight">Walcz o smoka<small>Ryzyko walki 5v5, ale trwałe wzmocnienie</small></button><button data-match-choice="retreat">Oddaj smoka<small>Bezpieczna farma i brak ryzyka śmierci</small></button></div>'
-      : match.stage === "baron"
-        ? '<div class="match-decisions"><button data-match-choice="baron">Rozpocznij Barona<small>Duża nagroda i duże ryzyko kradzieży</small></button><button data-match-choice="bait">Zastaw pułapkę<small>Wykorzystaj kontrolę wizji</small></button><button data-match-choice="scale">Wycofaj się<small>Skaluj i broń wizji</small></button></div>'
-        : match.stage === "nexus"
-          ? '<div class="match-decisions"><button data-match-choice="teamfight">Wymuś teamfight<small>Pełna walka 5v5</small></button><button data-match-choice="splitpush">Zagraj splitpush<small>Wywieraj presję na dwóch liniach</small></button><button data-match-choice="defend">Broń bazy<small>Szukaj błędu przeciwnika</small></button></div>'
-          : '<div class="match-decisions match-decisions--finished"><button data-dismiss-match="true">Zamknij relację<small>Wróć do tabeli i terminarza</small></button></div>';
-    const state = this.activeMatch ? `Decyzja: ${match.stage === "dragon" ? "smok" : match.stage === "baron" ? "Baron" : "końcówka"}` : match.won ? "ZWYCIĘSTWO" : "PORAŻKA";
+    const events = match.events.map((event) => { const normalized = Array.isArray(event) ? { minute: event[0], description: event[1], type: "neutral" } : event; return `<li class="match-event--${normalized.type}"><strong>${normalized.minute}:00</strong><span>${normalized.description}</span></li>`; }).reverse().join("");
+    const scenario = this.activeMatch ? this.currentScenario(match) : null;
+    const decisions = scenario
+      ? `<div class="match-call"><span>SYTUACJA NA MAPIE</span><h5>${scenario.title}</h5><p>Wybierz reakcję sztabu — poziom ryzyka wpływa na szansę powodzenia.</p></div><div class="match-decisions">${scenario.options.map((option) => `<button data-match-choice="${option.id}"><span>${option.title}<em>${option.risk}</em></span><small>${option.note}</small></button>`).join("")}</div>`
+      : '<div class="match-decisions match-decisions--finished"><button data-dismiss-match="true"><span>Zamknij relację</span><small>Wróć do tabeli i terminarza</small></button></div>';
+    const stageIndex = Number(match.stageIndex) || 0;
+    const state = this.activeMatch ? `${["OTWARCIE", "WCZESNA GRA", "ŚRODEK GRY", "PÓŹNA GRA", "FINAŁ"][stageIndex]} • ${scenario.minute}:00` : match.won ? "ZWYCIĘSTWO" : "PORAŻKA";
     const currentChance = Math.max(5, Math.min(95, match.winChance + match.advantage * 7));
-    return `<section class="match-simulation match-simulation--${this.activeMatch ? "live" : "finished"}"><div class="section-heading"><span>Mecz na żywo • Dzień ${match.day}</span><h4>${match.competition}</h4></div><div class="match-odds"><span>Szansa na zwycięstwo <strong>${currentChance}%</strong></span><span>Siła ${match.ourStrength} vs ${match.opponentStrength}</span><span>Komfort ról ${match.comfort}%</span></div><div class="match-score"><div><span>Nasz zespół</span><strong>${match.ourKills}</strong></div><b>${state}</b><div><span>${match.opponent}</span><strong>${match.opponentKills}</strong></div></div>${decisions}<ol class="match-timeline">${events}</ol></section>`;
+    const goldLead = match.advantage * 850;
+    const objectiveIcons = (items) => items.length ? items.map((item) => `<i title="${item}">${item === "dragon" ? "◆" : item === "baron" ? "⬢" : item === "elder" ? "✦" : "◈"}</i>`).join("") : "—";
+    return `<section class="match-simulation match-simulation--${this.activeMatch ? "live" : "finished"}"><div class="match-livebar"><span><i></i> ${this.activeMatch ? "LIVE" : "KONIEC"} • Dzień ${match.day}</span><b>${state}</b><strong>${currentChance}% szans</strong></div><div class="section-heading"><span>${match.competition}</span><h4>Nasz zespół vs ${match.opponent}</h4></div><div class="match-arena"><div class="match-map" aria-label="Taktyczna mapa meczu"><span class="map-lane map-lane--top"></span><span class="map-lane map-lane--mid"></span><span class="map-lane map-lane--bot"></span><i class="map-base map-base--us"></i><i class="map-base map-base--them"></i><b class="map-unit map-unit--us" style="--progress:${24 + stageIndex * 11 + Math.max(-8, match.advantage * 2)}%">●</b><b class="map-unit map-unit--them" style="--progress:${76 - stageIndex * 8 - Math.min(8, match.advantage * 2)}%">●</b><span class="map-objective">${scenario?.objective === "baron" ? "⬢" : scenario?.objective === "elder" ? "✦" : "◆"}</span></div><div class="match-stats"><div><span>Zabójstwa</span><strong>${match.ourKills} <small>—</small> ${match.opponentKills}</strong></div><div><span>Wieże</span><strong>${match.ourTowers || 0} <small>—</small> ${match.opponentTowers || 0}</strong></div><div><span>Przewaga złota</span><strong class="${goldLead >= 0 ? "positive" : "negative"}">${goldLead >= 0 ? "+" : ""}${goldLead.toLocaleString("pl-PL")}</strong></div><div><span>Cele</span><strong class="match-objectives">${objectiveIcons(match.ourObjectives || [])} <small>vs</small> ${objectiveIcons(match.opponentObjectives || [])}</strong></div></div></div>${decisions}<div class="match-feed"><h5>Relacja na żywo</h5><ol class="match-timeline">${events}</ol></div></section>`;
   },
   setup(onChange) {
     document.querySelectorAll("[data-match-choice]").forEach((button) => button.addEventListener("click", () => {
