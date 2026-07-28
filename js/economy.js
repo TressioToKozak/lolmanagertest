@@ -5,6 +5,7 @@ window.clubEconomy = {
       return `€${(amount / 1000000).toFixed(3).replace(/\.?0+$/, "")}M`;
     }
 
+    if (Math.abs(amount) < 1000) return `€${amount}`;
     const thousands = amount / 1000;
     return `€${(Number.isInteger(thousands) ? thousands.toFixed(0) : thousands.toFixed(1))}k`;
   },

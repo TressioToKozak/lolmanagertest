@@ -22,6 +22,7 @@ let gameLanguage = localStorage.getItem("manager-language") || "pl";
 let gameTheme = localStorage.getItem("manager-theme") || "dark";
 let settingsMessage = "";
 let settingsError = false;
+let showResetConfirmation = false;
 
 function t(key) { return translations[gameLanguage]?.[key] || translations.pl[key] || key; }
 function applyPreferences() {
@@ -36,7 +37,8 @@ function applyPreferences() {
 
 function renderSettings() {
   const option = (value, label, current) => `<option value="${value}" ${value === current ? "selected" : ""}>${label}</option>`;
-  return `<div class="management-board settings-board"><header class="management-header"><div><span>${t("subtitle")}</span><h3>${t("title")}</h3><p>${t("description")}</p></div></header><div class="settings-grid"><section class="settings-panel"><div class="section-heading"><span>${t("appearance")}</span><h4>${t("appearance")}</h4></div><label><span>${t("theme")}</span><select data-setting-theme>${option("dark", t("dark"), gameTheme)}${option("light", t("light"), gameTheme)}</select></label><label><span>${t("language")}</span><select data-setting-language>${option("pl", t("polish"), gameLanguage)}${option("en", t("english"), gameLanguage)}</select></label></section><section class="settings-panel"><div class="section-heading"><span>${t("security")}</span><h4>${t("passwordTitle")}</h4></div><form data-password-form><label><span>${t("currentPassword")}</span><input type="password" name="currentPassword" required></label><label><span>${t("newPassword")}</span><input type="password" name="newPassword" minlength="8" required></label><button class="upgrade-button">${t("changePassword")}</button></form></section><section class="settings-panel settings-panel--reset"><div class="section-heading"><span>${t("reset")}</span><h4>${t("resetTitle")}</h4></div><p>${t("resetDescription")}</p><button class="reset-button" data-reset-club>${t("resetClub")}</button></section><section class="settings-panel settings-panel--danger"><div class="section-heading"><span>${t("danger")}</span><h4>${t("deleteTitle")}</h4></div><p>${t("deleteDescription")}</p><form data-delete-form><label><span>${t("confirmPassword")}</span><input type="password" name="password" required></label><button class="danger-button">${t("deleteAccount")}</button></form></section></div><p class="settings-message ${settingsError ? "settings-message--error" : ""}" role="status">${settingsMessage}</p></div>`;
+  const resetModal = showResetConfirmation ? `<div class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="reset-title"><div class="settings-modal__card"><span>${t("reset")}</span><h3 id="reset-title">${t("resetTitle")}</h3><p>${t("resetConfirm")}</p><div><button class="reset-button" data-confirm-reset>${t("resetClub")}</button><button class="modal-cancel" data-cancel-reset>${gameLanguage === "pl" ? "Anuluj" : "Cancel"}</button></div></div></div>` : "";
+  return `<div class="management-board settings-board"><header class="management-header"><div><span>${t("subtitle")}</span><h3>${t("title")}</h3><p>${t("description")}</p></div></header><div class="settings-grid"><section class="settings-panel"><div class="section-heading"><span>${t("appearance")}</span><h4>${t("appearance")}</h4></div><label><span>${t("theme")}</span><select data-setting-theme>${option("dark", t("dark"), gameTheme)}${option("light", t("light"), gameTheme)}</select></label><label><span>${t("language")}</span><select data-setting-language>${option("pl", t("polish"), gameLanguage)}${option("en", t("english"), gameLanguage)}</select></label></section><section class="settings-panel"><div class="section-heading"><span>${t("security")}</span><h4>${t("passwordTitle")}</h4></div><form data-password-form><label><span>${t("currentPassword")}</span><input type="password" name="currentPassword" required></label><label><span>${t("newPassword")}</span><input type="password" name="newPassword" minlength="8" required></label><button class="upgrade-button">${t("changePassword")}</button></form></section><section class="settings-panel settings-panel--reset"><div class="section-heading"><span>${t("reset")}</span><h4>${t("resetTitle")}</h4></div><p>${t("resetDescription")}</p><button class="reset-button" data-reset-club>${t("resetClub")}</button></section><section class="settings-panel settings-panel--danger"><div class="section-heading"><span>${t("danger")}</span><h4>${t("deleteTitle")}</h4></div><p>${t("deleteDescription")}</p><form data-delete-form><label><span>${t("confirmPassword")}</span><input type="password" name="password" required></label><button class="danger-button">${t("deleteAccount")}</button></form></section></div><p class="settings-message ${settingsError ? "settings-message--error" : ""}" role="status">${settingsMessage}</p>${resetModal}</div>`;
 }
 
 async function accountRequest(url, options) {
@@ -56,8 +58,11 @@ function setupSettings(onChange) {
     onChange();
   });
   document.querySelector("[data-reset-club]")?.addEventListener("click", async () => {
-    if (!confirm(t("resetConfirm"))) return;
-    await window.gameState.reset(); settingsMessage = t("clubReset"); settingsError = false; window.refreshActiveSection();
+    showResetConfirmation = true; onChange();
+  });
+  document.querySelector("[data-cancel-reset]")?.addEventListener("click", () => { showResetConfirmation = false; onChange(); });
+  document.querySelector("[data-confirm-reset]")?.addEventListener("click", async () => {
+    await window.gameState.reset(); showResetConfirmation = false; settingsMessage = t("clubReset"); settingsError = false; window.refreshActiveSection();
   });
   document.querySelector("[data-delete-form]")?.addEventListener("submit", async (event) => {
     event.preventDefault(); if (!confirm(t("deleteConfirm"))) return;

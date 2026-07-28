@@ -16,7 +16,7 @@ function createLeagueSeason(league) {
     losses: index % 3 === 2 ? 1 : index % 3,
   }));
   teams[0] = { name: "Nasz zespół", played: 0, wins: 0, losses: 0 };
-  return { teams, opponentIndex: 1, nextMatchDay: window.gameClock.day + 3, matches: [] };
+  return { teams, opponentIndex: 1, nextMatchDay: window.gameClock.day + 3, matches: [], finished: false };
 }
 
 function getLeagueStandings() {
@@ -36,11 +36,13 @@ function renderLeagueTable(league) {
   const matchRows = leagueSeason.matches.length
     ? leagueSeason.matches.map((match) => `<tr><td>Dzień ${match.day}</td><td>${match.opponent}</td><td><strong>${match.score}</strong></td><td>${match.result}</td></tr>`).join("")
     : '<tr><td colspan="4">Pierwszy mecz jeszcze się nie odbył.</td></tr>';
-  return `<section class="competition-table"><div class="section-heading"><span>Aktywna liga • ${league.teamCount} drużyn</span><h4>${league.name}</h4></div><div class="tournament-next"><span>Następny mecz ligowy</span><strong>${matchDate} kontra ${opponent.name}</strong><small>Dzień ${leagueSeason.nextMatchDay} • BO1</small></div>${window.matchCenter.render(league.name)}<h4 class="table-title">Tabela ligowa</h4><table class="finance-table league-standings"><thead><tr><th>#</th><th>Drużyna</th><th>M</th><th>W</th><th>P</th><th>PKT</th></tr></thead><tbody>${rows}</tbody></table><h4 class="table-title">Mecze naszego zespołu</h4><table class="finance-table"><thead><tr><th>Dzień</th><th>Rywal</th><th>Wynik</th><th>Rezultat</th></tr></thead><tbody>${matchRows}</tbody></table></section>`;
+  const nextMatchPanel = leagueSeason.finished ? `<div class="tournament-next"><span>Sezon zakończony</span><strong>Rozegrano wszystkie mecze</strong><button class="upgrade-button" data-close-league>Zakończ sezon</button></div>` : `<div class="tournament-next"><span>Następny mecz ligowy</span><strong>${matchDate} kontra ${opponent.name}</strong><small>Dzień ${leagueSeason.nextMatchDay} • BO1</small></div>`;
+  return `<section class="competition-table"><div class="section-heading"><span>Aktywna liga • ${league.teamCount} drużyn</span><h4>${league.name}</h4></div>${nextMatchPanel}${window.matchCenter.render(league.name)}<h4 class="table-title">Tabela ligowa</h4><table class="finance-table league-standings"><thead><tr><th>#</th><th>Drużyna</th><th>M</th><th>W</th><th>P</th><th>PKT</th></tr></thead><tbody>${rows}</tbody></table><h4 class="table-title">Mecze naszego zespołu</h4><table class="finance-table"><thead><tr><th>Dzień</th><th>Rywal</th><th>Wynik</th><th>Rezultat</th></tr></thead><tbody>${matchRows}</tbody></table></section>`;
 }
 
 function renderLeagues() {
-  const cards = leagues.map((league, index) => {
+  const visibleLeagues = activeLeagueIndex === null || leagueSeason?.finished ? leagues.map((league, index) => [league, index]) : [[leagues[activeLeagueIndex], activeLeagueIndex]];
+  const cards = visibleLeagues.map(([league, index]) => {
     const isActive = activeLeagueIndex === index;
     const unavailable = activeLeagueIndex !== null || !window.clubEconomy.canAfford(league.entryFee);
     return `<article class="market-card competition-card ${isActive ? "market-card--active" : ""}"><div class="competition-card__top"><span>${league.tier}</span><b>${league.teamCount} drużyn</b></div><strong>${league.name}</strong><p>${league.region}</p><div class="competition-card__facts"><small>Nagroda<strong>${window.clubEconomy.format(league.prize)}</strong></small><small>Wpisowe<strong>${league.entryFee ? window.clubEconomy.format(league.entryFee) : "Darmowe"}</strong></small></div><button class="upgrade-button" data-join-league="${index}" ${unavailable ? "disabled" : ""}>${isActive ? "Gramy" : "Dołącz do ligi"}</button></article>`;
@@ -58,6 +60,7 @@ function setupLeagues(onChange) {
       onChange();
     }
   }));
+  document.querySelector("[data-close-league]")?.addEventListener("click", () => { activeLeagueIndex = null; leagueSeason = null; onChange(); });
 }
 
 function resolveLeagueMatch(day, league, opponent, won) {
@@ -67,19 +70,19 @@ function resolveLeagueMatch(day, league, opponent, won) {
   us[won ? "wins" : "losses"] += 1;
   opponent[won ? "losses" : "wins"] += 1;
   leagueSeason.matches.unshift({ day, opponent: opponent.name, score: won ? "1 : 0" : "0 : 1", result: won ? "Wygrana" : "Porażka" });
-  leagueSeason.opponentIndex = leagueSeason.opponentIndex >= leagueSeason.teams.length - 1 ? 1 : leagueSeason.opponentIndex + 1;
-  leagueSeason.nextMatchDay = day + 3;
+  if (leagueSeason.opponentIndex >= leagueSeason.teams.length - 1) leagueSeason.finished = true;
+  else { leagueSeason.opponentIndex += 1; leagueSeason.nextMatchDay = day + 3; }
   window.addMail({
     id: `league-${day}`,
     from: league.name,
     subject: `${won ? "Wygrana" : "Porażka"} w lidze z ${opponent.name}`,
     date: `Dzień ${day} • 20:00`,
-    body: `${won ? "Wygraliśmy" : "Przegraliśmy"} mecz ligowy ${won ? "1:0" : "0:1"} z ${opponent.name}. Tabela została zaktualizowana, a kolejne spotkanie odbędzie się w dniu ${leagueSeason.nextMatchDay}.`,
+    body: `${won ? "Wygraliśmy" : "Przegraliśmy"} mecz ligowy ${won ? "1:0" : "0:1"} z ${opponent.name}. ${leagueSeason.finished ? "Sezon ligowy został zakończony." : `Tabela została zaktualizowana, a kolejne spotkanie odbędzie się w dniu ${leagueSeason.nextMatchDay}.`}`,
   });
 }
 
 window.gameClock.subscribe((day) => {
-  if (!leagueSeason || day < leagueSeason.nextMatchDay || window.matchCenter.activeMatch) return;
+  if (!leagueSeason || leagueSeason.finished || day < leagueSeason.nextMatchDay || window.matchCenter.activeMatch) return;
   const league = leagues[activeLeagueIndex];
   const opponent = leagueSeason.teams[leagueSeason.opponentIndex];
   window.matchCenter.start({
@@ -95,7 +98,7 @@ window.gameClock.subscribe((day) => {
 window.renderLeagues = renderLeagues;
 window.setupLeagues = setupLeagues;
 window.getLeagueNextMatch = () => {
-  if (!leagueSeason) return null;
+  if (!leagueSeason || leagueSeason.finished) return null;
   const opponent = leagueSeason.teams[leagueSeason.opponentIndex];
   const remaining = Math.max(0, leagueSeason.nextMatchDay - window.gameClock.day);
   return { value: `vs ${opponent.name}`, note: `${remaining === 0 ? "Dzisiaj" : remaining === 1 ? "Jutro" : `Za ${remaining} dni`} • ${leagues[activeLeagueIndex].name}` };

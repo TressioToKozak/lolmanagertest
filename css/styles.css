@@ -1085,6 +1085,71 @@ body {
   border-color: rgba(255, 100, 100, 0.32);
 }
 
+.settings-panel--reset {
+  border-color: rgba(255, 211, 110, 0.32);
+}
+
+.reset-button,
+.modal-cancel {
+  padding: 11px 14px;
+  border: 1px solid rgba(255, 211, 110, 0.48);
+  border-radius: 999px;
+  color: var(--gold-bright);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(201, 160, 75, 0.14);
+}
+
+.settings-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: rgba(2, 7, 16, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.settings-modal__card {
+  width: min(460px, 100%);
+  padding: 28px;
+  border: 1px solid rgba(255, 211, 110, 0.38);
+  border-radius: 24px;
+  background: var(--panel);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+}
+
+.settings-modal__card > span {
+  color: var(--gold-bright);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.settings-modal__card h3 {
+  margin: 10px 0;
+  font-size: 2rem;
+}
+
+.settings-modal__card p {
+  color: var(--muted);
+}
+
+.settings-modal__card > div {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.modal-cancel {
+  border-color: rgba(255, 255, 255, 0.16);
+  color: var(--muted);
+  background: transparent;
+}
+
 .danger-button {
   padding: 11px 14px;
   border: 1px solid rgba(255, 100, 100, 0.5);

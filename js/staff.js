@@ -45,5 +45,5 @@ function setupStaff(onChange) {
 window.renderStaff = renderStaff;
 window.setupStaff = setupStaff;
 window.getStaffMatchBonus = () => Object.values(staffSlots).reduce((bonus, member) => bonus + (member ? (member.rating - 70) * 0.08 : 0), 0);
-window.getStaffPayrollRows = () => Object.entries(staffSlots).filter(([, member]) => member).map(([role, member]) => [staffLabels[role], member.name, Math.round(member.cost * 0.018)]);
+window.getStaffPayrollRows = () => Object.entries(staffSlots).filter(([, member]) => member).map(([role, member]) => [staffLabels[role], member.name, Math.round(member.cost * 0.001)]);
 window.gameState.register("staff", { get: () => ({ staffSlots, selectedSlot }), set: (state) => { Object.assign(staffSlots, state.staffSlots || {}); selectedSlot = state.selectedSlot || "coach"; } });

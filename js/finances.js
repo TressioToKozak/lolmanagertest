@@ -1,15 +1,15 @@
 const financeRows = [
-  ["TOP", 'Kamil "Stone" Wójcik', 1400],
-  ["JUNGLE", 'Adam "Path" Nowak', 1500],
-  ["MID", 'Michał "Nova" Zieliński', 1700],
-  ["ADC", 'Piotr "Arrow" Lis', 1600],
-  ["SUPPORT", 'Jan "Ward" Kowal', 1500],
-  ["Rezerwa", 'Bartosz "Flex" Grabowski', 700],
-  ["Rezerwa", 'Tomasz "Pulse" Wrona', 750],
+  ["TOP", 'Kamil "Stone" Wójcik', 60],
+  ["JUNGLE", 'Adam "Path" Nowak', 65],
+  ["MID", 'Michał "Nova" Zieliński', 70],
+  ["ADC", 'Piotr "Arrow" Lis', 65],
+  ["SUPPORT", 'Jan "Ward" Kowal', 60],
+  ["Rezerwa", 'Bartosz "Flex" Grabowski', 40],
+  ["Rezerwa", 'Tomasz "Pulse" Wrona', 40],
 ];
 const monthlyIncome = [
-  ["Streaming i content", 3000],
-  ["Drobne granty ligowe", 2000],
+  ["Streaming i content", 300],
+  ["Drobne granty ligowe", 200],
 ];
 let lastFinanceSettlementDay = 0;
 
