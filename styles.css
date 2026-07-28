@@ -106,6 +106,50 @@ h1 {
   gap: 9px;
 }
 
+.game-clock {
+  display: grid;
+  gap: 8px;
+  margin-top: auto;
+  padding: 16px;
+  border: 1px solid rgba(255, 211, 110, 0.24);
+  border-radius: 18px;
+  background: rgba(201, 160, 75, 0.08);
+}
+
+.game-clock > span,
+.tournament-next span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.game-clock .primary-action {
+  margin-top: 6px;
+  padding: 11px 14px;
+}
+
+.tournament-next {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid rgba(255, 211, 110, 0.28);
+  border-radius: 18px;
+  background: rgba(201, 160, 75, 0.1);
+}
+
+.tournament-next .upgrade-button {
+  justify-self: start;
+  margin-top: 8px;
+}
+
+.tournament-us td {
+  color: var(--gold-bright);
+  background: rgba(201, 160, 75, 0.1);
+}
+
 .main-nav__item {
   padding: 13px 16px;
   border: 1px solid transparent;

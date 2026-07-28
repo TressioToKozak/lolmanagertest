@@ -1,5 +1,6 @@
 const content = document.querySelector("#game-content");
 const navItems = document.querySelectorAll(".main-nav__item");
+const gameDay = document.querySelector("[data-game-day]");
 
 function activateNavItem(activeItem) {
   navItems.forEach((item) => item.classList.remove("main-nav__item--active"));
@@ -18,3 +19,10 @@ navItems.forEach((item) => {
 const initialItem = [...navItems].find((item) => item.getAttribute("href") === window.location.hash) || navItems[0];
 activateNavItem(initialItem);
 window.renderSection(content, initialItem.dataset.section);
+
+document.querySelector("[data-next-day]")?.addEventListener("click", () => {
+  window.gameClock.nextDay();
+  gameDay.textContent = window.gameClock.day;
+  const activeItem = document.querySelector(".main-nav__item--active");
+  window.renderSection(content, activeItem?.dataset.section || "home");
+});
