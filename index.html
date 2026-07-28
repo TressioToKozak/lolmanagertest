@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LoL eSport Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data.js" defer></script>
+    <script src="squad.js" defer></script>
+    <script src="gaming-house.js" defer></script>
+    <script src="render.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="game-shell" aria-label="Ekran startowy gry LoL eSport Manager">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand__mark">LM</div>
+          <div>
+            <p class="eyebrow">eSport</p>
+            <h1>LoL Manager</h1>
+          </div>
+        </div>
+
+        <nav class="main-nav" aria-label="Główna nawigacja">
+          <a class="main-nav__item main-nav__item--active" href="#home" data-section="home">Home</a>
+          <a class="main-nav__item" href="#mailbox" data-section="mailbox">Mailbox</a>
+          <a class="main-nav__item" href="#squad" data-section="squad">Squad</a>
+          <a class="main-nav__item" href="#staff" data-section="staff">Staff</a>
+          <a class="main-nav__item" href="#gaming-house" data-section="gamingHome">Gaming House</a>
+          <a class="main-nav__item" href="#transfer" data-section="transfer">Transfer</a>
+          <a class="main-nav__item" href="#scouting" data-section="scouting">Scouting</a>
+          <a class="main-nav__item" href="#tournaments" data-section="tournaments">Tournaments</a>
+          <a class="main-nav__item" href="#leagues" data-section="leagues">Leagues</a>
+          <a class="main-nav__item" href="#finances" data-section="finances">Finances</a>
+          <a class="main-nav__item" href="#sponsors" data-section="sponsors">Sponsors</a>
+        </nav>
+      </aside>
+
+      <section class="hero-panel" id="game-content" aria-live="polite">
+        <header class="top-bar">
+          <div>
+            <p class="eyebrow">Season 2026 • Preseason</p>
+            <h2>Welcome, Coach</h2>
+          </div>
+          <button class="primary-action">Start career</button>
+        </header>
+
+        <div class="hero-content">
+          <p class="hero-content__tag">Build your legacy</p>
+          <h3>LoL eSport Manager</h3>
+          <p>
+            Zarządzaj składem, sztabem, transferami i finansami klubu. Przygotuj drużynę do lig,
+            turniejów oraz walki o międzynarodowe trofea.
+          </p>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="status-card">
+            <span>Next match</span>
+            <strong>Spring Split Opener</strong>
+            <p>Za 3 dni • Best of 1</p>
+          </article>
+          <article class="status-card">
+            <span>Team morale</span>
+            <strong>87%</strong>
+            <p>Pozytywna atmosfera</p>
+          </article>
+          <article class="status-card">
+            <span>Budget</span>
+            <strong>€2.4M</strong>
+            <p>Gotowe na transfery</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
