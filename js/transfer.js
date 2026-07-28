@@ -55,7 +55,7 @@ const transferDetails = {
 
 const countryFlags = {
   PL: "Polska", GB: "Wielka Brytania", ES: "Hiszpania", RO: "Rumunia", PT: "Portugalia", SI: "Słowenia",
-  CZ: "Czechy", KR: "Korea Południowa", SK: "Słowacja", SE: "Szwecja", HR: "Chorwacja",
+  DE: "Niemcy", CZ: "Czechy", KR: "Korea Południowa", SK: "Słowacja", SE: "Szwecja", HR: "Chorwacja",
 };
 const riftCountryCodes = { iBo: "GB" };
 function withCountry(player, countryCode) {
@@ -65,7 +65,7 @@ function withCountry(player, countryCode) {
 const transferPlayers = Object.entries(riftLegendsRosters).flatMap(([team, roster]) => roster.map((stats) => {
   const [name, macro, micro, vision, roams, farming, reflex] = stats;
   const [position, overall, cost] = transferDetails[name];
-  return withCountry({ name, team, league: "RiftLegends", position, macro, micro, vision, roams, farming, reflex, overall, cost }, riftCountryCodes[name] || "PL");
+  return withCountry({ name, team, league: "RiftLegends (PL)", position, macro, micro, vision, roams, farming, reflex, overall, cost }, riftCountryCodes[name] || "PL");
 }));
 
 const superligaRosters = {
@@ -100,10 +100,47 @@ const superligaRosters = {
     ["CPM", "ES", 79, 79, 80, 75, 73, 80, 81, 150000], ["Time", "KR", 80, 81, 79, 80, 82, 74, 79, 180000], ["Miniduke", "ES", 81, 81, 82, 78, 78, 83, 83, 220000], ["Thomas", "ES", 80, 79, 81, 76, 74, 83, 83, 190000], ["Exorant", "ES", 80, 81, 78, 83, 82, 69, 78, 190000],
   ],
 };
+const primeLeagueRosters = {
+  "BIG": [
+    ["Satorius", 83, 84, 82, 79, 77, 82, 82, 290000], ["Akabane", 85, 85, 84, 83, 86, 79, 84, 430000], ["Reeker", 86, 85, 87, 82, 81, 86, 87, 500000], ["Jopa", 83, 81, 84, 78, 76, 85, 85, 280000], ["Leonard", 82, 83, 80, 85, 84, 71, 79, 250000],
+  ],
+  "G2 NORD": [
+    ["Melonik", 82, 82, 82, 77, 75, 82, 83, 250000], ["Isma", 84, 85, 82, 83, 85, 77, 82, 360000], ["TakeSet", 83, 83, 84, 80, 79, 84, 84, 300000], ["Vzz", 82, 81, 83, 77, 75, 84, 85, 260000], ["Nata", 83, 84, 80, 86, 85, 71, 79, 290000],
+  ],
+  "Eintracht Spandau": [
+    ["JNX", 85, 84, 85, 81, 78, 85, 86, 420000], ["Xagog", 84, 85, 82, 84, 86, 77, 82, 360000], ["PowerOfEvil", 87, 87, 87, 84, 80, 88, 86, 650000], ["Keduii", 86, 83, 87, 79, 76, 88, 88, 520000], ["seaz", 84, 85, 81, 87, 86, 70, 80, 340000],
+  ],
+  "Unicorns of Love Sexy Edition": [
+    ["Fornoreason", 84, 84, 84, 80, 78, 84, 85, 360000], ["Whiteakitout", 82, 83, 81, 82, 84, 76, 81, 260000], ["Kanin", 83, 83, 84, 79, 79, 84, 84, 300000], ["DenVoksne", 84, 82, 85, 78, 76, 86, 86, 340000], ["Twiizt", 83, 84, 80, 86, 85, 69, 79, 280000],
+  ],
+  "Eintracht Frankfurt": [
+    ["Scarface", 81, 81, 82, 77, 74, 81, 82, 220000], ["Obsess", 82, 83, 81, 82, 84, 76, 80, 260000], ["Diplex", 85, 85, 86, 82, 81, 86, 86, 440000], ["Innaxe", 85, 83, 86, 79, 76, 87, 87, 430000], ["Lucky", 82, 83, 80, 85, 84, 70, 79, 250000],
+  ],
+  "E WIE EINFACH Esports": [
+    ["Alois", 83, 84, 82, 79, 77, 83, 83, 290000], ["Pridestalkr", 85, 86, 83, 84, 86, 78, 83, 440000], ["Selfie", 86, 86, 86, 83, 81, 87, 86, 520000], ["SMILEY", 84, 82, 85, 79, 76, 86, 86, 360000], ["Doss", 84, 85, 81, 87, 86, 70, 80, 340000],
+  ],
+  "TeamOrangeGaming": [
+    ["Cboi", 80, 81, 80, 76, 73, 80, 81, 180000], ["Obsessed", 81, 82, 80, 81, 83, 75, 80, 220000], ["Pretty", 82, 82, 83, 79, 78, 83, 84, 260000], ["Focus", 81, 80, 82, 76, 73, 84, 84, 220000], ["Plasma", 81, 82, 79, 84, 83, 69, 79, 210000],
+  ],
+  "ROSSMANN Centaurs": [
+    ["Scar", 80, 81, 80, 77, 74, 80, 81, 180000], ["Don Arts", 82, 83, 81, 82, 84, 76, 81, 260000], ["Phantasm", 81, 81, 82, 79, 78, 82, 83, 220000], ["Vik", 81, 80, 82, 76, 74, 84, 84, 220000], ["Seal", 82, 83, 79, 85, 84, 70, 79, 250000],
+  ],
+  "Kaufland Hangry Knights": [
+    ["Ragner", 84, 84, 84, 80, 77, 84, 85, 360000], ["Lurox", 85, 86, 83, 84, 86, 78, 83, 430000], ["Special", 85, 85, 85, 82, 80, 86, 85, 440000], ["Gadget", 84, 82, 85, 79, 76, 86, 86, 360000], ["Prime", 83, 84, 81, 86, 85, 70, 80, 310000],
+  ],
+  "VfB eSports": [
+    ["Phones", 81, 81, 82, 77, 75, 81, 82, 220000], ["Rabble", 83, 84, 81, 83, 85, 77, 81, 290000], ["Sertuss", 86, 86, 87, 83, 81, 87, 87, 550000], ["Fun K3y", 82, 81, 83, 78, 75, 84, 84, 260000], ["Hustlin", 82, 83, 80, 85, 84, 70, 79, 250000],
+  ],
+};
+
 const standardPositions = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
 Object.entries(superligaRosters).forEach(([team, roster]) => roster.forEach((stats, index) => {
   const [name, countryCode, overall, macro, micro, vision, roams, farming, reflex, cost] = stats;
-  transferPlayers.push(withCountry({ name, team, league: "LVP Superliga", position: standardPositions[index], overall, macro, micro, vision, roams, farming, reflex, cost }, countryCode));
+  transferPlayers.push(withCountry({ name, team, league: "LVP Superliga (ES)", position: standardPositions[index], overall, macro, micro, vision, roams, farming, reflex, cost }, countryCode));
+}));
+Object.entries(primeLeagueRosters).forEach(([team, roster]) => roster.forEach((stats, index) => {
+  const [name, overall, macro, micro, vision, roams, farming, reflex, cost] = stats;
+  transferPlayers.push(withCountry({ name, team, league: "Prime League (DE)", position: standardPositions[index], overall, macro, micro, vision, roams, farming, reflex, cost }, "DE"));
 }));
 
 const purchasedPlayers = new Set();

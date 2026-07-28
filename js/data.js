@@ -10,7 +10,7 @@ window.sections = {
     cards: [
       ["Next match", "Brak zaplanowanego meczu", "Dołącz do ligi lub turnieju"],
       ["Team morale", "Stabilne", "Zależy od składu i ostatnich wyników"],
-      ["Budget", "€500k", "Gotowe na transfery"],
+      ["Budget", "€15k", "Budżet amatorskiego klubu"],
     ],
   },
   mailbox: { layout: "mailbox" },
@@ -108,7 +108,7 @@ window.sections = {
     heading: "Finanse",
     description: "Kontroluj budżet, pensje, premie za wyniki i miesięczny przepływ gotówki klubu.",
     cards: [
-      ["Balance", "€500k", "Dostępne środki"],
+      ["Balance", "€15k", "Dostępne środki"],
       ["Monthly wages", "€310k", "68% limitu płac"],
       ["Projected profit", "+€180k", "Prognoza na koniec splitu"],
     ],

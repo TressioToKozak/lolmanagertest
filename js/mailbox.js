@@ -25,12 +25,13 @@ function renderMailList() {
 }
 
 function renderMailbox() {
+  if (!mails.length) return '<div class="mailbox-board mailbox-board--empty"><div class="empty-state"><span>Skrzynka</span><h3>Brak wiadomości</h3><p>Nowe informacje pojawią się tutaj.</p></div></div>';
   const selectedMail = mails.find((mail) => mail.id === selectedMailId) || mails[0];
   if (selectedMail?.unread) {
     selectedMail.unread = false;
     notifyMailbox();
   }
-  return `<div class="mailbox-board"><aside class="mail-list"><div class="mail-list__header"><span>Wiadomości</span><strong>${mails.length}</strong></div>${renderMailList()}</aside><article class="mail-view"><span>${selectedMail.from}</span><h3>${selectedMail.subject}</h3><small>${selectedMail.date}</small><p>${selectedMail.body}</p></article></div>`;
+  return `<div class="mailbox-board"><aside class="mail-list"><div class="mail-list__header"><span>Wiadomości</span><strong>${mails.length}</strong></div>${renderMailList()}</aside><article class="mail-view"><span>${selectedMail.from}</span><h3>${selectedMail.subject}</h3><small>${selectedMail.date}</small><p>${selectedMail.body}</p><button class="mail-delete" data-delete-mail="${selectedMail.id}" ${selectedMail.unread ? "disabled" : ""}>Usuń przeczytaną wiadomość</button></article></div>`;
 };
 
 function setupMailbox(onChange) {
@@ -42,6 +43,14 @@ function setupMailbox(onChange) {
       notifyMailbox();
       onChange();
     });
+  });
+  document.querySelector("[data-delete-mail]")?.addEventListener("click", (event) => {
+    const index = mails.findIndex((mail) => mail.id === event.currentTarget.dataset.deleteMail);
+    if (index < 0 || mails[index].unread) return;
+    mails.splice(index, 1);
+    selectedMailId = mails[0]?.id || null;
+    notifyMailbox();
+    onChange();
   });
 }
 

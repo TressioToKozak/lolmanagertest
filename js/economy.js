@@ -1,5 +1,5 @@
 window.clubEconomy = {
-  budget: 500000,
+  budget: 15000,
   format(amount = this.budget) {
     if (Math.abs(amount) >= 1000000) {
       return `€${(amount / 1000000).toFixed(3).replace(/\.?0+$/, "")}M`;
