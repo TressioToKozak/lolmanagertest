@@ -70,7 +70,7 @@ window.matchCenter = {
       defend: won ? "Skuteczna obrona wyczerpuje rywala. Kontratak kończy mecz." : "Nie utrzymujemy bazy i nasz Nexus upada.",
     };
     match.events.push([34 + (match.day % 5), finalTexts[choice]]);
-    this.lastMatch = { ...match, won };
+    this.lastMatch = { ...match, won, stage: "finished" };
     this.activeMatch = null;
     match.onComplete(won, this.lastMatch);
   },
@@ -84,14 +84,23 @@ window.matchCenter = {
         ? '<div class="match-decisions"><button data-match-choice="baron">Rozpocznij Barona<small>Duża nagroda i duże ryzyko kradzieży</small></button><button data-match-choice="bait">Zastaw pułapkę<small>Wykorzystaj kontrolę wizji</small></button><button data-match-choice="scale">Wycofaj się<small>Skaluj i broń wizji</small></button></div>'
         : match.stage === "nexus"
           ? '<div class="match-decisions"><button data-match-choice="teamfight">Wymuś teamfight<small>Pełna walka 5v5</small></button><button data-match-choice="splitpush">Zagraj splitpush<small>Wywieraj presję na dwóch liniach</small></button><button data-match-choice="defend">Broń bazy<small>Szukaj błędu przeciwnika</small></button></div>'
-          : "";
+          : '<div class="match-decisions match-decisions--finished"><button data-dismiss-match="true">Zamknij relację<small>Wróć do tabeli i terminarza</small></button></div>';
     const state = this.activeMatch ? `Decyzja: ${match.stage === "dragon" ? "smok" : match.stage === "baron" ? "Baron" : "końcówka"}` : match.won ? "ZWYCIĘSTWO" : "PORAŻKA";
     return `<section class="match-simulation match-simulation--${this.activeMatch ? "live" : "finished"}"><div class="section-heading"><span>Mecz na żywo • Dzień ${match.day}</span><h4>${match.competition}</h4></div><div class="match-score"><div><span>Nasz zespół</span><strong>${match.ourKills}</strong></div><b>${state}</b><div><span>${match.opponent}</span><strong>${match.opponentKills}</strong></div></div>${decisions}<ol class="match-timeline">${events}</ol></section>`;
   },
   setup(onChange) {
     document.querySelectorAll("[data-match-choice]").forEach((button) => button.addEventListener("click", () => {
+      const scrollContainer = document.querySelector(".management-board");
+      const scrollTop = scrollContainer?.scrollTop || 0;
       this.choose(button.dataset.matchChoice);
       onChange();
+      const nextContainer = document.querySelector(".management-board");
+      if (nextContainer) nextContainer.scrollTop = scrollTop;
+      document.querySelector(".match-simulation")?.scrollIntoView({ block: "center", behavior: "smooth" });
     }));
+    document.querySelector("[data-dismiss-match]")?.addEventListener("click", () => {
+      this.lastMatch = null;
+      onChange();
+    });
   },
 };

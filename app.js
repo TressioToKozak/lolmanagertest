@@ -44,4 +44,5 @@ document.querySelector("[data-next-day]")?.addEventListener("click", () => {
   if (matchItem) activateNavItem(matchItem);
   const activeItem = matchItem || document.querySelector(".main-nav__item--active");
   window.renderSection(content, activeItem?.dataset.section || "home");
+  document.querySelector(".match-simulation--live")?.scrollIntoView({ block: "center" });
 });
