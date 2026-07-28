@@ -79,3 +79,20 @@ function setupSquadDragAndDrop(onChange) {
 
 window.renderSquad = renderSquad;
 window.setupSquadDragAndDrop = setupSquadDragAndDrop;
+window.addSquadPlayer = function addSquadPlayer(player) {
+  const playerId = `transfer-${player.name.toLocaleLowerCase("pl").replace(/[^a-z0-9]+/g, "-")}`;
+  squadPlayers[playerId] = {
+    name: player.name,
+    role: player.position,
+    style: `Transfer z ${player.team}`,
+    rating: player.overall,
+  };
+
+  let freeSlot = reserveSlots.find((slotId) => !squadSlots[slotId]);
+  if (!freeSlot) {
+    freeSlot = `reserve${reserveSlots.length + 1}`;
+    reserveSlots.push(freeSlot);
+    slotLabels[freeSlot] = `REZERWA ${reserveSlots.length}`;
+  }
+  squadSlots[freeSlot] = playerId;
+};

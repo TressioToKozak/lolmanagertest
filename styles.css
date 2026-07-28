@@ -106,6 +106,66 @@ h1 {
   gap: 9px;
 }
 
+.game-clock {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid rgba(255, 211, 110, 0.24);
+  border-radius: 18px;
+  background: rgba(201, 160, 75, 0.08);
+}
+
+.game-clock > span,
+.tournament-next span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.game-clock .primary-action {
+  margin-top: 6px;
+  padding: 11px 14px;
+}
+
+.nav-badge {
+  float: right;
+  min-width: 22px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: #07101d;
+  font-size: 0.72rem;
+  text-align: center;
+  background: var(--gold-bright);
+}
+
+.main-nav__item--unread {
+  border-color: rgba(255, 211, 110, 0.55);
+  color: var(--text);
+  box-shadow: inset 3px 0 var(--gold-bright);
+}
+
+.tournament-next {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid rgba(255, 211, 110, 0.28);
+  border-radius: 18px;
+  background: rgba(201, 160, 75, 0.1);
+}
+
+.tournament-next .upgrade-button {
+  justify-self: start;
+  margin-top: 8px;
+}
+
+.tournament-us td {
+  color: var(--gold-bright);
+  background: rgba(201, 160, 75, 0.1);
+}
+
 .main-nav__item {
   padding: 13px 16px;
   border: 1px solid transparent;
@@ -726,6 +786,33 @@ body {
 .staff-slot--active {
   border-color: rgba(255, 211, 110, 0.5);
   background: rgba(201, 160, 75, 0.16);
+}
+
+.mail-item--unread {
+  border-color: rgba(255, 211, 110, 0.38);
+  background: rgba(201, 160, 75, 0.12);
+}
+
+.mail-item--unread strong {
+  color: #fff;
+}
+
+.mail-item--read {
+  opacity: 0.72;
+}
+
+.mail-unread-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 10px rgba(255, 211, 110, 0.8);
+}
+
+.table-title {
+  margin: 24px 0 10px;
 }
 
 .mail-item span,
