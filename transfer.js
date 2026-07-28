@@ -132,6 +132,14 @@ function setupTransfer(onChange) {
     const player = transferPlayers[index];
     if (player && window.clubEconomy.spend(player.cost)) {
       purchasedPlayers.add(index);
+      window.addSquadPlayer(player);
+      window.addMail({
+        id: `transfer-${player.name}`,
+        from: "Dyrektor sportowy",
+        subject: `Transfer zakończony: ${player.name}`,
+        date: `Dzień ${window.gameClock.day}`,
+        body: `${player.name} (${player.position}, OVR ${player.overall}) dołączył do naszego zespołu z ${player.team}. Kwota transferu: ${window.clubEconomy.format(player.cost)}. Zawodnik jest już dostępny w rezerwach na ekranie Squad.`,
+      });
       transferMessage = `Kupiono zawodnika ${player.name} z ${player.team} za ${window.clubEconomy.format(player.cost)}.`;
       onChange();
     }

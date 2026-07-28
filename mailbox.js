@@ -41,3 +41,6 @@ function setupMailbox(onChange) {
 
 window.renderMailbox = renderMailbox;
 window.setupMailbox = setupMailbox;
+window.addMail = function addMail(mail) {
+  mails.unshift({ ...mail, id: `${mail.id}-${Date.now()}` });
+};
