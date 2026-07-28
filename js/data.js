@@ -8,8 +8,8 @@ window.sections = {
     description:
       "Zarządzaj składem, sztabem, transferami i finansami klubu. Przygotuj drużynę do lig, turniejów oraz walki o międzynarodowe trofea.",
     cards: [
-      ["Next match", "Spring Split Opener", "Za 3 dni • Best of 1"],
-      ["Team morale", "87%", "Pozytywna atmosfera"],
+      ["Next match", "Brak zaplanowanego meczu", "Dołącz do ligi lub turnieju"],
+      ["Team morale", "Stabilne", "Zależy od składu i ostatnich wyników"],
       ["Budget", "€500k", "Gotowe na transfery"],
     ],
   },

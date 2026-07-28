@@ -94,3 +94,9 @@ window.gameClock.subscribe((day) => {
 
 window.renderLeagues = renderLeagues;
 window.setupLeagues = setupLeagues;
+window.getLeagueNextMatch = () => {
+  if (!leagueSeason) return null;
+  const opponent = leagueSeason.teams[leagueSeason.opponentIndex];
+  const remaining = Math.max(0, leagueSeason.nextMatchDay - window.gameClock.day);
+  return { value: `vs ${opponent.name}`, note: `${remaining === 0 ? "Dzisiaj" : remaining === 1 ? "Jutro" : `Za ${remaining} dni`} • ${leagues[activeLeagueIndex].name}` };
+};
