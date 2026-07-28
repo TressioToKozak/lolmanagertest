@@ -1,5 +1,5 @@
 function renderCards(cards) {
-  return `<div class="dashboard-grid">${cards.map(([label, value, note]) => `<article class="status-card"><span>${label}</span><strong>${value}</strong><p>${note}</p></article>`).join("")}</div>`;
+  return `<div class="dashboard-grid">${cards.map(([label, value, note]) => `<article class="status-card"><span>${label}</span><strong>${label === "Budget" ? window.clubEconomy.format() : value}</strong><p>${note}</p></article>`).join("")}</div>`;
 }
 
 function renderSection(content, sectionKey) {
