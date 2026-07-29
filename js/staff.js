@@ -2,16 +2,16 @@ const staffSlots = { coach: null, analyst: null, psychologist: null };
 const staffLabels = { coach: "Trener", analyst: "Analityk", psychologist: "Psycholog" };
 const candidates = {
   coach: [
-    { name: "Marta Kowalska", specialty: "Draft i makro", rating: 86, experience: "5 sezonów", cost: 120000 },
-    { name: "Rafał Nowicki", specialty: "Agresywny early game", rating: 79, experience: "3 sezony", cost: 90000 },
+    { name: "Marta Kowalska", specialty: "Draft i makro", rating: 86, experience: "5 sezonów", cost: 11500 },
+    { name: "Rafał Nowicki", specialty: "Agresywny early game", rating: 79, experience: "3 sezony", cost: 6500 },
   ],
   analyst: [
-    { name: "Oskar Lewandowski", specialty: "VOD review", rating: 78, experience: "4 sezony", cost: 70000 },
-    { name: "Nina Kamińska", specialty: "Dane i matchup", rating: 83, experience: "3 sezony", cost: 85000 },
+    { name: "Oskar Lewandowski", specialty: "VOD review", rating: 78, experience: "4 sezony", cost: 5000 },
+    { name: "Nina Kamińska", specialty: "Dane i matchup", rating: 83, experience: "3 sezony", cost: 8000 },
   ],
   psychologist: [
-    { name: "Ewa Mazur", specialty: "Mental reset", rating: 80, experience: "6 sezonów", cost: 60000 },
-    { name: "Igor Malec", specialty: "Praca pod presją", rating: 82, experience: "4 sezony", cost: 75000 },
+    { name: "Ewa Mazur", specialty: "Mental reset", rating: 80, experience: "6 sezonów", cost: 4500 },
+    { name: "Igor Malec", specialty: "Praca pod presją", rating: 82, experience: "4 sezony", cost: 7000 },
   ],
 };
 let selectedSlot = "coach";
@@ -37,6 +37,7 @@ function setupStaff(onChange) {
     const candidate = candidates[selectedSlot][Number(button.dataset.hireStaff)];
     if (candidate && window.clubEconomy.spend(candidate.cost)) {
       staffSlots[selectedSlot] = candidate;
+      window.progressQuest?.("hire-staff");
       onChange();
     }
   }));
@@ -46,4 +47,9 @@ window.renderStaff = renderStaff;
 window.setupStaff = setupStaff;
 window.getStaffMatchBonus = () => Object.values(staffSlots).reduce((bonus, member) => bonus + (member ? (member.rating - 70) * 0.08 : 0), 0);
 window.getStaffPayrollRows = () => Object.entries(staffSlots).filter(([, member]) => member).map(([role, member]) => [staffLabels[role], member.name, Math.round(member.cost * 0.001)]);
-window.gameState.register("staff", { get: () => ({ staffSlots, selectedSlot }), set: (state) => { Object.assign(staffSlots, state.staffSlots || {}); selectedSlot = state.selectedSlot || "coach"; } });
+window.gameState.register("staff", { get: () => ({ staffSlots, selectedSlot }), set: (state) => {
+  Object.entries(state.staffSlots || {}).forEach(([role, savedMember]) => {
+    staffSlots[role] = savedMember ? candidates[role]?.find((candidate) => candidate.name === savedMember.name) || savedMember : null;
+  });
+  selectedSlot = state.selectedSlot || "coach";
+} });
