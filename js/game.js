@@ -162,8 +162,7 @@ window.matchCenter = {
     match.events.push({ minute: scenario.minute + (match.day % 4), type: won ? "success" : "danger", description: won ? "Wygrywamy decydującą akcję i niszczymy Nexus!" : `${match.opponent} wygrywa decydującą akcję i niszczy nasz Nexus.` });
     this.lastMatch = { ...match, won, stage: "finished" };
     this.activeMatch = null;
-    window.progressQuest?.("play-match");
-    if (won) window.progressQuest?.("win-match");
+    window.recordCareerMatch?.(won, this.lastMatch);
     match.onComplete(won, this.lastMatch);
   },
   currentScenario(match) {
@@ -200,7 +199,6 @@ window.matchCenter = {
       onChange();
       const nextContainer = document.querySelector(".management-board");
       if (nextContainer) nextContainer.scrollTop = scrollTop;
-      document.querySelector(".match-simulation")?.scrollIntoView({ block: "center", behavior: "smooth" });
     }));
     document.querySelector("[data-dismiss-match]")?.addEventListener("click", () => {
       this.lastMatch = null;

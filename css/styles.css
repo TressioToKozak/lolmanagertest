@@ -1899,6 +1899,17 @@ body {
 .quest-card--done > i { color: #2ee6a6; background: rgba(46, 230, 166, 0.12); }
 @media (max-width: 760px) { .quest-list { grid-template-columns: 1fr; } }
 
+.career-summary { margin-top: 22px; padding: 18px; border: 1px solid rgba(46, 230, 166, 0.22); border-radius: 20px; background: rgba(7, 21, 37, 0.72); }
+.career-kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 9px; margin-bottom: 16px; }
+.career-kpis article { display: grid; gap: 6px; padding: 13px 9px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 13px; text-align: center; background: rgba(17, 39, 64, 0.74); }
+.career-kpis span { color: var(--muted); font-size: 0.68rem; }
+.career-kpis strong { color: var(--gold-bright); font-size: 1.25rem; }
+.career-table-wrap { overflow-x: auto; }
+.career-result--win { color: #2ee6a6; }
+.career-result--loss { color: #ff8a8a; }
+@media (max-width: 900px) { .career-kpis { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 520px) { .career-kpis { grid-template-columns: repeat(2, 1fr); } }
+
 @media (max-width: 1100px) {
   .finance-summary,
   .finance-columns {

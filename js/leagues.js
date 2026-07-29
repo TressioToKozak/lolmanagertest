@@ -57,13 +57,37 @@ function renderLeagues() {
   return `<div class="management-board"><header class="competition-picker-header"><div><span>Rozgrywki ligowe</span><h2>${activeLeagueIndex === null ? "Wywalcz miejsce w lidze" : "Sezon ligowy"}</h2><p>${activeLeagueIndex === null ? "Każda liga wymaga wygrania meczu eliminacyjnego. Mocniejsze rozgrywki odblokujesz wynikami klubu." : "Śledź tabelę, terminarz i formę rywali."}</p></div><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div></header><div class="market-grid market-grid--four competition-picker">${cards}</div>${qualifierMatch}${renderLeagueTable(leagues[activeLeagueIndex])}</div>`;
 }
 
+function startLeagueQualifier(day) {
+  if (!leagueQualifier || window.matchCenter.activeMatch) return false;
+  const qualifier = { ...leagueQualifier };
+  const league = leagues[qualifier.index];
+  if (!league) { leagueQualifier = null; return false; }
+  window.matchCenter.start({
+    competition: `Eliminacje • ${league.name}`,
+    opponent: "Rywal kwalifikacyjny",
+    opponentStrength: league.strength,
+    day,
+    section: "leagues",
+    onComplete: (won) => {
+      leagueQualifier = null;
+      if (won) {
+        activeLeagueIndex = qualifier.index;
+        leagueSeason = createLeagueSeason(league);
+      }
+      window.addMail({ id: `qualifier-${day}`, from: league.name, subject: won ? "Awans do ligi" : "Nieudane eliminacje", date: `Dzień ${day} • 20:00`, body: won ? `Wygraliśmy eliminacje i otrzymaliśmy miejsce w ${league.name}.` : `Przegraliśmy eliminacje do ${league.name}. Możemy spróbować ponownie.` });
+    },
+  });
+  return Boolean(window.matchCenter.activeMatch);
+}
+
 function setupLeagues(onChange) {
   document.querySelectorAll("[data-join-league]").forEach((button) => button.addEventListener("click", () => {
     const index = Number(button.dataset.joinLeague);
     const league = leagues[index];
     const eligible = league && (window.getCareerWins?.() || 0) >= league.requiredWins;
     if (activeLeagueIndex === null && leagueQualifier === null && eligible && window.clubEconomy.spend(league.entryFee)) {
-      leagueQualifier = { index, nextMatchDay: window.gameClock.day + 1 };
+      leagueQualifier = { index, nextMatchDay: window.gameClock.day };
+      startLeagueQualifier(window.gameClock.day);
       onChange();
     }
   }));
@@ -90,23 +114,7 @@ function resolveLeagueMatch(day, league, opponent, won) {
 
 window.gameClock.subscribe((day) => {
   if (leagueQualifier && day >= leagueQualifier.nextMatchDay && !window.matchCenter.activeMatch) {
-    const qualifier = leagueQualifier;
-    const league = leagues[qualifier.index];
-    window.matchCenter.start({
-      competition: `Eliminacje • ${league.name}`,
-      opponent: "Rywal kwalifikacyjny",
-      opponentStrength: league.strength,
-      day,
-      section: "leagues",
-      onComplete: (won) => {
-        leagueQualifier = null;
-        if (won) {
-          activeLeagueIndex = qualifier.index;
-          leagueSeason = createLeagueSeason(league);
-        }
-        window.addMail({ id: `qualifier-${day}`, from: league.name, subject: won ? "Awans do ligi" : "Nieudane eliminacje", date: `Dzień ${day} • 20:00`, body: won ? `Wygraliśmy eliminacje i otrzymaliśmy miejsce w ${league.name}.` : `Przegraliśmy eliminacje do ${league.name}. Możemy spróbować ponownie.` });
-      },
-    });
+    startLeagueQualifier(day);
     return;
   }
   if (!leagueSeason || leagueSeason.finished || day < leagueSeason.nextMatchDay || window.matchCenter.activeMatch) return;
