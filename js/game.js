@@ -193,8 +193,14 @@ window.matchCenter = {
   },
   setup(onChange) {
     document.querySelectorAll("[data-match-choice]").forEach((button) => button.addEventListener("click", () => {
+      const scrollContainer = button.closest(".management-board");
+      const matchPanel = button.closest(".match-simulation");
+      const matchViewportOffset = scrollContainer && matchPanel ? matchPanel.offsetTop - scrollContainer.scrollTop : null;
       this.choose(button.dataset.matchChoice);
       onChange();
+      const nextContainer = document.querySelector(".management-board");
+      const nextMatchPanel = nextContainer?.querySelector(".match-simulation");
+      if (nextContainer && nextMatchPanel && matchViewportOffset !== null) nextContainer.scrollTop = Math.max(0, nextMatchPanel.offsetTop - matchViewportOffset);
     }));
     document.querySelector("[data-dismiss-match]")?.addEventListener("click", () => {
       this.lastMatch = null;
