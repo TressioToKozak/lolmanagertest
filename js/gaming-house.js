@@ -2,13 +2,13 @@ const maxGamingHouseLevel = 5;
 const gamingHouseState = {
   level: 1,
   equipment: [
-    { id: "mice", name: "Myszki", level: 1, comfort: 4 },
-    { id: "keyboards", name: "Klawiatury", level: 1, comfort: 4 },
-    { id: "pcs", name: "Komputery", level: 1, comfort: 6 },
-    { id: "monitors", name: "Monitory", level: 1, comfort: 5 },
-    { id: "headsets", name: "Słuchawki", level: 1, comfort: 4 },
-    { id: "chairs", name: "Krzesła", level: 1, comfort: 6 },
-    { id: "desks", name: "Biurka", level: 1, comfort: 5 },
+    { id: "mice", name: "Myszki", level: 1, comfort: 4, upgradeCost: 1200 },
+    { id: "keyboards", name: "Klawiatury", level: 1, comfort: 4, upgradeCost: 1400 },
+    { id: "pcs", name: "Komputery", level: 1, comfort: 6, upgradeCost: 4500 },
+    { id: "monitors", name: "Monitory", level: 1, comfort: 5, upgradeCost: 3000 },
+    { id: "headsets", name: "Słuchawki", level: 1, comfort: 4, upgradeCost: 1600 },
+    { id: "chairs", name: "Krzesła", level: 1, comfort: 6, upgradeCost: 2800 },
+    { id: "desks", name: "Biurka", level: 1, comfort: 5, upgradeCost: 2200 },
   ],
 };
 
@@ -18,18 +18,32 @@ function getComfort() {
 }
 
 function getUpgradeCost(level) {
-  return level * 35000;
+  return level * 8000;
+}
+
+function getEquipmentUpgradeCost(item) {
+  return Math.round(item.upgradeCost * (1 + (item.level - 1) * 0.65));
+}
+
+function getMatchEffects() {
+  const extraEquipmentLevels = gamingHouseState.equipment.reduce((sum, item) => sum + Math.max(0, item.level - 1), 0);
+  return {
+    strength: (gamingHouseState.level - 1) * 0.8 + extraEquipmentLevels * 0.18,
+    comfortBonus: (gamingHouseState.level - 1) * 2 + Math.floor(extraEquipmentLevels / 3),
+    morale: (getComfort() - 55) * 0.12,
+  };
 }
 
 function renderGamingHouse() {
   const comfort = getComfort();
+  const effects = getMatchEffects();
   const equipment = gamingHouseState.equipment
     .map(
       (item) => `
         <article class="equipment-card">
           <img class="equipment-card__image" src="assets/gaming-house/${item.id}.svg" alt="${item.name}"><div><span>${item.name}</span><strong>Level ${item.level}</strong></div>
-          <p>Komfort +${item.level * item.comfort}</p>
-          <button class="upgrade-button" data-upgrade-equipment="${item.id}" ${!window.clubEconomy.canAfford(getUpgradeCost(item.level)) ? "disabled" : ""}>Ulepsz (${window.clubEconomy.format(getUpgradeCost(item.level))})</button>
+          <p>Komfort +${item.level * item.comfort} • forma meczowa rośnie z poziomem</p>
+          <button class="upgrade-button" data-upgrade-equipment="${item.id}" ${item.level >= maxGamingHouseLevel || !window.clubEconomy.canAfford(getEquipmentUpgradeCost(item)) ? "disabled" : ""}>${item.level >= maxGamingHouseLevel ? "Maksymalny poziom" : `Ulepsz (${window.clubEconomy.format(getEquipmentUpgradeCost(item))})`}</button>
         </article>`
     )
     .join("");
@@ -47,8 +61,9 @@ function renderGamingHouse() {
           <span>Komfort gry</span>
           <strong>${comfort}%</strong>
           <div class="form-bar" aria-label="Komfort gry ${comfort}%"><span style="width: ${comfort}%"></span></div>
+          <small>Bonus: +${effects.strength.toFixed(1)} siły • +${effects.comfortBonus}% komfortu ról</small>
         </div>
-        <button class="primary-action" data-upgrade-house ${gamingHouseState.level >= maxGamingHouseLevel || !window.clubEconomy.canAfford(getUpgradeCost(gamingHouseState.level) * 3) ? "disabled" : ""}>Ulepsz bazę (${window.clubEconomy.format(getUpgradeCost(gamingHouseState.level) * 3)})</button>
+        <button class="primary-action" data-upgrade-house ${gamingHouseState.level >= maxGamingHouseLevel || !window.clubEconomy.canAfford(getUpgradeCost(gamingHouseState.level)) ? "disabled" : ""}>${gamingHouseState.level >= maxGamingHouseLevel ? "Maksymalny poziom" : `Ulepsz bazę (${window.clubEconomy.format(getUpgradeCost(gamingHouseState.level))})`}</button>
       </section>
       <div class="equipment-grid">${equipment}</div>
     </div>`;
@@ -56,7 +71,7 @@ function renderGamingHouse() {
 
 function setupGamingHouseUpgrades(onChange) {
   document.querySelector("[data-upgrade-house]")?.addEventListener("click", () => {
-    const cost = getUpgradeCost(gamingHouseState.level) * 3;
+    const cost = getUpgradeCost(gamingHouseState.level);
     if (window.clubEconomy.spend(cost)) {
       gamingHouseState.level = Math.min(maxGamingHouseLevel, gamingHouseState.level + 1);
       onChange();
@@ -67,7 +82,7 @@ function setupGamingHouseUpgrades(onChange) {
     button.addEventListener("click", () => {
       const item = gamingHouseState.equipment.find((equipment) => equipment.id === button.dataset.upgradeEquipment);
       if (!item) return;
-      if (window.clubEconomy.spend(getUpgradeCost(item.level))) {
+      if (item.level < maxGamingHouseLevel && window.clubEconomy.spend(getEquipmentUpgradeCost(item))) {
         item.level += 1;
         onChange();
       }
@@ -77,7 +92,14 @@ function setupGamingHouseUpgrades(onChange) {
 
 window.renderGamingHouse = renderGamingHouse;
 window.setupGamingHouseUpgrades = setupGamingHouseUpgrades;
+window.getGamingHouseMatchEffects = getMatchEffects;
 window.gameState.register("gamingHouse", {
   get: () => gamingHouseState,
-  set: (state) => { gamingHouseState.level = Number(state.level) || 1; if (Array.isArray(state.equipment)) gamingHouseState.equipment.splice(0, gamingHouseState.equipment.length, ...state.equipment); },
+  set: (state) => {
+    gamingHouseState.level = Number(state.level) || 1;
+    if (Array.isArray(state.equipment)) gamingHouseState.equipment.forEach((item) => {
+      const saved = state.equipment.find((candidate) => candidate.id === item.id);
+      if (saved) item.level = Number(saved.level) || 1;
+    });
+  },
 });
