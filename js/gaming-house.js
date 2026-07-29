@@ -25,14 +25,24 @@ function getEquipmentUpgradeCost(item) {
   return Math.round(item.upgradeCost * (1 + (item.level - 1) * 0.65));
 }
 
+function getMatchEffects() {
+  const extraEquipmentLevels = gamingHouseState.equipment.reduce((sum, item) => sum + Math.max(0, item.level - 1), 0);
+  return {
+    strength: (gamingHouseState.level - 1) * 0.8 + extraEquipmentLevels * 0.18,
+    comfortBonus: (gamingHouseState.level - 1) * 2 + Math.floor(extraEquipmentLevels / 3),
+    morale: (getComfort() - 55) * 0.12,
+  };
+}
+
 function renderGamingHouse() {
   const comfort = getComfort();
+  const effects = getMatchEffects();
   const equipment = gamingHouseState.equipment
     .map(
       (item) => `
         <article class="equipment-card">
           <img class="equipment-card__image" src="assets/gaming-house/${item.id}.svg" alt="${item.name}"><div><span>${item.name}</span><strong>Level ${item.level}</strong></div>
-          <p>Komfort +${item.level * item.comfort}</p>
+          <p>Komfort +${item.level * item.comfort} • forma meczowa rośnie z poziomem</p>
           <button class="upgrade-button" data-upgrade-equipment="${item.id}" ${item.level >= maxGamingHouseLevel || !window.clubEconomy.canAfford(getEquipmentUpgradeCost(item)) ? "disabled" : ""}>${item.level >= maxGamingHouseLevel ? "Maksymalny poziom" : `Ulepsz (${window.clubEconomy.format(getEquipmentUpgradeCost(item))})`}</button>
         </article>`
     )
@@ -51,6 +61,7 @@ function renderGamingHouse() {
           <span>Komfort gry</span>
           <strong>${comfort}%</strong>
           <div class="form-bar" aria-label="Komfort gry ${comfort}%"><span style="width: ${comfort}%"></span></div>
+          <small>Bonus: +${effects.strength.toFixed(1)} siły • +${effects.comfortBonus}% komfortu ról</small>
         </div>
         <button class="primary-action" data-upgrade-house ${gamingHouseState.level >= maxGamingHouseLevel || !window.clubEconomy.canAfford(getUpgradeCost(gamingHouseState.level)) ? "disabled" : ""}>${gamingHouseState.level >= maxGamingHouseLevel ? "Maksymalny poziom" : `Ulepsz bazę (${window.clubEconomy.format(getUpgradeCost(gamingHouseState.level))})`}</button>
       </section>
@@ -81,6 +92,7 @@ function setupGamingHouseUpgrades(onChange) {
 
 window.renderGamingHouse = renderGamingHouse;
 window.setupGamingHouseUpgrades = setupGamingHouseUpgrades;
+window.getGamingHouseMatchEffects = getMatchEffects;
 window.gameState.register("gamingHouse", {
   get: () => gamingHouseState,
   set: (state) => {

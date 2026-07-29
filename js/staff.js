@@ -1,5 +1,10 @@
 const staffSlots = { coach: null, analyst: null, psychologist: null };
 const staffLabels = { coach: "Trener", analyst: "Analityk", psychologist: "Psycholog" };
+const staffBenefits = {
+  coach: (member) => `Siła drużyny +${((member.rating - 70) * 0.12).toFixed(1)}`,
+  analyst: (member) => `Szansa bazowa +${Math.round((member.rating - 70) * 0.35)} p.p.`,
+  psychologist: (member) => `Comeback +${Math.round((member.rating - 70) * 0.4)} p.p. • morale`,
+};
 const candidates = {
   coach: [
     { name: "Marta Kowalska", specialty: "Draft i makro", rating: 86, experience: "5 sezonów", cost: 11500 },
@@ -18,12 +23,12 @@ let selectedSlot = "coach";
 
 function renderStaffSlot(slotId) {
   const hired = staffSlots[slotId];
-  return `<button class="staff-slot staff-profile ${selectedSlot === slotId ? "staff-slot--active" : ""}" data-staff-slot="${slotId}"><i class="staff-avatar">${hired ? hired.name.split(" ").map((part) => part[0]).join("") : "+"}</i><div><span>${staffLabels[slotId]}</span><strong>${hired ? hired.name : "Puste stanowisko"}</strong><p>${hired ? `${hired.specialty} • OVR ${hired.rating}` : "Wybierz stanowisko i zatrudnij specjalistę"}</p></div></button>`;
+  return `<button class="staff-slot staff-profile ${selectedSlot === slotId ? "staff-slot--active" : ""}" data-staff-slot="${slotId}"><i class="staff-avatar">${hired ? hired.name.split(" ").map((part) => part[0]).join("") : "+"}</i><div><span>${staffLabels[slotId]}</span><strong>${hired ? hired.name : "Puste stanowisko"}</strong><p>${hired ? `${hired.specialty} • ${staffBenefits[slotId](hired)}` : "Wybierz stanowisko i zatrudnij specjalistę"}</p></div></button>`;
 }
 
 function renderCandidates() {
   return candidates[selectedSlot]
-    .map((candidate, index) => `<article class="candidate-card candidate-card--detailed"><div class="candidate-heading"><i class="staff-avatar">${candidate.name.split(" ").map((part) => part[0]).join("")}</i><div><span>${staffLabels[selectedSlot]}</span><strong>${candidate.name}</strong></div><b class="candidate-rating">${candidate.rating}</b></div><p>${candidate.specialty}</p><div class="candidate-meta"><small>Doświadczenie: ${candidate.experience}</small><strong>${window.clubEconomy.format(candidate.cost)}</strong></div><button class="upgrade-button" data-hire-staff="${index}" ${!window.clubEconomy.canAfford(candidate.cost) ? "disabled" : ""}>Zatrudnij</button></article>`)
+    .map((candidate, index) => `<article class="candidate-card candidate-card--detailed"><div class="candidate-heading"><i class="staff-avatar">${candidate.name.split(" ").map((part) => part[0]).join("")}</i><div><span>${staffLabels[selectedSlot]}</span><strong>${candidate.name}</strong></div><b class="candidate-rating">${candidate.rating}</b></div><p>${candidate.specialty}</p><p class="staff-benefit">Efekt: ${staffBenefits[selectedSlot](candidate)}</p><div class="candidate-meta"><small>Doświadczenie: ${candidate.experience}</small><strong>${window.clubEconomy.format(candidate.cost)}</strong></div><button class="upgrade-button" data-hire-staff="${index}" ${!window.clubEconomy.canAfford(candidate.cost) ? "disabled" : ""}>Zatrudnij</button></article>`)
     .join("");
 }
 
@@ -45,7 +50,13 @@ function setupStaff(onChange) {
 
 window.renderStaff = renderStaff;
 window.setupStaff = setupStaff;
-window.getStaffMatchBonus = () => Object.values(staffSlots).reduce((bonus, member) => bonus + (member ? (member.rating - 70) * 0.08 : 0), 0);
+window.getStaffMatchEffects = () => ({
+  coachStrength: staffSlots.coach ? (staffSlots.coach.rating - 70) * 0.12 : 0,
+  analystChance: staffSlots.analyst ? (staffSlots.analyst.rating - 70) * 0.35 : 0,
+  comebackChance: staffSlots.psychologist ? (staffSlots.psychologist.rating - 70) * 0.4 : 0,
+  morale: staffSlots.psychologist ? (staffSlots.psychologist.rating - 70) * 0.45 : 0,
+});
+window.getStaffMatchBonus = () => window.getStaffMatchEffects().coachStrength;
 window.getStaffPayrollRows = () => Object.entries(staffSlots).filter(([, member]) => member).map(([role, member]) => [staffLabels[role], member.name, Math.round(member.cost * 0.001)]);
 window.gameState.register("staff", { get: () => ({ staffSlots, selectedSlot }), set: (state) => {
   Object.entries(state.staffSlots || {}).forEach(([role, savedMember]) => {

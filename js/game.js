@@ -58,26 +58,26 @@ window.matchCenter = {
         { id: "cover", title: "Broń wejść", note: "Bezpieczny start bez utraty zasobów", risk: "niskie", modifier: 10, success: 1, failure: 0, text: ["Zachowujemy zimną krew i rozpoczynamy linie zgodnie z planem.", "Oddajemy jeden obóz, ale linie pozostają bezpieczne."] },
       ]},
       { id: "laneswap", title: "Przeciwnik rozpoczyna lane swap", minute: 3, options: [
-        { id: "mirror", title: "Odpowiedz zmianą linii", note: "Utrzymaj równy układ mapy", risk: "niskie", modifier: 8, success: 1, failure: -1, text: ["Szybka odpowiedź neutralizuje plan przeciwnika.", "Zmiana trwa za długo i tracimy dwie fale stworów."] },
+        { id: "mirror", title: "Odpowiedz zmianą linii", note: "Utrzymaj równy układ mapy", risk: "niskie", modifier: 8, success: 1, failure: -1, text: ["Szybka odpowiedź neutralizuje plan przeciwnika.", "Rotacja trwa za długo i tracimy dwie fale minionów."] },
         { id: "dive", title: "Wymuś dive na topie", note: "Przewaga liczebna za cenę ryzyka", risk: "wysokie", modifier: -9, success: 3, failure: -3, kills: 2, tower: 1, text: ["Perfekcyjny dive daje zabójstwa i pierwszą wieżę.", "Teleport rywala odwraca dive — tracimy dwóch graczy."] },
-        { id: "freeze", title: "Zamroź dolną aleję", note: "Inwestycja w farmę naszego carry", risk: "średnie", modifier: 4, success: 2, failure: -1, text: ["Carry buduje dużą przewagę w stworach.", "Rywal łamie freeze i odzyskuje kontrolę rzeki."] },
+        { id: "freeze", title: "Zrób freeze na bocie", note: "Daj naszemu carry bezpieczny CS i skalowanie", risk: "średnie", modifier: 4, success: 2, failure: -1, text: ["Carry buduje dużą przewagę w CS-ie.", "Rywal łamie freeze i odzyskuje kontrolę rzeki."] },
       ]},
     ],
     early: [
       { id: "dragon", title: "Pierwszy smok pojawia się na mapie", minute: 9, objective: "smok", options: [
         { id: "fight", title: "Rozpocznij walkę", note: "Pełne 5v5 o trwałe wzmocnienie", risk: "wysokie", modifier: -5, success: 3, failure: -3, kills: 3, objective: "dragon", text: ["Wygrywamy walkę w rzece i zabezpieczamy smoka.", "Rywal kontruje wejście i zabiera smoka po walce."] },
-        { id: "trade", title: "Wymień cel na Herolda", note: "Presja wieżą po drugiej stronie mapy", risk: "niskie", modifier: 9, success: 2, failure: 0, tower: 1, objective: "herald", text: ["Herold taranuje wieżę i daje nam zastrzyk złota.", "Zdobywamy Herolda, ale rywal dobrze broni wieży."] },
-        { id: "steal", title: "Spróbuj ukraść smoka", note: "Jungler wchodzi sam, reszta farmi", risk: "bardzo wysokie", modifier: -16, success: 4, failure: -2, objective: "dragon", text: ["Niesamowity Smite! Kradniemy smoka i uciekamy.", "Próba kradzieży nie wychodzi, jungler ginie w pitcie."] },
+        { id: "trade", title: "Zagraj cross-map po Herolda", note: "Herald i plate’y po drugiej stronie mapy", risk: "niskie", modifier: 9, success: 2, failure: 0, tower: 1, objective: "herald", text: ["Herald wpada w turret, zbieramy plate’y i duży zastrzyk golda.", "Zdobywamy Herolda, ale rywal dobrze broni wieży."] },
+        { id: "steal", title: "Spróbuj ukraść smoka", note: "Jungler wchodzi solo, reszta bierze CS", risk: "bardzo wysokie", modifier: -16, success: 4, failure: -2, objective: "dragon", text: ["Niesamowity Smite! Kradniemy smoka i uciekamy.", "Próba kradzieży nie wychodzi, jungler ginie w pitcie."] },
       ]},
       { id: "botpressure", title: "Botlane rywala gra bez flashów", minute: 11, options: [
         { id: "gank", title: "Zagraj dive 4 na 2", note: "Przenieś mid i jungle na dół", risk: "średnie", modifier: 1, success: 3, failure: -2, kills: 2, tower: 1, text: ["Czysty dive otwiera dolną aleję.", "Rywal kupuje czas, a jego teleport odwraca akcję."] },
-        { id: "plates", title: "Graj o płyty na midzie", note: "Pewne złoto bez dużej walki", risk: "niskie", modifier: 11, success: 1, failure: 0, text: ["Zgarniamy płyty i spokojnie powiększamy zasoby.", "Presja daje mniej złota, niż zakładaliśmy."] },
-        { id: "vision", title: "Odkrój ich od dżungli", note: "Wizja przygotuje następną akcję", risk: "średnie", modifier: 5, success: 2, failure: -1, text: ["Głęboka wizja pozwala złapać supporta rywali.", "Ward zostaje wykryty i tracimy kontrolę rzeki."] },
+        { id: "plates", title: "Zagraj o plate’y na midzie", note: "Bezpieczny gold bez wymuszania teamfightu", risk: "niskie", modifier: 11, success: 1, failure: 0, text: ["Zgarniamy plate’y i budujemy przewagę w goldzie.", "Presja daje mniej złota, niż zakładaliśmy."] },
+        { id: "vision", title: "Zagraj invade i deep vision", note: "Deep wardy przygotują następny play", risk: "średnie", modifier: 5, success: 2, failure: -1, text: ["Głęboka wizja pozwala złapać supporta rywali.", "Ward zostaje wykryty i tracimy kontrolę rzeki."] },
       ]},
     ],
     middle: [
       { id: "herald", title: "Herold otwiera drogę do środkowej wieży", minute: 17, options: [
-        { id: "siege", title: "Zgrupuj się na midzie", note: "Oblężenie i walka o wieżę", risk: "średnie", modifier: 1, success: 3, failure: -2, tower: 1, kills: 2, text: ["Herold uderza, a my wygrywamy walkę pod wieżą.", "Rywal czyści Herolda i karze nas za zbyt długie oblężenie."] },
+        { id: "siege", title: "Zagraj siege na midzie", note: "Push z Heraldem i presja na turret", risk: "średnie", modifier: 1, success: 3, failure: -2, tower: 1, kills: 2, text: ["Herold uderza, a my wygrywamy walkę pod wieżą.", "Rywal czyści Herolda i karze nas za zbyt długie oblężenie."] },
         { id: "side", title: "1-3-1 na bocznych liniach", note: "Rozciągnij obronę przeciwnika", risk: "średnie", modifier: 4, comfort: true, success: 2, failure: -2, tower: 1, text: ["Boczne linie pękają pod jednoczesną presją.", "Nasz splitpusher zostaje złapany bez teleportu."] },
         { id: "ambush", title: "Oddaj Herolda i zastaw pułapkę", note: "Poluj na rotujących graczy", risk: "wysokie", modifier: -3, success: 3, failure: -2, kills: 3, text: ["Rywal wchodzi bez wizji — pułapka daje trzy zabójstwa.", "Przeciwnik sprawdza krzaki i odwraca zasadzkę."] },
       ]},
@@ -112,16 +112,19 @@ window.matchCenter = {
   start({ competition, opponent, opponentStrength, day, section, onComplete }) {
     if (this.activeMatch) return;
     const profile = window.getSquadMatchProfile();
-    const staffBonus = window.getStaffMatchBonus?.() || 0;
-    const ourStrength = profile.strength + staffBonus;
-    const winChance = Math.max(18, Math.min(82, Math.round(50 + (ourStrength - opponentStrength) * 2.2)));
+    const staff = window.getStaffMatchEffects?.() || { coachStrength: 0, analystChance: 0, comebackChance: 0 };
+    const gamingHouse = window.getGamingHouseMatchEffects?.() || { strength: 0, comfortBonus: 0 };
+    const ourStrength = profile.strength + staff.coachStrength + gamingHouse.strength;
+    const effectiveComfort = Math.min(100, profile.comfort + gamingHouse.comfortBonus);
+    const winChance = Math.max(18, Math.min(82, Math.round(50 + (ourStrength - opponentStrength) * 2.2 + staff.analystChance)));
     this.activeMatch = {
       competition, opponent, day, section, onComplete, stage: "opening", stageIndex: 0, advantage: 0, winChance,
-      ourStrength: Math.round(ourStrength), opponentStrength, comfort: profile.comfort,
+      ourStrength: Math.round(ourStrength), opponentStrength, comfort: effectiveComfort,
+      staffEffects: staff, gamingHouseEffects: gamingHouse,
       ourKills: 1 + (this.seed(`${competition}-${day}-us`) % 4), opponentKills: 1 + (this.seed(`${opponent}-${day}`) % 4),
       ourTowers: 0, opponentTowers: 0, ourObjectives: [], opponentObjectives: [],
       scenarioIndexes: ["opening", "early", "middle", "late"].map((phase, index) => this.seed(`${competition}-${opponent}-${day}-${phase}`) % this.scenarios[phase].length),
-      events: [{ minute: 0, type: "info", description: `Wchodzimy na Summoner's Rift. Siła ${Math.round(ourStrength)} vs ${opponentStrength}, komfort ról ${profile.comfort}%.` }],
+      events: [{ minute: 0, type: "info", description: `Wchodzimy na Summoner's Rift. Siła ${Math.round(ourStrength)} vs ${opponentStrength}, komfort ról ${effectiveComfort}%.` }],
     };
   },
   seed(value) {
@@ -140,6 +143,7 @@ window.matchCenter = {
     let modifier = option.modifier || 0;
     if (option.comfort) modifier += match.comfort >= 80 ? 5 : -5;
     if (option.comeback) modifier += match.advantage < 0 ? 9 : -4;
+    if (match.advantage < 0) modifier += match.staffEffects?.comebackChance || 0;
     const success = this.succeeds(match, `${match.stageIndex}-${scenario.id}-${choice}`, modifier);
     match.advantage += success ? option.success : option.failure;
     const kills = option.kills || (scenario.final ? 4 : 1);
@@ -189,7 +193,8 @@ window.matchCenter = {
     const currentChance = Math.max(5, Math.min(95, match.winChance + match.advantage * 7));
     const goldLead = match.advantage * 850;
     const objectiveIcons = (items) => items.length ? items.map((item) => `<i title="${item}">${item === "dragon" ? "◆" : item === "baron" ? "⬢" : item === "elder" ? "✦" : "◈"}</i>`).join("") : "—";
-    return `<section class="match-simulation match-simulation--${this.activeMatch ? "live" : "finished"}"><div class="match-livebar"><span><i></i> ${this.activeMatch ? "LIVE" : "KONIEC"} • Dzień ${match.day}</span><b>${state}</b><strong>${currentChance}% szans</strong></div><div class="section-heading"><span>${match.competition}</span><h4>Nasz zespół vs ${match.opponent}</h4></div><div class="match-arena"><div class="match-map" aria-label="Taktyczna mapa Summoner's Rift"><img src="assets/summoners-rift.svg" alt="Summoner's Rift — aleje, dżungla, rzeka, Smok i Baron"><b class="map-unit map-unit--us" style="--progress:${24 + stageIndex * 11 + Math.max(-8, match.advantage * 2)}%">●</b><b class="map-unit map-unit--them" style="--progress:${76 - stageIndex * 8 - Math.min(8, match.advantage * 2)}%">●</b></div><div class="match-stats"><div><span>Zabójstwa</span><strong>${match.ourKills} <small>—</small> ${match.opponentKills}</strong></div><div><span>Wieże</span><strong>${match.ourTowers || 0} <small>—</small> ${match.opponentTowers || 0}</strong></div><div><span>Przewaga złota</span><strong class="${goldLead >= 0 ? "positive" : "negative"}">${goldLead >= 0 ? "+" : ""}${goldLead.toLocaleString("pl-PL")}</strong></div><div><span>Cele</span><strong class="match-objectives">${objectiveIcons(match.ourObjectives || [])} <small>vs</small> ${objectiveIcons(match.opponentObjectives || [])}</strong></div></div></div>${decisions}<div class="match-feed"><h5>Relacja na żywo</h5><ol class="match-timeline">${events}</ol></div></section>`;
+    const supportBonuses = `<div class="match-support-bonuses"><span>Trener <strong>+${(match.staffEffects?.coachStrength || 0).toFixed(1)} siły</strong></span><span>Analityk <strong>+${Math.round(match.staffEffects?.analystChance || 0)} p.p.</strong></span><span>Psycholog <strong>+${Math.round(match.staffEffects?.comebackChance || 0)} p.p. comeback</strong></span><span>Gaming House <strong>+${(match.gamingHouseEffects?.strength || 0).toFixed(1)} siły</strong></span></div>`;
+    return `<section class="match-simulation match-simulation--${this.activeMatch ? "live" : "finished"}"><div class="match-livebar"><span><i></i> ${this.activeMatch ? "LIVE" : "KONIEC"} • Dzień ${match.day}</span><b>${state}</b><strong>${currentChance}% szans</strong></div><div class="section-heading"><span>${match.competition}</span><h4>Nasz zespół vs ${match.opponent}</h4></div>${supportBonuses}<div class="match-arena"><div class="match-map" aria-label="Taktyczna mapa Summoner's Rift"><img src="assets/summoners-rift.svg" alt="Summoner's Rift — aleje, dżungla, rzeka, Smok i Baron"><b class="map-unit map-unit--us" style="--progress:${24 + stageIndex * 11 + Math.max(-8, match.advantage * 2)}%">●</b><b class="map-unit map-unit--them" style="--progress:${76 - stageIndex * 8 - Math.min(8, match.advantage * 2)}%">●</b></div><div class="match-stats"><div><span>Kille</span><strong>${match.ourKills} <small>—</small> ${match.opponentKills}</strong></div><div><span>Turrety</span><strong>${match.ourTowers || 0} <small>—</small> ${match.opponentTowers || 0}</strong></div><div><span>Gold lead</span><strong class="${goldLead >= 0 ? "positive" : "negative"}">${goldLead >= 0 ? "+" : ""}${goldLead.toLocaleString("pl-PL")}</strong></div><div><span>Cele</span><strong class="match-objectives">${objectiveIcons(match.ourObjectives || [])} <small>vs</small> ${objectiveIcons(match.opponentObjectives || [])}</strong></div></div></div>${decisions}<div class="match-feed"><h5>Relacja na żywo</h5><ol class="match-timeline">${events}</ol></div></section>`;
   },
   setup(onChange) {
     document.querySelectorAll("[data-match-choice]").forEach((button) => button.addEventListener("click", () => {
@@ -215,6 +220,8 @@ window.getHomeStatus = function getHomeStatus() {
   const nextMatch = window.getLeagueNextMatch?.() || window.getTournamentNextMatch?.() || { value: "Brak zaplanowanego meczu", note: "Dołącz do ligi lub turnieju" };
   const profile = window.getSquadMatchProfile?.() || { comfort: 70 };
   const resultModifier = window.matchCenter.lastMatch ? (window.matchCenter.lastMatch.won ? 8 : -8) : 0;
-  const morale = Math.max(35, Math.min(95, Math.round(62 + profile.comfort * 0.2 + resultModifier)));
+  const staffMorale = window.getStaffMatchEffects?.().morale || 0;
+  const houseMorale = window.getGamingHouseMatchEffects?.().morale || 0;
+  const morale = Math.max(35, Math.min(95, Math.round(62 + profile.comfort * 0.2 + resultModifier + staffMorale + houseMorale)));
   return { nextMatch, morale: { value: `${morale}%`, note: morale >= 80 ? "Świetna atmosfera" : morale >= 65 ? "Stabilna atmosfera" : "Zespół potrzebuje zwycięstwa" } };
 };
