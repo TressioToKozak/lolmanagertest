@@ -1043,6 +1043,10 @@ body {
 
 .hero-panel--management {
   padding: 22px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mailbox-board {
@@ -1343,14 +1347,10 @@ body {
   z-index: 1;
   display: grid;
   gap: 18px;
-  height: 100%;
+  height: auto;
   padding: 18px;
-  min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-  scroll-behavior: auto;
-  -webkit-overflow-scrolling: touch;
+  min-height: 100%;
+  overflow: visible;
 }
 
 .budget-pill {

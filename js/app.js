@@ -51,5 +51,4 @@ document.querySelector("[data-next-day]")?.addEventListener("click", () => {
   const activeItem = matchItem || document.querySelector(".main-nav__item--active");
   window.renderSection(content, activeItem?.dataset.section || "home");
   window.gameState.schedule();
-  document.querySelector(".match-simulation--live")?.scrollIntoView({ block: "center" });
 });
