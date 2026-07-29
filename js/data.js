@@ -1,12 +1,6 @@
 window.sections = {
   home: {
     eyebrow: "Season 2026 • Preseason",
-    title: "Welcome, Coach",
-    action: "Start career",
-    tag: "Build your legacy",
-    heading: "LoL eSport Manager",
-    description:
-      "Zarządzaj składem, sztabem, transferami i finansami klubu. Przygotuj drużynę do lig, turniejów oraz walki o międzynarodowe trofea.",
     cards: [
       ["Next match", "Brak zaplanowanego meczu", "Dołącz do ligi lub turnieju"],
       ["Team morale", "Stabilne", "Zależy od składu i ostatnich wyników"],

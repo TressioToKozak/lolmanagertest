@@ -1,15 +1,17 @@
 const leagues = [
-  { name: "Bronze Circuit", tier: "Startowa", entryFee: 0, prize: 35000, region: "Polska", teamCount: 8 },
-  { name: "Regional Academy League", tier: "Regionalna", entryFee: 20000, prize: 80000, region: "Europa Centralna", teamCount: 10 },
-  { name: "Challenger Path", tier: "Semi-pro", entryFee: 60000, prize: 180000, region: "Europa", teamCount: 12 },
-  { name: "Elite Championship", tier: "Pro", entryFee: 150000, prize: 500000, region: "Europa", teamCount: 10 },
+  { name: "Puchar Polski / eventy offseason", tier: "Krajowa elita", entryFee: 10000, prize: 180000, region: "Polska", teamCount: 12, requiredWins: 10, strength: 82 },
+  { name: "ARRMY League", tier: "Czołowa amatorska", entryFee: 6500, prize: 100000, region: "Polska", teamCount: 12, requiredWins: 6, strength: 75 },
+  { name: "Grimorr League", tier: "Społecznościowa+", entryFee: 4000, prize: 60000, region: "Polska", teamCount: 10, requiredWins: 3, strength: 69 },
+  { name: "MadLeague", tier: "Amatorska", entryFee: 2000, prize: 30000, region: "Polska", teamCount: 10, requiredWins: 1, strength: 63 },
+  { name: "Małe ligi Discordowe", tier: "Debiutancka", entryFee: 0, prize: 12000, region: "Polska • ligi społecznościowe", teamCount: 16, requiredWins: 0, strength: 56 },
 ];
 const leagueTeamNames = ["Nasz zespół", "Bronze Badgers", "Academy Owls", "Valley Drakes", "Dragon Forge", "Crimson Wolves", "Royal Krakens", "Iron Ravens", "Prague Golems", "Berlin Bots", "Nordic Sparks", "Baltic Foxes"];
 let activeLeagueIndex = null;
 let leagueSeason = null;
+let leagueQualifier = null;
 
 function createLeagueSeason(league) {
-  const teams = leagueTeamNames.slice(0, league.teamCount).map((name, index) => ({
+  const teams = Array.from({ length: league.teamCount }, (_, index) => leagueTeamNames[index] || `Discord Squad ${index + 1}`).map((name, index) => ({
     name,
     played: index % 3,
     wins: index % 3 === 2 ? 1 : 0,
@@ -44,19 +46,24 @@ function renderLeagues() {
   const visibleLeagues = activeLeagueIndex === null || leagueSeason?.finished ? leagues.map((league, index) => [league, index]) : [[leagues[activeLeagueIndex], activeLeagueIndex]];
   const cards = visibleLeagues.map(([league, index]) => {
     const isActive = activeLeagueIndex === index;
-    const unavailable = activeLeagueIndex !== null || !window.clubEconomy.canAfford(league.entryFee);
-    return `<article class="market-card competition-card ${isActive ? "market-card--active" : ""}"><div class="competition-card__top"><span>${league.tier}</span><b>${league.teamCount} drużyn</b></div><strong>${league.name}</strong><p>${league.region}</p><div class="competition-card__facts"><small>Nagroda<strong>${window.clubEconomy.format(league.prize)}</strong></small><small>Wpisowe<strong>${league.entryFee ? window.clubEconomy.format(league.entryFee) : "Darmowe"}</strong></small></div><button class="upgrade-button" data-join-league="${index}" ${unavailable ? "disabled" : ""}>${isActive ? "Gramy" : "Dołącz do ligi"}</button></article>`;
+    const wins = window.getCareerWins?.() || 0;
+    const locked = wins < league.requiredWins;
+    const qualifying = leagueQualifier?.index === index;
+    const unavailable = activeLeagueIndex !== null || leagueQualifier !== null || locked || !window.clubEconomy.canAfford(league.entryFee);
+    const label = isActive ? "Gramy" : qualifying ? `Eliminacje • dzień ${leagueQualifier.nextMatchDay}` : locked ? `Wymagane zwycięstwa: ${wins}/${league.requiredWins}` : "Zagraj eliminacje";
+    return `<article class="market-card competition-card ${isActive ? "market-card--active" : ""} ${locked ? "competition-card--locked" : ""}"><div class="competition-card__top"><span>${league.tier}</span><b>${league.teamCount} drużyn</b></div><strong>${league.name}</strong><p>${league.region}</p><div class="competition-card__facts"><small>Nagroda<strong>${window.clubEconomy.format(league.prize)}</strong></small><small>Wpisowe eliminacyjne<strong>${league.entryFee ? window.clubEconomy.format(league.entryFee) : "Darmowe"}</strong></small></div><button class="upgrade-button" data-join-league="${index}" ${unavailable ? "disabled" : ""}>${label}</button></article>`;
   }).join("");
-  return `<div class="management-board"><header class="competition-picker-header"><div><span>Rozgrywki ligowe</span><h2>${activeLeagueIndex === null ? "Wybierz ligę dla zespołu" : "Sezon ligowy"}</h2><p>${activeLeagueIndex === null ? "Porównaj poziom, wpisowe i pulę nagród. W jednym sezonie możesz grać tylko w jednej lidze." : "Śledź tabelę, terminarz i formę rywali."}</p></div><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div></header><div class="market-grid market-grid--four competition-picker">${cards}</div>${renderLeagueTable(leagues[activeLeagueIndex])}</div>`;
+  const qualifierMatch = leagueQualifier ? window.matchCenter.render(`Eliminacje • ${leagues[leagueQualifier.index].name}`) : "";
+  return `<div class="management-board"><header class="competition-picker-header"><div><span>Rozgrywki ligowe</span><h2>${activeLeagueIndex === null ? "Wywalcz miejsce w lidze" : "Sezon ligowy"}</h2><p>${activeLeagueIndex === null ? "Każda liga wymaga wygrania meczu eliminacyjnego. Mocniejsze rozgrywki odblokujesz wynikami klubu." : "Śledź tabelę, terminarz i formę rywali."}</p></div><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div></header><div class="market-grid market-grid--four competition-picker">${cards}</div>${qualifierMatch}${renderLeagueTable(leagues[activeLeagueIndex])}</div>`;
 }
 
 function setupLeagues(onChange) {
   document.querySelectorAll("[data-join-league]").forEach((button) => button.addEventListener("click", () => {
     const index = Number(button.dataset.joinLeague);
     const league = leagues[index];
-    if (activeLeagueIndex === null && league && window.clubEconomy.spend(league.entryFee)) {
-      activeLeagueIndex = index;
-      leagueSeason = createLeagueSeason(league);
+    const eligible = league && (window.getCareerWins?.() || 0) >= league.requiredWins;
+    if (activeLeagueIndex === null && leagueQualifier === null && eligible && window.clubEconomy.spend(league.entryFee)) {
+      leagueQualifier = { index, nextMatchDay: window.gameClock.day + 1 };
       onChange();
     }
   }));
@@ -82,13 +89,33 @@ function resolveLeagueMatch(day, league, opponent, won) {
 }
 
 window.gameClock.subscribe((day) => {
+  if (leagueQualifier && day >= leagueQualifier.nextMatchDay && !window.matchCenter.activeMatch) {
+    const qualifier = leagueQualifier;
+    const league = leagues[qualifier.index];
+    window.matchCenter.start({
+      competition: `Eliminacje • ${league.name}`,
+      opponent: "Rywal kwalifikacyjny",
+      opponentStrength: league.strength,
+      day,
+      section: "leagues",
+      onComplete: (won) => {
+        leagueQualifier = null;
+        if (won) {
+          activeLeagueIndex = qualifier.index;
+          leagueSeason = createLeagueSeason(league);
+        }
+        window.addMail({ id: `qualifier-${day}`, from: league.name, subject: won ? "Awans do ligi" : "Nieudane eliminacje", date: `Dzień ${day} • 20:00`, body: won ? `Wygraliśmy eliminacje i otrzymaliśmy miejsce w ${league.name}.` : `Przegraliśmy eliminacje do ${league.name}. Możemy spróbować ponownie.` });
+      },
+    });
+    return;
+  }
   if (!leagueSeason || leagueSeason.finished || day < leagueSeason.nextMatchDay || window.matchCenter.activeMatch) return;
   const league = leagues[activeLeagueIndex];
   const opponent = leagueSeason.teams[leagueSeason.opponentIndex];
   window.matchCenter.start({
     competition: league.name,
     opponent: opponent.name,
-    opponentStrength: 55 + activeLeagueIndex * 7 + (leagueSeason.opponentIndex % 5),
+    opponentStrength: league.strength + (leagueSeason.opponentIndex % 5),
     day,
     section: "leagues",
     onComplete: (won) => resolveLeagueMatch(day, league, opponent, won),
@@ -98,12 +125,16 @@ window.gameClock.subscribe((day) => {
 window.renderLeagues = renderLeagues;
 window.setupLeagues = setupLeagues;
 window.getLeagueNextMatch = () => {
+  if (leagueQualifier) {
+    const remaining = Math.max(0, leagueQualifier.nextMatchDay - window.gameClock.day);
+    return { value: `Eliminacje: ${leagues[leagueQualifier.index].name}`, note: remaining === 0 ? "Dzisiaj" : remaining === 1 ? "Jutro" : `Za ${remaining} dni` };
+  }
   if (!leagueSeason || leagueSeason.finished) return null;
   const opponent = leagueSeason.teams[leagueSeason.opponentIndex];
   const remaining = Math.max(0, leagueSeason.nextMatchDay - window.gameClock.day);
   return { value: `vs ${opponent.name}`, note: `${remaining === 0 ? "Dzisiaj" : remaining === 1 ? "Jutro" : `Za ${remaining} dni`} • ${leagues[activeLeagueIndex].name}` };
 };
 window.gameState.register("leagues", {
-  get: () => ({ activeLeagueIndex, leagueSeason }),
-  set: (state) => { activeLeagueIndex = state.activeLeagueIndex ?? null; leagueSeason = state.leagueSeason || null; },
+  get: () => ({ activeLeagueIndex, leagueSeason, leagueQualifier }),
+  set: (state) => { activeLeagueIndex = state.activeLeagueIndex ?? null; leagueSeason = state.leagueSeason || null; leagueQualifier = state.leagueQualifier || null; },
 });

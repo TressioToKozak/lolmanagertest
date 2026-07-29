@@ -93,11 +93,11 @@ function renderSection(content, sectionKey) {
     return;
   }
 
-  content.innerHTML = `
-    <header class="top-bar"><div><p class="eyebrow">${section.eyebrow}</p><h2>${section.title}</h2></div><button class="primary-action">${section.action}</button></header>
-    <div class="hero-content"><p class="hero-content__tag">${section.tag}</p><h3>${section.heading}</h3><p>${section.description}</p></div>
-    ${renderCards(section.cards)}
-    ${sectionKey === "home" ? window.renderOnboardingQuests?.() || "" : ""}`;
+  if (sectionKey === "home") {
+    content.innerHTML = `<header class="top-bar"><div><p class="eyebrow">${section.eyebrow}</p><h2>Welcome, ${window.managerName || "Manager"}</h2></div></header>${renderCards(section.cards)}${window.renderOnboardingQuests?.() || ""}`;
+  } else {
+    content.innerHTML = `<header class="top-bar"><div><p class="eyebrow">${section.eyebrow}</p><h2>${section.title}</h2></div><button class="primary-action">${section.action}</button></header><div class="hero-content"><p class="hero-content__tag">${section.tag}</p><h3>${section.heading}</h3><p>${section.description}</p></div>${renderCards(section.cards)}`;
+  }
   if (sectionKey === "home") window.setupOnboardingQuests?.(rerender);
 }
 

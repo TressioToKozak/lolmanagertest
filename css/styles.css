@@ -1831,7 +1831,7 @@ body {
 }
 
 .competition-card--locked { opacity: 0.76; }
-.competition-card--locked::before { position: absolute; top: 52px; right: 18px; z-index: 2; padding: 5px 8px; border-radius: 999px; color: #ffd0d0; font-size: 0.62rem; font-weight: 900; content: "ZABLOKOWANY"; background: rgba(120, 30, 40, 0.72); }
+.competition-card--locked::before { display: none; }
 
 .match-score div {
   display: grid;
