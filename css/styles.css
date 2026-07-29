@@ -1636,13 +1636,13 @@ body {
   overflow: hidden;
   border: 1px solid rgba(46, 230, 166, 0.23);
   border-radius: 18px;
-  background: radial-gradient(circle at center, rgba(201, 160, 75, 0.18) 0 7%, transparent 8%), linear-gradient(135deg, #123852, #0a2234 48%, #173747);
+  background: #102c2e;
 }
 
+.match-map > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+
 .match-map::before,
-.match-map::after { position: absolute; width: 42%; height: 38%; border-radius: 50%; background: rgba(19, 82, 77, 0.65); content: ""; filter: blur(3px); }
-.match-map::before { left: 6%; bottom: 7%; }
-.match-map::after { top: 7%; right: 6%; }
+.match-map::after { display: none; }
 .map-lane { position: absolute; z-index: 1; height: 5px; border-radius: 8px; background: rgba(166, 193, 208, 0.3); transform-origin: left; }
 .map-lane--top { top: 20%; left: 13%; width: 72%; transform: rotate(1deg); }
 .map-lane--mid { top: 50%; left: 10%; width: 80%; transform: rotate(-24deg); }
@@ -1830,6 +1830,9 @@ body {
   width: 100%;
 }
 
+.competition-card--locked { opacity: 0.76; }
+.competition-card--locked::before { position: absolute; top: 52px; right: 18px; z-index: 2; padding: 5px 8px; border-radius: 999px; color: #ffd0d0; font-size: 0.62rem; font-weight: 900; content: "ZABLOKOWANY"; background: rgba(120, 30, 40, 0.72); }
+
 .match-score div {
   display: grid;
   gap: 6px;
@@ -1882,6 +1885,19 @@ body {
   .match-decisions { grid-template-columns: 1fr; }
   .match-livebar b { display: none; }
 }
+
+.quest-panel { margin-top: 22px; padding: 18px; border: 1px solid rgba(255, 211, 110, 0.2); border-radius: 20px; background: rgba(7, 21, 37, 0.7); }
+.quest-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.quest-card { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 12px; padding: 13px; border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 14px; background: rgba(17, 39, 64, 0.7); }
+.quest-card > i { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; color: var(--gold-bright); font-style: normal; font-weight: 900; background: rgba(201, 160, 75, 0.14); }
+.quest-card > div { display: grid; gap: 3px; }
+.quest-card p { margin: 0; color: var(--muted); font-size: 0.75rem; }
+.quest-card small { color: var(--gold-bright); }
+.quest-card > b { color: var(--muted); font-size: 0.75rem; }
+.quest-card > button { padding: 8px 11px; border: 0; border-radius: 9px; color: #07101d; font-weight: 900; cursor: pointer; background: var(--gold-bright); }
+.quest-card--done { border-color: rgba(46, 230, 166, 0.35); }
+.quest-card--done > i { color: #2ee6a6; background: rgba(46, 230, 166, 0.12); }
+@media (max-width: 760px) { .quest-list { grid-template-columns: 1fr; } }
 
 @media (max-width: 1100px) {
   .finance-summary,

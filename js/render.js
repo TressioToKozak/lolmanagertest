@@ -96,7 +96,9 @@ function renderSection(content, sectionKey) {
   content.innerHTML = `
     <header class="top-bar"><div><p class="eyebrow">${section.eyebrow}</p><h2>${section.title}</h2></div><button class="primary-action">${section.action}</button></header>
     <div class="hero-content"><p class="hero-content__tag">${section.tag}</p><h3>${section.heading}</h3><p>${section.description}</p></div>
-    ${renderCards(section.cards)}`;
+    ${renderCards(section.cards)}
+    ${sectionKey === "home" ? window.renderOnboardingQuests?.() || "" : ""}`;
+  if (sectionKey === "home") window.setupOnboardingQuests?.(rerender);
 }
 
 window.renderSection = renderSection;
