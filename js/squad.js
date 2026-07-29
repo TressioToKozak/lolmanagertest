@@ -26,6 +26,8 @@ function renderPlayer(playerId, isStarter) {
   }
 
   const player = squadPlayers[playerId];
+  const development = player.development || { xp: 0, gained: 0, matches: 0, kills: 0, mvps: 0 };
+  const xpTarget = development.gained === 0 ? 140 : 200;
   const listed = transferListedPlayers.has(playerId);
   return `
     <article class="player-card ${isStarter ? "player-card--starter" : "player-card--reserve"} ${listed ? "player-card--listed" : ""}" draggable="true" data-player-id="${playerId}">
@@ -33,7 +35,8 @@ function renderPlayer(playerId, isStarter) {
       <strong>${player.name}</strong>
       <p>${player.style}</p>
       <div class="form-bar" aria-label="Ocena zawodnika ${player.rating}"><span style="width: ${player.rating}%"></span></div>
-      <small>Ocena ${player.rating}</small>
+      <small>OVR ${player.rating} • rozwój ${development.xp}/${development.gained >= 2 ? "MAX" : xpTarget}</small>
+      <small>${development.matches} meczów • ${development.kills} killi • ${development.mvps} MVP • sezon +${development.gained}</small>
       <button class="player-sale-button" data-sell-player="${playerId}">${listed ? `Wystawiony • ${window.clubEconomy.format(player.value)}` : `Wystaw na sprzedaż • ${window.clubEconomy.format(player.value)}`}</button>
     </article>`;
 }
@@ -111,6 +114,42 @@ window.getSquadMatchProfile = function getSquadMatchProfile() {
   const comfort = Math.round((roleMatches / Math.max(starters.length, 1)) * 100);
   return { rating: Math.round(average), comfort, strength: average + (comfort - 70) * 0.12 };
 };
+window.applySquadMatchDevelopment = function applySquadMatchDevelopment(match) {
+  const starterIds = startingSlots.map((slotId) => squadSlots[slotId]).filter((playerId) => squadPlayers[playerId]);
+  if (!starterIds.length) return;
+  const stats = Object.fromEntries(starterIds.map((playerId) => [playerId, { kills: 0, assists: 0 }]));
+  const killPool = starterIds.flatMap((playerId, index) => index === 2 || index === 3 ? [playerId, playerId] : [playerId]);
+  for (let kill = 0; kill < match.ourKills; kill += 1) {
+    const hash = [...`${match.competition}-${match.opponent}-${match.day}-${kill}`].reduce((sum, character) => ((sum * 31) + character.charCodeAt(0)) >>> 0, 7);
+    stats[killPool[hash % killPool.length]].kills += 1;
+  }
+  starterIds.forEach((playerId, index) => {
+    stats[playerId].assists = Math.max(0, Math.round((match.ourKills - stats[playerId].kills) * (0.45 + index * 0.06)));
+  });
+  const mvpId = [...starterIds].sort((first, second) => (stats[second].kills * 3 + stats[second].assists) - (stats[first].kills * 3 + stats[first].assists))[0];
+  const growth = [];
+  starterIds.forEach((playerId) => {
+    const player = squadPlayers[playerId];
+    player.development ||= { xp: 0, gained: 0, matches: 0, kills: 0, assists: 0, mvps: 0 };
+    const development = player.development;
+    development.matches += 1;
+    development.kills += stats[playerId].kills;
+    development.assists += stats[playerId].assists;
+    if (playerId === mvpId) development.mvps += 1;
+    if (development.gained >= 2) return;
+    development.xp += 2 + (match.won ? 2 : 0) + stats[playerId].kills * 1.2 + stats[playerId].assists * 0.25 + (playerId === mvpId ? 4 : 0);
+    const target = development.gained === 0 ? 140 : 200;
+    if (development.xp >= target) {
+      development.xp = Math.round(development.xp - target);
+      development.gained += 1;
+      player.rating += 1;
+      player.value = Math.round(player.value * 1.12);
+      growth.push(`${player.name} awansuje do ${player.rating} OVR`);
+    } else development.xp = Math.round(development.xp);
+  });
+  match.playerStats = starterIds.map((playerId) => ({ name: squadPlayers[playerId].name, ...stats[playerId], mvp: playerId === mvpId }));
+  match.developmentReport = growth;
+};
 window.addSquadPlayer = function addSquadPlayer(player) {
   const playerId = `transfer-${player.league}-${player.team}-${player.name}`.toLocaleLowerCase("pl").replace(/[^a-z0-9]+/g, "-");
   squadPlayers[playerId] = {
@@ -119,6 +158,7 @@ window.addSquadPlayer = function addSquadPlayer(player) {
     style: `Transfer z ${player.team}`,
     rating: player.overall,
     value: Math.round(player.cost * 0.7),
+    development: { xp: 0, gained: 0, matches: 0, kills: 0, assists: 0, mvps: 0 },
   };
 
   let freeSlot = reserveSlots.find((slotId) => !squadSlots[slotId]);
