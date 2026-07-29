@@ -7,24 +7,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css?v=17" />
-    <script src="js/game.js?v=17" defer></script>
+    <link rel="stylesheet" href="css/styles.css?v=26" />
+    <script src="js/game.js?v=26" defer></script>
     <script src="js/economy.js?v=17" defer></script>
-    <script src="js/data.js?v=17" defer></script>
-    <script src="js/squad.js?v=17" defer></script>
-    <script src="js/gaming-house.js?v=17" defer></script>
+    <script src="js/quests.js?v=21" defer></script>
+    <script src="js/data.js?v=20" defer></script>
+    <script src="js/squad.js?v=26" defer></script>
+    <script src="js/gaming-house.js?v=25" defer></script>
     <script src="js/mailbox.js?v=17" defer></script>
-    <script src="js/staff.js?v=17" defer></script>
+    <script src="js/staff.js?v=25" defer></script>
     <script src="js/transfer.js?v=17" defer></script>
-    <script src="js/scouting.js?v=17" defer></script>
-    <script src="js/tournaments.js?v=17" defer></script>
-    <script src="js/leagues.js?v=17" defer></script>
+    <script src="js/scouting.js?v=19" defer></script>
+    <script src="js/tournaments.js?v=19" defer></script>
+    <script src="js/leagues.js?v=23" defer></script>
     <script src="js/finances.js?v=17" defer></script>
     <script src="js/sponsors.js?v=17" defer></script>
     <script src="js/settings.js?v=17" defer></script>
-    <script src="js/render.js?v=17" defer></script>
-    <script src="js/app.js?v=17" defer></script>
-    <script src="js/auth.js?v=17" defer></script>
+    <script src="js/render.js?v=20" defer></script>
+    <script src="js/app.js?v=24" defer></script>
+    <script src="js/auth.js?v=20" defer></script>
   </head>
   <body>
     <section class="auth-screen" data-auth-screen hidden>
@@ -32,11 +33,6 @@
     </section>
     <main class="game-shell" aria-label="Ekran startowy gry LoL eSport Manager" hidden>
       <aside class="sidebar">
-        <div class="game-clock">
-          <span>Sezon 2026</span>
-          <strong>Dzień <span data-game-day>1</span></strong>
-          <button class="primary-action" data-next-day>Następny dzień</button>
-        </div>
         <div class="brand">
           <div class="brand__mark">LM</div>
           <div>
@@ -44,10 +40,15 @@
             <h1>LoL Manager</h1>
           </div>
         </div>
+        <div class="game-clock">
+          <span>Sezon 2026</span>
+          <strong>Dzień <span data-game-day>1</span></strong>
+          <button class="primary-action" data-next-day>Następny dzień</button>
+        </div>
         <div class="manager-chip"><span>Zalogowany</span><strong data-manager-name>Menedżer</strong><button data-logout>Wyloguj</button></div>
 
         <nav class="main-nav" aria-label="Główna nawigacja">
-          <a class="main-nav__item main-nav__item--active" href="#home" data-section="home">Home</a>
+          <a class="main-nav__item main-nav__item--active" href="#home" data-section="home">Home <span class="nav-badge" data-quest-badge hidden>0</span></a>
           <a class="main-nav__item" href="#mailbox" data-section="mailbox">Mailbox <span class="nav-badge" data-mail-badge hidden>0</span></a>
           <a class="main-nav__item" href="#squad" data-section="squad">Squad</a>
           <a class="main-nav__item" href="#staff" data-section="staff">Staff</a>
@@ -60,11 +61,6 @@
           <a class="main-nav__item" href="#sponsors" data-section="sponsors">Sponsors</a>
           <a class="main-nav__item" href="#settings" data-section="settings">Settings</a>
         </nav>
-        <div class="game-clock">
-          <span>Sezon 2026</span>
-          <strong>Dzień <span data-game-day>1</span></strong>
-          <button class="primary-action" data-next-day>Następny dzień</button>
-        </div>
       </aside>
 
       <section class="hero-panel" id="game-content" aria-live="polite">
