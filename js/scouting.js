@@ -1,9 +1,9 @@
 const scoutSlots = [null, null, null];
 const scouts = [
-  { name: "Anna Wiśniewska", region: "Korea Challengers", rating: 88, discovery: "Talenty mechaniczne", cost: 95000 },
-  { name: "Filip Domański", region: "EU Masters", rating: 82, discovery: "Gotowi do gry", cost: 75000 },
-  { name: "Noah Jensen", region: "Nordics", rating: 77, discovery: "Młodzi shotcallerzy", cost: 68000 },
-  { name: "Sofia Rossi", region: "ERL South", rating: 80, discovery: "Agresywni carry", cost: 72000 },
+  { name: "Anna Wiśniewska", region: "Korea Challengers", rating: 88, discovery: "Talenty mechaniczne", cost: 14500 },
+  { name: "Filip Domański", region: "EU Masters", rating: 82, discovery: "Gotowi do gry", cost: 9500 },
+  { name: "Noah Jensen", region: "Nordics", rating: 77, discovery: "Młodzi shotcallerzy", cost: 6000 },
+  { name: "Sofia Rossi", region: "ERL South", rating: 80, discovery: "Agresywni carry", cost: 8000 },
 ];
 let selectedScoutSlot = 0;
 
@@ -26,4 +26,8 @@ function setupScouting(onChange) {
 
 window.renderScouting = renderScouting;
 window.setupScouting = setupScouting;
-window.gameState.register("scouting", { get: () => ({ scoutSlots, selectedScoutSlot }), set: (state) => { scoutSlots.splice(0, scoutSlots.length, ...(state.scoutSlots || [null, null, null])); selectedScoutSlot = Number(state.selectedScoutSlot) || 0; } });
+window.gameState.register("scouting", { get: () => ({ scoutSlots, selectedScoutSlot }), set: (state) => {
+  const restored = (state.scoutSlots || [null, null, null]).map((savedScout) => savedScout ? scouts.find((scout) => scout.name === savedScout.name) || savedScout : null);
+  scoutSlots.splice(0, scoutSlots.length, ...restored);
+  selectedScoutSlot = Number(state.selectedScoutSlot) || 0;
+} });

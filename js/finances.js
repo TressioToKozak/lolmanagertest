@@ -15,9 +15,10 @@ let lastFinanceSettlementDay = 0;
 
 function getFinanceSnapshot() {
   const staffRows = window.getStaffPayrollRows?.() || [];
-  const costs = [...financeRows, ...staffRows].reduce((sum, [, , cost]) => sum + cost, 0);
+  const playerContractRows = window.getSquadPayrollRows?.() || [];
+  const costs = [...financeRows, ...playerContractRows, ...staffRows].reduce((sum, [, , cost]) => sum + cost, 0);
   const income = monthlyIncome.reduce((sum, [, amount]) => sum + amount, 0);
-  return { staffRows, costs, income, profit: income - costs };
+  return { staffRows: [...playerContractRows, ...staffRows], costs, income, profit: income - costs };
 }
 
 function renderFinances() {

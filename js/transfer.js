@@ -142,6 +142,21 @@ Object.entries(primeLeagueRosters).forEach(([team, roster]) => roster.forEach((s
   const [name, overall, macro, micro, vision, roams, farming, reflex, cost] = stats;
   transferPlayers.push(withCountry({ name, team, league: "Prime League (DE)", position: standardPositions[index], overall, macro, micro, vision, roams, farming, reflex, cost }, "DE"));
 }));
+const koreanLeagueRosters = {
+  "🏆 T1": [["Doran",92,94,91,90,89,92,91,2800000],["Oner",95,96,94,94,96,90,95,4500000],["Faker",99,99,98,99,99,97,97,10000000],["Peyz",95,92,97,89,86,98,98,5000000],["Keria",97,98,96,99,99,84,96,7000000]],
+  "🐯 Gen.G": [["Kiin",96,96,96,92,90,95,96,6000000],["Canyon",97,98,97,95,97,92,97,7500000],["Chovy",98,98,99,94,91,99,99,9000000],["Ruler",97,94,98,90,87,99,98,7500000],["Duro",91,92,89,94,93,82,90,2200000]],
+  "🦅 Hanwha Life Esports": [["Zeus",97,96,98,91,90,97,98,8000000],["Kanavi",97,98,97,94,96,92,97,7500000],["Zeka",95,94,96,90,89,95,96,5500000],["Gumayusi",96,93,97,89,86,98,98,6500000],["Delight",94,95,92,97,97,82,92,3800000]],
+  "⚡ Dplus KIA": [["Siwoo",90,90,91,86,84,90,91,1800000],["Lucid",93,94,93,91,94,88,93,3200000],["ShowMaker",96,97,96,94,92,96,96,6500000],["Aiming",94,91,95,88,84,97,97,4500000],["BeryL",92,95,89,98,97,80,88,2800000]],
+  "🔵 KT Rolster": [["PerfecT",91,91,92,87,85,91,92,2200000],["Cuzz",92,94,91,91,94,87,90,2800000],["Bdd",95,96,95,93,90,95,95,5200000],["Deokdam",91,89,92,85,82,94,94,2300000],["Peter",89,90,88,92,91,80,88,1600000]],
+  "🦈 DN SOOPers": [["DuDu",90,91,90,87,85,90,91,1900000],["Pyosik",92,94,91,91,94,87,91,2800000],["BuLLDoG",90,90,91,88,86,91,92,1800000],["Smash",91,89,93,85,82,94,95,2400000],["Life",91,93,89,95,94,81,89,2300000]],
+  "🐉 KIWOOM DRX": [["Rich",89,90,89,86,84,89,89,1500000],["Willer",91,92,91,90,93,86,91,2400000],["Ucal",92,93,92,90,88,93,93,3000000],["Jiwoo",91,89,93,85,82,95,95,2600000],["Andil",89,91,88,93,92,80,88,1600000]],
+  "🦊 BNK FearX": [["Clear",88,89,88,85,83,88,89,1300000],["Raptor",89,90,89,88,91,84,89,1600000],["VicLa",91,91,92,89,87,92,93,2500000],["Diable",90,88,92,84,81,94,94,2100000],["Kellin",92,94,90,96,95,81,90,2900000]],
+  "🌶️ Nongshim RedForce": [["Kingen",94,95,94,90,88,94,94,4200000],["Sponge",89,90,89,88,90,84,89,1500000],["Scout",96,97,96,93,90,97,96,6800000],["Taeyoon",89,87,90,84,81,92,92,1500000],["Lehends",95,97,93,98,97,82,92,5800000]],
+  "🚢 Hanjin BRION": [["Morgan",90,91,89,87,84,90,90,1800000],["Gideon",89,91,89,89,91,84,89,1600000],["Karis",89,89,90,87,85,91,91,1700000],["Hype",88,87,90,83,80,91,92,1300000],["Pollu",88,90,87,92,91,79,87,1200000]],
+};
+Object.entries(koreanLeagueRosters).forEach(([team, roster]) => roster.forEach(([name, overall, macro, micro, vision, roams, farming, reflex, cost], index) => {
+  transferPlayers.push(withCountry({ name, team, league: "LCK (KR)", position: standardPositions[index], overall, macro, micro, vision, roams, farming, reflex, cost }, "KR"));
+}));
 
 const purchasedPlayers = new Set();
 let transferTeamFilter = "all";
@@ -150,6 +165,11 @@ let transferPositionFilter = "all";
 let transferSearch = "";
 let transferMessage = "";
 let transferSort = { key: "overall", direction: "desc" };
+let pendingNegotiation = null;
+
+function getContractTerms(player) {
+  return { requestedSalary: Math.max(100, Math.round(player.cost * 0.006)), requiredPrestige: Math.min(95, Math.max(5, (player.overall - 64) * 3)) };
+}
 
 const transferColumns = [
   ["name", "Zawodnik"], ["flag", "Kraj"], ["position", "Pozycja"], ["team", "Drużyna"], ["league", "Liga"], ["overall", "OVR"],
@@ -185,11 +205,18 @@ function renderTransfer() {
   const rows = visiblePlayers.map((player) => {
     const index = transferPlayers.indexOf(player);
     const unavailable = purchasedPlayers.has(index) || !window.clubEconomy.canAfford(player.cost);
-    return `<tr><td><strong>${player.name}</strong></td><td><img class="country-flag" src="${player.flag}" title="${player.country}" alt="Flaga: ${player.country}" loading="lazy"></td><td><strong>${player.position}</strong></td><td>${player.team}</td><td>${player.league}</td><td class="rating-cell">${player.overall}</td><td>${player.macro}</td><td>${player.micro}</td><td>${player.vision}</td><td>${player.roams}</td><td>${player.farming}</td><td>${player.reflex}</td><td><strong>${window.clubEconomy.format(player.cost)}</strong></td><td><button class="upgrade-button transfer-buy" data-buy-player="${index}" ${unavailable ? "disabled" : ""}>${purchasedPlayers.has(index) ? "Kupiony" : "Kup"}</button></td></tr>`;
+    const terms = getContractTerms(player);
+    return `<tr><td><strong>${player.name}</strong><small>Prestiż ${terms.requiredPrestige}+</small></td><td><img class="country-flag" src="${player.flag}" title="${player.country}" alt="Flaga: ${player.country}" loading="lazy"></td><td><strong>${player.position}</strong></td><td>${player.team}</td><td>${player.league}</td><td class="rating-cell">${player.overall}</td><td>${player.macro}</td><td>${player.micro}</td><td>${player.vision}</td><td>${player.roams}</td><td>${player.farming}</td><td>${player.reflex}</td><td><strong>${window.clubEconomy.format(player.cost)}</strong></td><td><button class="upgrade-button transfer-buy" data-buy-player="${index}" ${unavailable ? "disabled" : ""}>Negocjuj</button></td></tr>`;
   }).join("");
-  return `<div class="management-board transfer-board">
-    <header class="transfer-toolbar"><div><p class="eyebrow">Rynek transferowy</p><h2>${transferLeagueFilter === "all" ? "Wszystkie ligi" : transferLeagueFilter}</h2><div class="transfer-meta"><span class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></span><span>${visiblePlayers.length} z ${transferPlayers.length - purchasedPlayers.size} dostępnych zawodników</span></div></div><div class="transfer-filters"><label><span>Szukaj</span><input data-transfer-search value="${transferSearch}" placeholder="Nazwa zawodnika"></label><label><span>Pozycja</span><select data-transfer-position><option value="all">Wszystkie pozycje</option>${positions.map((position) => `<option ${position === transferPositionFilter ? "selected" : ""}>${position}</option>`).join("")}</select></label><label><span>Liga</span><select data-transfer-league><option value="all">Wszystkie ligi</option>${leagues.map((league) => `<option ${league === transferLeagueFilter ? "selected" : ""}>${league}</option>`).join("")}</select></label><label><span>Drużyna</span><select data-transfer-team><option value="all">Wszystkie drużyny</option>${teams.map((team) => `<option ${team === transferTeamFilter ? "selected" : ""}>${team}</option>`).join("")}</select></label></div></header>
-    <p class="transfer-notice ${transferMessage ? "" : "transfer-notice--hint"}" role="status">${transferMessage || "Wybierz zawodnika z listy i kliknij „Kup”. Cena zostanie odjęta od budżetu klubu."}</p>
+  const negotiation = pendingNegotiation ? (() => {
+    const player = transferPlayers[pendingNegotiation.index];
+    const terms = getContractTerms(player);
+    const prestige = window.getClubPrestige?.() || 10;
+    return `<section class="contract-negotiation"><div><span>Negocjacje kontraktu</span><h3>${player.name} • ${player.overall} OVR</h3><p>Oczekiwania: <strong>${window.clubEconomy.format(terms.requestedSalary)} / mies.</strong> • wymagany prestiż <strong>${terms.requiredPrestige}</strong> • prestiż klubu <strong class="${prestige >= terms.requiredPrestige ? "positive" : "negative"}">${prestige}</strong></p></div><form data-contract-form><label>Miesięczna pensja<input type="number" name="salary" min="50" step="50" value="${pendingNegotiation.salary || terms.requestedSalary}" required></label><button class="primary-action">Złóż ofertę</button><button type="button" class="upgrade-button" data-cancel-contract>Anuluj</button></form></section>`;
+  })() : "";
+  return `<div class="management-board transfer-board ${pendingNegotiation ? "transfer-board--negotiating" : ""}">
+    <header class="transfer-toolbar"><div><p class="eyebrow">Rynek transferowy</p><h2>${transferLeagueFilter === "all" ? "Wszystkie ligi" : transferLeagueFilter}</h2><div class="transfer-meta"><span class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></span><span>Prestiż: <strong>${window.getClubPrestige?.() || 10}</strong></span><span>${visiblePlayers.length} z ${transferPlayers.length - purchasedPlayers.size} dostępnych zawodników</span></div></div><div class="transfer-filters"><label><span>Szukaj</span><input data-transfer-search value="${transferSearch}" placeholder="Nazwa zawodnika"></label><label><span>Pozycja</span><select data-transfer-position><option value="all">Wszystkie pozycje</option>${positions.map((position) => `<option ${position === transferPositionFilter ? "selected" : ""}>${position}</option>`).join("")}</select></label><label><span>Liga</span><select data-transfer-league><option value="all">Wszystkie ligi</option>${leagues.map((league) => `<option ${league === transferLeagueFilter ? "selected" : ""}>${league}</option>`).join("")}</select></label><label><span>Drużyna</span><select data-transfer-team><option value="all">Wszystkie drużyny</option>${teams.map((team) => `<option ${team === transferTeamFilter ? "selected" : ""}>${team}</option>`).join("")}</select></label></div></header>
+    <p class="transfer-notice ${transferMessage ? "" : "transfer-notice--hint"}" role="status">${transferMessage || "Wybierz zawodnika, wynegocjuj pensję i przekonaj go prestiżem klubu."}</p>${negotiation}
     <div class="transfer-table-wrap"><table class="finance-table transfer-table"><thead><tr>${transferColumns.map(([key, label]) => renderSortHeader(key, label)).join("")}<th>Zakup</th></tr></thead><tbody>${rows || `<tr><td colspan="14" class="transfer-empty">Brak zawodników spełniających kryteria.</td></tr>`}</tbody></table></div>
   </div>`;
 }
@@ -217,20 +244,41 @@ function setupTransfer(onChange) {
   document.querySelectorAll("[data-buy-player]").forEach((button) => button.addEventListener("click", () => {
     const index = Number(button.dataset.buyPlayer);
     const player = transferPlayers[index];
-    if (player && window.clubEconomy.spend(player.cost)) {
-      purchasedPlayers.add(index);
-      window.addSquadPlayer(player);
-      window.addMail({
-        id: `transfer-${player.name}`,
-        from: "Dyrektor sportowy",
-        subject: `Transfer zakończony: ${player.name}`,
-        date: `Dzień ${window.gameClock.day} • 12:00`,
-        body: `${player.name} (${player.position}, OVR ${player.overall}) dołączył do naszego zespołu z ${player.team}. Kwota transferu: ${window.clubEconomy.format(player.cost)}. Zawodnik jest już dostępny w rezerwach na ekranie Squad.`,
-      });
-      transferMessage = `Kupiono zawodnika ${player.name} z ${player.team} za ${window.clubEconomy.format(player.cost)}.`;
-      onChange();
-    }
+    if (!player) return;
+    pendingNegotiation = { index, salary: getContractTerms(player).requestedSalary };
+    transferMessage = `Rozpoczęto rozmowy z ${player.name}. Ustal miesięczną pensję.`;
+    onChange();
   }));
+  document.querySelector("[data-cancel-contract]")?.addEventListener("click", () => { pendingNegotiation = null; transferMessage = "Negocjacje anulowane."; onChange(); });
+  document.querySelector("[data-contract-form]")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const player = transferPlayers[pendingNegotiation?.index];
+    if (!player) return;
+    const salary = Math.max(0, Number(new FormData(event.currentTarget).get("salary")) || 0);
+    const terms = getContractTerms(player);
+    const prestige = window.getClubPrestige?.() || 10;
+    pendingNegotiation.salary = salary;
+    if (prestige < terms.requiredPrestige) {
+      transferMessage = `${player.name} odrzuca ofertę. Klub ma ${prestige} prestiżu, a zawodnik oczekuje minimum ${terms.requiredPrestige}.`;
+      onChange();
+      return;
+    }
+    const salaryRatio = salary / terms.requestedSalary;
+    const roll = [...`${player.name}-${salary}-${window.gameClock.day}`].reduce((hash, character) => ((hash * 31) + character.charCodeAt(0)) >>> 0, 7) % 100;
+    const acceptanceChance = Math.min(100, Math.round(20 + salaryRatio * 65 + Math.max(0, prestige - terms.requiredPrestige) * 1.5));
+    if (salaryRatio < 0.7 || roll >= acceptanceChance) {
+      transferMessage = `${player.name} odrzuca pensję ${window.clubEconomy.format(salary)}. Oczekuje około ${window.clubEconomy.format(terms.requestedSalary)} miesięcznie.`;
+      onChange();
+      return;
+    }
+    if (!window.clubEconomy.spend(player.cost)) { transferMessage = "Klubu nie stać na opłatę transferową."; onChange(); return; }
+    purchasedPlayers.add(pendingNegotiation.index);
+    window.addSquadPlayer(player, salary);
+    pendingNegotiation = null;
+    window.addMail({ id: `transfer-${player.name}`, from: "Dyrektor sportowy", subject: `Transfer zakończony: ${player.name}`, date: `Dzień ${window.gameClock.day} • 12:00`, body: `${player.name} (${player.position}, OVR ${player.overall}) podpisuje kontrakt. Transfer: ${window.clubEconomy.format(player.cost)}, pensja: ${window.clubEconomy.format(salary)} miesięcznie.` });
+    transferMessage = `${player.name} zaakceptował kontrakt: ${window.clubEconomy.format(salary)} / mies.`;
+    onChange();
+  });
   document.querySelectorAll("[data-transfer-sort]").forEach((button) => button.addEventListener("click", () => {
     const key = button.dataset.transferSort;
     const defaultDirection = key === "name" || key === "flag" || key === "position" || key === "team" || key === "league" || key === "cost" ? "asc" : "desc";
@@ -244,10 +292,10 @@ function setupTransfer(onChange) {
 window.renderTransfer = renderTransfer;
 window.setupTransfer = setupTransfer;
 window.gameState.register("transfers", {
-  get: () => ({ purchasedPlayers: [...purchasedPlayers], transferTeamFilter, transferLeagueFilter, transferPositionFilter, transferSearch, transferMessage, transferSort }),
+  get: () => ({ purchasedPlayers: [...purchasedPlayers], transferTeamFilter, transferLeagueFilter, transferPositionFilter, transferSearch, transferMessage, transferSort, pendingNegotiation }),
   set: (state) => {
     purchasedPlayers.clear(); (state.purchasedPlayers || []).forEach((index) => purchasedPlayers.add(index));
     transferTeamFilter = state.transferTeamFilter || "all"; transferLeagueFilter = state.transferLeagueFilter || "all"; transferPositionFilter = state.transferPositionFilter || "all";
-    transferSearch = state.transferSearch || ""; transferMessage = state.transferMessage || ""; transferSort = state.transferSort || transferSort;
+    transferSearch = state.transferSearch || ""; transferMessage = state.transferMessage || ""; transferSort = state.transferSort || transferSort; pendingNegotiation = state.pendingNegotiation || null;
   },
 });
