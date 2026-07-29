@@ -11,6 +11,7 @@ let authMode = "login";
 async function showGame(user) {
   authScreen.hidden = true;
   gameShell.hidden = false;
+  window.managerName = user.managerName;
   document.querySelector("[data-manager-name]").textContent = user.managerName;
   await window.gameState.load();
   window.refreshActiveSection();
