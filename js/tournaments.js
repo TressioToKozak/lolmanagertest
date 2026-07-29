@@ -1,8 +1,11 @@
 const tournaments = [
-  { name: "Local Net Cup", type: "Amatorski", entryFee: 0, prize: 25000, startIn: 6 },
-  { name: "City LAN Clash", type: "Regionalny", entryFee: 15000, prize: 60000, startIn: 14 },
-  { name: "Rift Masters Open", type: "Semi-pro", entryFee: 45000, prize: 140000, startIn: 24 },
-  { name: "EU Rising Cup", type: "Pro", entryFee: 90000, prize: 300000, startIn: 35 },
+  { name: "Go4LoL 🥇", type: "Elitarny", entryFee: 15000, prize: 250000, startIn: 18, requiredWins: 12, strength: 88 },
+  { name: "Challengermode", type: "Profesjonalny", entryFee: 10000, prize: 150000, startIn: 14, requiredWins: 8, strength: 81 },
+  { name: "Żabka Cup / Legends Academy", type: "Akademicki", entryFee: 7500, prize: 90000, startIn: 12, requiredWins: 5, strength: 75 },
+  { name: "ARRMY.GG", type: "Semi-pro", entryFee: 5000, prize: 60000, startIn: 10, requiredWins: 3, strength: 70 },
+  { name: "FACEIT", type: "Otwarty", entryFee: 2500, prize: 35000, startIn: 8, requiredWins: 1, strength: 65 },
+  { name: "Battlefy", type: "Community", entryFee: 1000, prize: 18000, startIn: 6, requiredWins: 0, strength: 60 },
+  { name: "Toornament", type: "Debiutancki", entryFee: 0, prize: 10000, startIn: 4, requiredWins: 0, strength: 56 },
 ];
 const tournamentTeams = ["Nasz zespół", "Pixel Rookies", "Kraków Minions", "Baltic Foxes", "Berlin Bots", "Warsaw Dragons", "Prague Golems", "Nordic Sparks"];
 let activeTournamentIndex = null;
@@ -45,8 +48,11 @@ function renderTournaments() {
     : [[tournaments[activeTournamentIndex], activeTournamentIndex]];
   const cards = visibleTournaments.map(([tournament, index]) => {
     const isActive = activeTournamentIndex === index;
-    const cannotJoin = activeTournamentIndex !== null || !window.clubEconomy.canAfford(tournament.entryFee);
-    return `<article class="market-card competition-card ${isActive ? "market-card--active" : ""}"><div class="competition-card__top"><span>${tournament.type}</span><b>Start za ${tournament.startIn} dni</b></div><strong>${tournament.name}</strong><p>Drabinka pucharowa • BO1 • 8 drużyn</p><div class="competition-card__facts"><small>Nagroda<strong>${window.clubEconomy.format(tournament.prize)}</strong></small><small>Wpisowe<strong>${tournament.entryFee ? window.clubEconomy.format(tournament.entryFee) : "Darmowe"}</strong></small></div>${isActive ? "" : `<button class="upgrade-button" data-join-tournament="${index}" ${cannotJoin ? "disabled" : ""}>${runFinished ? "Zakończ aktywny turniej" : "Dołącz do turnieju"}</button>`}</article>`;
+    const wins = window.getCareerWins?.() || 0;
+    const locked = wins < tournament.requiredWins;
+    const cannotJoin = activeTournamentIndex !== null || locked || !window.clubEconomy.canAfford(tournament.entryFee);
+    const buttonLabel = locked ? `Wymagane zwycięstwa: ${wins}/${tournament.requiredWins}` : runFinished ? "Zakończ aktywny turniej" : "Dołącz do turnieju";
+    return `<article class="market-card competition-card ${isActive ? "market-card--active" : ""} ${locked ? "competition-card--locked" : ""}"><div class="competition-card__top"><span>${tournament.type}</span><b>Start za ${tournament.startIn} dni</b></div><strong>${tournament.name}</strong><p>Drabinka pucharowa • BO1 • 8 drużyn</p><div class="competition-card__facts"><small>Nagroda<strong>${window.clubEconomy.format(tournament.prize)}</strong></small><small>Wpisowe<strong>${tournament.entryFee ? window.clubEconomy.format(tournament.entryFee) : "Darmowe"}</strong></small></div>${isActive ? "" : `<button class="upgrade-button" data-join-tournament="${index}" ${cannotJoin ? "disabled" : ""}>${buttonLabel}</button>`}</article>`;
   }).join("");
   return `<div class="management-board"><header class="competition-picker-header"><div><span>Turnieje pucharowe</span><h2>${activeTournamentIndex === null ? "Wybierz następne wyzwanie" : "Aktywny turniej"}</h2><p>${activeTournamentIndex === null ? "Sprawdź termin, poziom i ryzyko finansowe przed zgłoszeniem drużyny." : "Pozostałe turnieje wrócą po zakończeniu obecnej drabinki."}</p></div><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div></header><div class="market-grid ${activeTournamentIndex === null ? "market-grid--four" : ""} competition-picker">${cards}</div>${renderTournamentTable(tournaments[activeTournamentIndex])}</div>`;
 }
@@ -57,6 +63,7 @@ function setupTournaments(onChange) {
     const tournament = tournaments[index];
     if (activeTournamentIndex === null && tournament && window.clubEconomy.spend(tournament.entryFee)) {
       startTournament(index);
+      window.progressQuest?.("join-tournament");
       onChange();
     }
   }));
@@ -102,7 +109,7 @@ window.gameClock.subscribe((day) => {
   window.matchCenter.start({
     competition: tournament.name,
     opponent: opponent.name,
-    opponentStrength: 57 + activeTournamentIndex * 7 + tournamentRun.round * 3,
+    opponentStrength: tournament.strength + tournamentRun.round * 2,
     day,
     section: "tournaments",
     onComplete: (won) => resolveTournamentMatch(day, tournament, opponent, won),
