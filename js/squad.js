@@ -150,7 +150,7 @@ window.applySquadMatchDevelopment = function applySquadMatchDevelopment(match) {
   match.playerStats = starterIds.map((playerId) => ({ name: squadPlayers[playerId].name, ...stats[playerId], mvp: playerId === mvpId }));
   match.developmentReport = growth;
 };
-window.addSquadPlayer = function addSquadPlayer(player) {
+window.addSquadPlayer = function addSquadPlayer(player, salary) {
   const playerId = `transfer-${player.league}-${player.team}-${player.name}`.toLocaleLowerCase("pl").replace(/[^a-z0-9]+/g, "-");
   squadPlayers[playerId] = {
     name: player.name,
@@ -158,6 +158,7 @@ window.addSquadPlayer = function addSquadPlayer(player) {
     style: `Transfer z ${player.team}`,
     rating: player.overall,
     value: Math.round(player.cost * 0.7),
+    contractSalary: Math.max(50, Number(salary) || Math.max(100, Math.round(player.cost * 0.006))),
     development: { xp: 0, gained: 0, matches: 0, kills: 0, assists: 0, mvps: 0 },
   };
 
@@ -188,10 +189,15 @@ window.gameClock.subscribe((day) => {
     });
   });
 });
+window.getSquadPayrollRows = () => [...new Set(Object.values(squadSlots).filter(Boolean))]
+  .map((playerId) => squadPlayers[playerId])
+  .filter((player) => player?.contractSalary)
+  .map((player) => ["Kontrakt zawodnika", player.name, player.contractSalary]);
 window.gameState.register("squad", {
   get: () => ({ squadPlayers, squadSlots, reserveSlots, slotLabels, listed: [...transferListedPlayers], squadSaleFilter }),
   set: (state) => {
     Object.keys(squadPlayers).forEach((key) => delete squadPlayers[key]); Object.assign(squadPlayers, state.squadPlayers || {});
+    Object.entries(squadPlayers).forEach(([playerId, player]) => { if (playerId.startsWith("transfer-") && !player.contractSalary) player.contractSalary = Math.max(100, Math.round((player.value || 0) * 0.0086)); });
     Object.keys(squadSlots).forEach((key) => delete squadSlots[key]); Object.assign(squadSlots, state.squadSlots || {});
     reserveSlots.splice(0, reserveSlots.length, ...(state.reserveSlots || [])); Object.assign(slotLabels, state.slotLabels || {});
     transferListedPlayers.clear(); (state.listed || []).forEach(([key, value]) => transferListedPlayers.set(key, value)); squadSaleFilter = state.squadSaleFilter || "all";

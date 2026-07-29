@@ -67,6 +67,7 @@ window.setupOnboardingQuests = function setupOnboardingQuests(onChange) {
 };
 
 window.getCareerWins = () => careerStats.wins;
+window.getClubPrestige = () => Math.min(100, 10 + careerStats.wins * 3 + careerStats.bestStreak);
 window.gameState.register("quests", {
   get: () => ({ progress: questProgress, claimed: [...claimedQuests], careerStats }),
   set: (state) => {

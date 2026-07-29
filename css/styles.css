@@ -2037,6 +2037,17 @@ body {
   background: rgba(46, 230, 166, 0.08);
 }
 
+.contract-negotiation { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 18px; padding: 18px; border: 1px solid rgba(255, 211, 110, 0.32); border-radius: 18px; background: linear-gradient(120deg, rgba(201, 160, 75, 0.13), rgba(17, 39, 64, 0.75)); }
+.contract-negotiation span { color: var(--gold-bright); font-size: 0.7rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.contract-negotiation h3 { margin: 5px 0; }
+.contract-negotiation p { margin: 0; color: var(--muted); }
+.contract-negotiation .positive { color: #2ee6a6; }
+.contract-negotiation .negative { color: #ff8a8a; }
+.contract-negotiation form { display: flex; align-items: end; gap: 9px; }
+.contract-negotiation label { display: grid; gap: 5px; color: var(--muted); font-size: 0.7rem; }
+.contract-negotiation input { width: 150px; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: var(--text); background: rgba(8, 21, 37, 0.8); }
+@media (max-width: 800px) { .contract-negotiation { grid-template-columns: 1fr; } .contract-negotiation form { align-items: stretch; flex-direction: column; } .contract-negotiation input { width: 100%; } }
+
 .transfer-notice--hint {
   border-color: rgba(255, 211, 110, 0.24);
   color: var(--muted);
