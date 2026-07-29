@@ -193,12 +193,8 @@ window.matchCenter = {
   },
   setup(onChange) {
     document.querySelectorAll("[data-match-choice]").forEach((button) => button.addEventListener("click", () => {
-      const scrollContainer = document.querySelector(".management-board");
-      const scrollTop = scrollContainer?.scrollTop || 0;
       this.choose(button.dataset.matchChoice);
       onChange();
-      const nextContainer = document.querySelector(".management-board");
-      if (nextContainer) nextContainer.scrollTop = scrollTop;
     }));
     document.querySelector("[data-dismiss-match]")?.addEventListener("click", () => {
       this.lastMatch = null;

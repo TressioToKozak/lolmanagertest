@@ -43,6 +43,11 @@ function renderLeagueTable(league) {
 }
 
 function renderLeagues() {
+  if (activeLeagueIndex !== null && (!leagues[activeLeagueIndex] || !leagueSeason)) {
+    activeLeagueIndex = null;
+    leagueSeason = null;
+  }
+  if (leagueQualifier && !leagues[leagueQualifier.index]) leagueQualifier = null;
   const visibleLeagues = activeLeagueIndex === null || leagueSeason?.finished ? leagues.map((league, index) => [league, index]) : [[leagues[activeLeagueIndex], activeLeagueIndex]];
   const cards = visibleLeagues.map(([league, index]) => {
     const isActive = activeLeagueIndex === index;
@@ -54,7 +59,7 @@ function renderLeagues() {
     return `<article class="market-card competition-card ${isActive ? "market-card--active" : ""} ${locked ? "competition-card--locked" : ""}"><div class="competition-card__top"><span>${league.tier}</span><b>${league.teamCount} drużyn</b></div><strong>${league.name}</strong><p>${league.region}</p><div class="competition-card__facts"><small>Nagroda<strong>${window.clubEconomy.format(league.prize)}</strong></small><small>Wpisowe eliminacyjne<strong>${league.entryFee ? window.clubEconomy.format(league.entryFee) : "Darmowe"}</strong></small></div><button class="upgrade-button" data-join-league="${index}" ${unavailable ? "disabled" : ""}>${label}</button></article>`;
   }).join("");
   const qualifierMatch = leagueQualifier ? window.matchCenter.render(`Eliminacje • ${leagues[leagueQualifier.index].name}`) : "";
-  return `<div class="management-board"><header class="competition-picker-header"><div><span>Rozgrywki ligowe</span><h2>${activeLeagueIndex === null ? "Wywalcz miejsce w lidze" : "Sezon ligowy"}</h2><p>${activeLeagueIndex === null ? "Każda liga wymaga wygrania meczu eliminacyjnego. Mocniejsze rozgrywki odblokujesz wynikami klubu." : "Śledź tabelę, terminarz i formę rywali."}</p></div><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div></header><div class="market-grid market-grid--four competition-picker">${cards}</div>${qualifierMatch}${renderLeagueTable(leagues[activeLeagueIndex])}</div>`;
+  return `<div class="management-board" data-scroll-view="leagues"><header class="competition-picker-header"><div><span>Rozgrywki ligowe</span><h2>${activeLeagueIndex === null ? "Wywalcz miejsce w lidze" : "Sezon ligowy"}</h2><p>${activeLeagueIndex === null ? "Każda liga wymaga wygrania meczu eliminacyjnego. Na start dostępne są Małe ligi Discordowe; kolejne odblokujesz zwycięstwami." : "Śledź tabelę, terminarz i formę rywali."}</p></div><div class="budget-pill">Budżet: <strong>${window.clubEconomy.format()}</strong></div></header>${qualifierMatch}<div class="market-grid market-grid--four competition-picker">${cards}</div>${renderLeagueTable(leagues[activeLeagueIndex])}</div>`;
 }
 
 function startLeagueQualifier(day) {
@@ -85,7 +90,7 @@ function setupLeagues(onChange) {
     const index = Number(button.dataset.joinLeague);
     const league = leagues[index];
     const eligible = league && (window.getCareerWins?.() || 0) >= league.requiredWins;
-    if (activeLeagueIndex === null && leagueQualifier === null && eligible && window.clubEconomy.spend(league.entryFee)) {
+    if (activeLeagueIndex === null && leagueQualifier === null && !window.matchCenter.activeMatch && eligible && window.clubEconomy.spend(league.entryFee)) {
       leagueQualifier = { index, nextMatchDay: window.gameClock.day };
       startLeagueQualifier(window.gameClock.day);
       onChange();
@@ -144,5 +149,11 @@ window.getLeagueNextMatch = () => {
 };
 window.gameState.register("leagues", {
   get: () => ({ activeLeagueIndex, leagueSeason, leagueQualifier }),
-  set: (state) => { activeLeagueIndex = state.activeLeagueIndex ?? null; leagueSeason = state.leagueSeason || null; leagueQualifier = state.leagueQualifier || null; },
+  set: (state) => {
+    const savedIndex = Number(state.activeLeagueIndex);
+    activeLeagueIndex = Number.isInteger(savedIndex) && leagues[savedIndex] && state.leagueSeason ? savedIndex : null;
+    leagueSeason = activeLeagueIndex === null ? null : state.leagueSeason;
+    const qualifierIndex = Number(state.leagueQualifier?.index);
+    leagueQualifier = Number.isInteger(qualifierIndex) && leagues[qualifierIndex] ? { ...state.leagueQualifier, index: qualifierIndex } : null;
+  },
 });
